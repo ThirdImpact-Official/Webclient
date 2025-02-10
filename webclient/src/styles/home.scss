@@ -1,0 +1,45 @@
+//------------------------Home Sccs------------------///
+
+
+
+.css-box-shadow{
+	/*start ------------*/
+	width: [object Object]px; 
+	height: [object Object]px; 
+	background: #F8F8F8; 
+	border: solid #BDBDBD 0; 
+	box-shadow: 54px 29px 8px rgba(140, 117, 140, 0.6)  ; 
+	-webkit-box-shadow: 54px 29px 8px rgba(140, 117, 140, 0.6)  ; 
+	-moz-box-shadow: 54px 29px 8px rgba(140, 117, 140, 0.6)  ; 
+}
+//------------------------Animation css------------------///
+//rotation
+.css-transform {
+    /* Combine all transforms into one property and use modern vendor prefix handling */
+    transform: scale(1) rotate(0deg) skew(0deg, 0deg) translate(3px, 0);
+    transform-origin: 50% 49%;
+    
+    /* Add transition for transform property since that's what's changing */
+    transition: transform 0.9s ease-in-out, background 2s ease-in-out;
+  }
+  
+.css-transform.active {
+    transform: scale(1) rotate(360deg) skew(0deg, 0deg) translate(493px, 0);
+    transform-origin: 50% 49%;
+    transition: transform 8s ease-in-out, background 8s ease-in-out;
+  }
+//fading 
+  .css-fade-transform {
+    /* Combine all transforms into one property and use modern vendor prefix handling */
+    transform: scale(1) rotate(0deg) skew(0deg, 0deg) translate(3px, 0);
+    transform-origin: 50% 49%;
+    
+    /* Add transition for transform property since that's what's changing */
+    transition: transform 0.9s ease-in-out, background 2s ease-in-out;
+  }
+  
+.css-fade-transform.active {
+    transform: scale(1) rotate(0) skew(0deg, 0deg) translate(493px, 0);
+    transform-origin: 50% 49%;
+    transition: transform 8s ease-in-out, background 8s ease-in-out;
+  }

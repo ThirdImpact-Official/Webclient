@@ -12,12 +12,15 @@ import Home from "./app/Home";
  */
 const App:React.FC = () => {
   return(
-    <Routes>
-      <Route path="login" element={<Login />} />
-      <Route path="" element={<UserAppLayout />}>
-        <Route index element={<Home />} />
-      </Route>
-    </Routes>
+    <div className="w-full pt-10 flex items-center justify-center">
+      <Routes>
+        <Route path="login" element={<Login />} />
+        <Route path="" element={<UserAppLayout />}>
+          <Route index element={<Home />} />
+        </Route>
+      </Routes>
+
+    </div>
   )
 }
 
