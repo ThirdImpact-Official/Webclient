@@ -1,14 +1,7 @@
 import { ErrorType, RequestType } from "@/enums/RequestType";
+import { ServiceResponse } from "@/interfaces/ServiceResponse";
 import axios,{ AxiosInstance} from "axios";
 
-
-interface ServiceResponse<T>
-{
-    data: T;
-    success: boolean;
-    message: string;
-    ErrorType: ErrorType;
-}
 
 export class HttpClient 
 {
@@ -27,6 +20,41 @@ export class HttpClient
            }
        });
     }
+    
+    // ceci est un expemple d'utilisation
+    /*
+        public exemples(): void
+        {
+            dans le cadre d'un get 
+
+            const response = await HttpClient
+                .getInstance()
+                .setBaseUrl('https://api.example.com')
+                .GetRequestType('/users/1')
+                .execute<User>();
+
+            if (response.success) {
+                console.log(response.data);
+                }
+        }
+
+        // Exemple POST
+        const createUser = async () => {
+            const userData = { name: "John" };
+            
+            const response = await HttpClient
+                .getInstance()
+                .setBaseUrl('https://api.example.com')
+                .PostRequestType('/users')
+                .setData(userData)
+                .execute<User>();
+
+            if (response.success) {
+                console.log(response.data);
+    }
+};
+
+    */
 
     /**
     * Sends a request to the server and returns a promise that resolves with a ServiceResponse object.
