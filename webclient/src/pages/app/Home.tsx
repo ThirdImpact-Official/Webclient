@@ -23,7 +23,7 @@ export default Home;
  */
 const HomeHeroComponent = () => {
   return (
-    <div className="h-[336px] flex flex-col items-center gap-6">
+    <div className="h-[336px] flex flex-col  items-center gap-6">
       <h1 className="text-white text-4xl font-bold">
         Welcome to the Organization Dashboard
       </h1>
@@ -37,8 +37,6 @@ const HomeHeroComponent = () => {
           </p>
         </div>
       </div>
-
-
       < SwitchformPropsComponent
              firstChild={ <HomeHeroTabsComponent />}
              secondChild={<HomeHeroLinksComponent />}

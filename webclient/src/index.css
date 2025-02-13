@@ -23,6 +23,11 @@
   opacity: 1;
   transform: scale(1);
 }
+@keyframes wavegradient{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
 body {
   /* Remove invalid blur property */
   --color-background-start: #666161;
@@ -33,7 +38,8 @@ body {
     var(--color-background-start) 33%,
     var(--color-background-end) 100%
   );
-  
+  background-size: 400% 400%;
+  animation: wavegradient 10s linear infinite;
   /* If you want to add a blur effect, you could use: */
   /* backdrop-filter: blur(5px); */
   
