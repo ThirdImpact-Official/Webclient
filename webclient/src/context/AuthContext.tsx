@@ -16,7 +16,7 @@ interface AuthContextType {
     isAuthenticated: boolean;
 };
 
-const AuthContext= createContext<AuthContextType | undefined>(undefined);
+export const AuthContext= createContext<AuthContextType | undefined>(undefined);
 interface AuthProviderProps {
     children: React.ReactNode   
 }
@@ -63,12 +63,10 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
                 withCredentials: true,
             });
             setIsAuthenticated(true);
-        } catch (error: any) {
+        } catch (error) {
             throw new Error(error.response.message);
         }
     };
-
-
     /**
      * Logs out from the server and updates the authentication state.
      *
@@ -84,11 +82,10 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
                 throw new error('Logout failed');
            }
            setIsAuthenticated(false);
-        } catch (error: any) {
+        } catch (error) {
             throw new Error(error.response?.message || 'Logout failed');
         }
     };
-
     /**
      * Checks the authentication state of the server by making a GET request to the `/checkauth` endpoint.
      * If the request is successful, the `isAuthenticated` state is updated to true.
@@ -98,18 +95,17 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
      */
     const checkAuth = async () => {
         try {
-            const response = await axios.get<ServiceResponse<any>>(`${apiUrl}/checkauth`, {
+            const response = await axios.get<ServiceResponse<string>>(`${apiUrl}/checkauth`, {
                 withCredentials: true,
             });
  
             setIsAuthenticated(response.data.success || false);
 
-        } catch (error: any) {
+        } catch (error) {
             setIsAuthenticated(false);
             throw new Error(error.response.message);
         }
     };
-
     useEffect(() => {
         axios.defaults.withCredentials = true;
     }, []);
@@ -157,7 +153,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
  * @returns {AuthContextType} The authentication context value.
  */
 
-export const useAuth = () =>{
+export const useAuth = (): AuthContextType =>{
 
     const  context = useContext(AuthContext);
     if(!context)

@@ -19,6 +19,7 @@ const App:React.FC = () => {
   return(
     <div className="h-full flex items-center justify-center">
         <Routes>
+          
           {/* Route avec Layout principal */}
           <Route path="/" element={<DashboardLayout/>}>
             <Route index element={<Dashboard />} />

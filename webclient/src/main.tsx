@@ -5,6 +5,8 @@ import { BrowserRouter } from 'react-router-dom'
 
 createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
+        // mettre le  context d'autentification ici
+        //
             <App />
     </BrowserRouter>
 )
