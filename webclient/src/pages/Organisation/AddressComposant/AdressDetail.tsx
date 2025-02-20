@@ -1,5 +1,5 @@
 import React,{FC}from 'react';
-import { GetAdressDto } from '../../interfaces/Adress/getAdressDto';
+import { GetAdressDto } from '../../../interfaces/Adress/getAdressDto';
 
 
 interface AddressDetailProps 

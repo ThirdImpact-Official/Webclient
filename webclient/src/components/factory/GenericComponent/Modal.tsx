@@ -36,16 +36,18 @@ const ModalComponent: FC<modalProps> = ({children,ButtonTitle,Title,Description}
             aria-describedby="modal-modal-description"
             >
             <Box sx={style}>
-                <Typography id="modal-modal-title" variant="h6" component="h2">
-                {Title}
-                </Typography>
-                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                {Description}
-                </Typography>
-                <Box>
-                    {children}
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                    {Title}
+                    </Typography>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                    {Description}
+                    </Typography>
+                    <Box>
+                        {children}
+                    </Box>
                 </Box>
-                <Box>
+                <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
                     <Button variant="contained" onClick={handleClose}>Fermer</Button>
                 </Box>
             </Box>
