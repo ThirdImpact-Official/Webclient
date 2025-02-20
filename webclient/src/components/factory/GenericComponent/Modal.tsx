@@ -15,11 +15,12 @@ const style = {
   };
   
 interface modalProps {
+    ButtonTitle?: string;
     children: React.ReactNode;
     Title: string;
     Description: string;
 }
-const ModalComponent: FC<modalProps> = ({children,Title,Description}) => 
+const ModalComponent: FC<modalProps> = ({children,ButtonTitle,Title,Description}) => 
 {
     const [open, setOpen] = useState<boolean>(false);
     const handleOpen = () => setOpen(true);
@@ -27,7 +28,7 @@ const ModalComponent: FC<modalProps> = ({children,Title,Description}) =>
 
     return(
        <>
-            <Button onClick={handleOpen}>Open modal</Button>
+            <Button onClick={handleOpen}>{ButtonTitle}</Button>
             <Modal
             open={open}
             onClose={handleClose}

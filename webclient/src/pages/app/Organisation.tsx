@@ -1,12 +1,9 @@
-
-import AddNewOrganisation from "../Organisation/AddOrganisation";
-import ModalComponent from "@/components/factory/GenericComponent/Modal";
+import OrganisationComponent from "../Organisation/OraganisationComponent";
 
  const Organisation: React.FC = () => {
     return(
         <div className="w-full h-full flex items-center justify-center">
-            <ModalComponent children={<AddNewOrganisation/>} Title={"addOrganisation"} Description={"allow u to add an organisation"} />
-              
+             <OrganisationComponent/> 
         </div>);
 }
 

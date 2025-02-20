@@ -1,4 +1,9 @@
+import { GetAdressDto } from '../Adress/getAdressDto';
 export interface GetOrganisationDto  {
-    id: number;
+    orgId: number;
     name: string;
+    email: string;
+    description: string;
+    phoneNumber: string;
+    address: GetAdressDto | null;
 }
