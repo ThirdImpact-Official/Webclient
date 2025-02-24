@@ -9,6 +9,8 @@ import Dashboard from "./app/Dashboard";
 import AuthLayout from "@/components/app/Layout/AuthLayout";
 import DashboardLayout from "@/components/app/Layout/MainLayout";
 import { Layout } from "@/components/app/Layout/Layout";
+import Organisation from "./app/Organisation";
+import UserOrganisation from "./app/UserOrganisation";
 
 
 /**
@@ -25,6 +27,8 @@ const App:React.FC = () => {
             <Route index element={<Dashboard />} />
             <Route path="user" element={<UserAppLayout />} />
             <Route path="contact" element={<Contact />} />
+            <Route path="organisation" element={<Organisation />} />
+            <Route path="organisation/user" element={<UserOrganisation />} />
           </Route>
 
           {/* Route Login (sans sidebar) */}

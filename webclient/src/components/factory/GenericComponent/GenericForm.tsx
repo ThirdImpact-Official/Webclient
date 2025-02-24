@@ -67,8 +67,7 @@ export function GenericForm<T>({ data, onSubmit: handleSubmit }: FormProps<T>) {
             <form onSubmit={(e) => {
                 e.preventDefault();
                 handleSubmit(formData);
-            }}
-            >
+            }}>
                 {Object.entries(data).map(([key, value]) => {
                     const label = key.charAt(0).toUpperCase() + key.slice(1);
                     const type = typeof value === "string" ? "text" : typeof value === "number" ? "number" : "text";

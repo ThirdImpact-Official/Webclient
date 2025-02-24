@@ -1,5 +1,5 @@
 import { ErrorType, RequestType } from "@/enums/RequestType";
-import { ServiceResponse } from "@/interfaces/ServiceResponse";
+import { PaginationResponse, ServiceResponse } from "@/interfaces/ServiceResponse";
 import axios,{ AxiosInstance} from "axios";
 
 
@@ -11,13 +11,15 @@ export class HttpClient
     private requestType: RequestType = RequestType.GET;
     private static instance: HttpClient;
     private Data : unknown = null;
+    private jwtCookieName: string = 'jwt';
     // 
     constructor(  )
     {
        this.Axios= axios.create({
            headers:{
                 'Content-Type': 'application/json'
-           }
+           },
+           withCredentials: true
        });
     }
     
@@ -63,7 +65,7 @@ export class HttpClient
     * @param {T} data - The data to be sent with the request.
     * @returns {Promise<ServiceResponse<T>>} A promise that resolves with a ServiceResponse object.
     */
-    private Sendrequest<T>( url: string, requestType: RequestType, data?: T ): Promise<ServiceResponse<T>>
+    private Sendrequest<T>( actionurl: string, requestType: RequestType, data?: T ): Promise<ServiceResponse<T> |PaginationResponse<T>>
     {
         return new Promise<ServiceResponse<T>>((resolve)=>
             {
@@ -87,27 +89,71 @@ export class HttpClient
                 }
                 this.Axios
                 .request({
-                        url: this.baseUrl + url, 
+                        headers: {
+                            'Content-Type':'application/json'
+                            ,'Access-Control-Allow-Origin': '*'
+                        },
+                        url: actionurl, 
                         method: methodes,
                         data: data})
                 .then((response) => {
                         resolve({
-                            data: response.data, 
-                            success: true, 
-                            message: "Success", 
+                            Data: response.data, 
+                            Success: true, 
+                            Message: "Success", 
                             ErrorType: ErrorType.Good})    
                 })
                 .catch((error) => {
                         resolve({
-                            data: null,
-                            success: false,
-                            message: error.message,
+                            Data: null,
+                            Success: false,
+                            Message: error.message,
                             ErrorType: ErrorType.Bad});
                 })
             
             });
     
     }
+      /**
+     * Définit le nom du cookie contenant le JWT
+     * 
+     * @param {string} cookieName - Le nom du cookie JWT
+     * @returns {HttpClient} L'instance HttpClient pour le chaînage de méthodes
+     */
+      public setJwtCookieName(cookieName: string): HttpClient {
+        this.jwtCookieName = cookieName;
+        return this;
+    }
+    
+    /**
+     * Vérifie si le cookie JWT est présent dans le document
+     * 
+     * @returns {boolean} true si le cookie JWT est présent
+     */
+    private hasJwtCookie(): boolean {
+        if (typeof document !== 'undefined') {
+            const cookies = document.cookie.split(';');
+            return cookies.some(cookie => cookie.trim().startsWith(`${this.jwtCookieName}=`));
+        }
+        return false;
+    }
+    
+    /**
+     * Récupère la valeur du cookie JWT
+     * 
+     * @returns {string|null} La valeur du cookie JWT ou null si non trouvé
+     */
+    private getJwtCookieValue(): string | null {
+        if (typeof document !== 'undefined') {
+            const cookies = document.cookie.split(';');
+            const jwtCookie = cookies.find(cookie => cookie.trim().startsWith(`${this.jwtCookieName}=`));
+            if (jwtCookie) {
+                return jwtCookie.split('=')[1].trim();
+            }
+        }
+        return null;
+    }
+
     /**
      * Sets the base URL of the API endpoint for all subsequent requests.
      * 
@@ -208,20 +254,24 @@ export class HttpClient
  * @throws Will return an error response if the base URL is not set or if the request fails.
  */
 
-    public async execute<T>(): Promise<ServiceResponse<T>>
+    public async execute<T>(): Promise<ServiceResponse<T> | PaginationResponse<T>>
     {
         if (!this.baseUrl) {
             return {
-                data: null,
-                success: false,
-                message: 'Base URL not set',
+                Data: null,
+                Success: false,
+                Message: 'Base URL not set',
                 ErrorType: ErrorType.Null,
             };
         }
 
         try {
-            let response: ServiceResponse<T>;
+            let response: ServiceResponse<T> | PaginationResponse<T>;
             const fullUrl = `${this.baseUrl}${this.url}`;
+            if(!this.hasJwtCookie)
+            {
+                throw new Error('JWT cookie not found');
+            }
             if(this.requestType == RequestType.GET)
             {
                  response = await this.Sendrequest(fullUrl, this.requestType);
@@ -230,24 +280,23 @@ export class HttpClient
             {
                 if(this.Data == null)
                 {
-                    return {
-                        data: null,
-                        success: false,
-                        message: 'Data not set',
-                        ErrorType: ErrorType.Null,
-                    };
+                    response = await this.Sendrequest(fullUrl, this.requestType);
                 }
-                response = await this.Sendrequest(fullUrl, this.requestType, this.Data as T);
+                else
+                {
+                    response = await this.Sendrequest(fullUrl, this.requestType, this.Data as T);
+                }
             }
 
             return response as ServiceResponse<T>;
         } catch (error) {
             return {
-                data: null,
-                success: false,
-                message: error.message,
+                Data: null,
+                Success: false,
+                Message: error.message,
                 ErrorType: ErrorType.Bad,
             };
         }
     }
+ 
 }   

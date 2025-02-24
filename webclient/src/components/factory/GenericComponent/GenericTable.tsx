@@ -1,4 +1,5 @@
-/*************  ✨ Codeium Command 🌟  *************/
+
+
 import { TableProps } from "@/interfaces/GenericInterface/GenericInterfaceComponent";
 import { useState } from "react";
 import { ArrowUp, ArrowDown } from "lucide-react";
