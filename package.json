@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "vite": "^5.0.0",
+    "vite-plugin-mkcert": "^1.17.6",
+    "@vitejs/plugin-react-swc":"^3.5.0"
+  }
+}

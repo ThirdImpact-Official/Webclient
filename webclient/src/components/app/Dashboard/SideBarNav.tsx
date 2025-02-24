@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import { Dashboard, ExitToApp } from '@mui/icons-material';
 import { Settings } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -46,6 +47,12 @@ const AccountUser = () => {
 // Main Sidebar Component
 
 const Sidebar: React.FC = () => {
+
+  const navigate=useNavigate();
+  const handleredirection= (arg: string) => {
+    navigate(arg);
+  }
+
   return (
     <Box sx={{ width: 240, bgcolor: "background.paper", height: "100%" }}>
       {/* Logo */}
@@ -56,19 +63,68 @@ const Sidebar: React.FC = () => {
       {/* Menu */}
       <List>
         <ListItem disablePadding>
-          <ListItemButton>
+
+        <ListItem disablePadding>
+        <ListItemButton onClick={() => handleredirection("/organisation")}>
+            <ListItemIcon>
+              <Dashboard />
+            </ListItemIcon>
+            <ListItemText primary="Admin" />
+          </ListItemButton>
+        </ListItem>
+        </ListItem>
+          <ListItemButton onClick={() => handleredirection("/")}>
             <ListItemIcon>
               <Dashboard />
             </ListItemIcon>
             <ListItemText primary="Tableau de bord" />
           </ListItemButton>
-        </ListItem>
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton onClick={() => handleredirection("/organisation/user")}>
             <ListItemIcon>
               <Settings />
             </ListItemIcon>
-            <ListItemText primary="Paramètres" />
+            <ListItemText  primary="Organisation" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleredirection("/escapeGame")}>
+            <ListItemIcon>
+              <Settings />
+            </ListItemIcon>
+            <ListItemText primary="EscapeGame" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleredirection("/reservation")}>
+            <ListItemIcon>
+              <Settings />
+            </ListItemIcon>
+            <ListItemText primary="Reservation" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleredirection("/session")}>
+            <ListItemIcon>
+              <Settings />
+            </ListItemIcon>
+            <ListItemText  primary="Session" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleredirection("/statistic")}>
+            <ListItemIcon>
+              <Settings />
+            </ListItemIcon>
+            <ListItemText primary="Statisitic" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding >
+        <ListItemButton onClick={() => handleredirection("/parameters")} >
+            <ListItemIcon>
+              <Settings />
+            </ListItemIcon>
+            <ListItemText  primary="Parametres" />
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>

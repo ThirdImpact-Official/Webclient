@@ -1,3 +1,4 @@
 export interface UpdateUserOrganisationDto{
-    id: number;
+    userId: number;
+    OrganisationId: number;
 }

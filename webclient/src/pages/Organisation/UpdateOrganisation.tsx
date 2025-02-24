@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { Box, Button, Input, TextareaAutosize } from "@mui/material";
+import { Box, Button,  TextareaAutosize, TextField } from "@mui/material";
 import { UpdateOrganisationDto } from "@/interfaces/Organisation/updateOrganisationDto";
 
 interface FormProps {
@@ -45,7 +45,7 @@ const UpdateOrganisationForm: FC<FormProps> = ({ data, handleCallBackResponse}) 
             <hr />
             <div className="flex flex-col">
               <label className="form-label" htmlFor="email">Email</label>
-              <Input
+              <TextField
                   placeholder="insert email"
                   className="form-control"
                   value={organisation.email}
@@ -56,7 +56,7 @@ const UpdateOrganisationForm: FC<FormProps> = ({ data, handleCallBackResponse}) 
             </div>
             <div className="flex flex-col">
               <label htmlFor="phoneNumber">PhoneNumber</label>
-              <Input
+              <TextField
                   placeholder="insert phone number"
                   className="form-control"
                   id="phoneNumber"
@@ -67,7 +67,7 @@ const UpdateOrganisationForm: FC<FormProps> = ({ data, handleCallBackResponse}) 
             </div>
             <div className="flex flex-col">
               <label htmlFor="name">Name</label>
-              <Input
+              <TextField
                   id="name"
                   placeholder="insert name"
                   type="text"
@@ -82,7 +82,8 @@ const UpdateOrganisationForm: FC<FormProps> = ({ data, handleCallBackResponse}) 
               <TextareaAutosize
                   placeholder="insert description"
                   id="description"
-                  className="form-control w-[350px] h-[100px]"
+                  style={{ width: "350px", height: "100px" , borderRadius: "5px" ,border: "1px solid #ccc"}}
+                  className="form-control"
                   value={organisation.description}
                   onChange={(e) => handleFieldChange("description", e.target.value)}/>
             </div>

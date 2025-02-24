@@ -1,5 +1,5 @@
 import { GetOrganisationDto } from '@/interfaces/Organisation/getOrganisationDto';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Divider, Typography } from '@mui/material';
 import { FC } from 'react';
 
 
@@ -7,49 +7,41 @@ interface OrganisationDetailsProps
 {
     data: GetOrganisationDto;
 }
-const OrganisationDetails:FC<OrganisationDetailsProps> = ({data}) => {
-    if(data == null)
-    {
-
-        return <></>;
-    } 
-    else
-    {
-        return(
-                <div className="flex items-center justify-center">
-                    <Box className="my-10 space-y-4 space-x-4  shadow-sm px-4">
-                        <div>
-                            <Typography className='text-center text-xls'>Details</Typography>
-                        </div>
-                        <div>
-                            <div className='flex items-center'>
-                                <Typography className='text-start'><strong >Id :</strong></Typography>
-                                <Typography className="my-2 text-center">{data.orgId}</Typography>
-                            </div>
-                        </div>
-                        <div>
-                            <Typography><strong>Name :</strong></Typography>
-                            <Typography className="text-center">{data.name} </Typography>
-                        </div>
-                        <div>
-                            <Typography><strong>Email :</strong></Typography>
-                            <Typography className="text-center">{data.email} </Typography>
-
-                        </div>
-                        <div>
-                            <Typography><strong>Description :</strong> </Typography>
-                            <Typography>{data.description}</Typography>
-                        </div>
-                        <div>
-                            <Typography><strong>Phone Number :</strong></Typography>
-                            <p className="my-2 text-center"> {data.phoneNumber} </p>
-                        </div>
-                        <div className='flex items-center justify-center m-4 p-2'>
-                     
-                            <Button sx={{mr:2}} variant="contained" color='error'>Delete</Button>
-                        </div>
-                    </Box>
-            </div>)
+const OrganisationDetails: FC<OrganisationDetailsProps> = ({ data }) => {
+    if (!data) {
+        return null;
     }
+
+    return (
+        <Box className="flex items-center  mx-15 w-4/6 rounded-md ">
+            <Box className="mx-15 space-y-6 px-10">
+                <Typography className="flex-1 text-center" variant="h4">Details</Typography>
+                <Box className="flex items-center gap-4">
+                    <Typography variant="h5" className="text-start">ID:</Typography>
+                    <Typography variant="body1" className="mx-2 text-center">{data.orgId}</Typography>
+                </Box>
+                <Box className="flex gap-4 justify-between">
+                    <Typography variant="h5" className="text-start">Name:</Typography>
+                    <Typography variant="body1" className="text-center">{data.name}</Typography>
+                </Box>
+                <Box className="flex gap-4 justify-between">
+                    <Typography variant="h5">Email:</Typography>
+                    <Typography variant="body1" className="text-center">{data.email}</Typography>
+                </Box>
+                <Box>
+                    <Typography variant="h5">Description:</Typography>
+                    <Typography variant="body1">{data.description}</Typography>
+                </Box>
+                <Box className="flex gap-4 justify-between">
+                    <Typography variant="h5">Phone Number:</Typography>
+                    <Typography variant="body1" className="mx-2 text-center">{data.phoneNumber}</Typography>
+                </Box>
+                <Divider />
+                <Box className="flex items-center justify-center m-4 p-2">
+                    <Button sx={{ mr: 2 }} variant="contained" color="error">Delete</Button>
+                </Box>
+            </Box>
+        </Box>
+    );
 }
 export default OrganisationDetails;

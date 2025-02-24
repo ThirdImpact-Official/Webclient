@@ -1,3 +1,4 @@
 export interface AddUserOrganisationDto {
-userid:number ;
+    Email:string ;
+    OrganisationId:number ;
 }

@@ -1,9 +1,21 @@
 import { ErrorType } from "@/enums/RequestType";
 
+
 export interface ServiceResponse<T>
 {
-    data: T;
-    success: boolean;
-    message: string;
+    Data: T;
+    Success: boolean;
+    Message: string;
+    ErrorType: ErrorType;
+}
+
+export interface PaginationResponse<T>
+{
+    Data: T[];
+    Page:number;
+    PageSize:number;
+    TotalPage:number;
+    Success: boolean;
+    Message: string;
     ErrorType: ErrorType;
 }

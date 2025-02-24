@@ -1,5 +1,8 @@
 import React,{FC}from 'react';
 import { GetAdressDto } from '../../../interfaces/Adress/getAdressDto';
+import { Box, Typography, Button, Divider } from '@mui/material';
+
+
 
 
 interface AddressDetailProps 
@@ -8,26 +11,36 @@ interface AddressDetailProps
 }
 const AddressDetail: FC<AddressDetailProps> = ({ props: address }) => {
   if (!address) {
-    return <p>Not defined</p>;
+    return <Typography variant="body1">Not defined</Typography>;
   }
 
   return (
-    <div className="flex flex-col mt-4 p-4 text-center">
-      <div className="mb-2 my-4 space-y-2">
-        <p>
-          <strong>Street :</strong> {address.street}
-        </p>
-        <p>
-          <strong>Postal Code :</strong> {address.postalCode}
-        </p>
-        <p>
-          <strong>City :</strong> {address.city}
-        </p>
-        <p>
-          <strong>Country :</strong> {address.country}
-        </p>
-      </div>
-    </div>
+    <Box className="flex flex-col mt-4 p-4 text-center w-4/6">
+      <Typography variant="h4">Address Details</Typography>
+      <Box className="mx-10 my-4 space-y-2">
+        <Box className="flex gap-4 justify-between">
+          <Typography sx={{pe:'5px'}} variant="h5">Street:</Typography>
+          <Typography variant="body1">{address.street}</Typography>
+        </Box>
+        <Box className="flex gap-4 justify-between">
+          <Typography variant="h5">Postal Code:</Typography>
+          <Typography variant="body1">{address.postalCode}</Typography>
+        </Box>
+        <Box className="flex gap-4 justify-between">
+          <Typography variant="h5">City:</Typography>
+          <Typography variant="body1">{address.city}</Typography>
+        </Box>
+        <Box className="flex gap-4 justify-between">
+          <Typography variant="h5">Country:</Typography>
+          <Typography variant="body1">{address.country}</Typography>
+        </Box>
+        <Divider />
+        <Box className="flex justify-between mt-2">
+          <Button color="primary">Update</Button>
+          <Button color="error">Delete</Button>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
