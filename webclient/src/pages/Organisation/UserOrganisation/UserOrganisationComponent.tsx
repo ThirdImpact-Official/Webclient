@@ -8,9 +8,8 @@ import { GetUserDto } from "@/interfaces/User/GetUserDto";
 import OrganisationDetails from "../OrganisationDetails";
 import { useParams } from "react-router-dom";
 import { OrganisationAction } from "@/actions/OrganisationActions";
-import AddUserOrganisation from "./AddUserOrganisation";
-import removefromOrganisation from './RemoveFromOrganisation';
 import RemoveFromOrganisation from "./RemoveFromOrganisation";
+import AddUserOrganisation from "./AddUserOrganisation";
 
 
 enum ViewState {
@@ -142,13 +141,13 @@ const UserOrganisationComponent = () => {
           {viewState === ViewState.LIST && (
             <>
               <ModalComponent
-              children={
-                <AddUserOrganisation 
-                    organisationId={selectedOrganisation?.orgId as number} />
-              }
-              ButtonTitle="Add User"
-              Description="Add a user to an organisation"
-              Title="Add User"
+                  children={
+                    <AddUserOrganisation 
+                        organisationId={selectedOrganisation?.orgId as number} />
+                  }
+                  ButtonTitle="Add User"
+                  Description="Add a user to an organisation"
+                  Title="Add User"
               />
             <UserOrganisationTable
                 GetUserDto={users}
