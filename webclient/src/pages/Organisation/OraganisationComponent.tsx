@@ -10,9 +10,10 @@ import UpdateOrganisation from './UpdateOrganisation';
 import AddressDetail from './AddressComposant/AdressDetail';
 import OrganisationDetails from './OrganisationDetails';
 import OrganisationTable from './OrganisationTable';
-import { GetOrganisationDto } from '@/interfaces/Organisation/getOrganisationDto';
+
 import { OrganisationAction } from '@/actions/OrganisationActions';
 import { PaginationResponse, ServiceResponse } from '@/interfaces/ServiceResponse';
+import { GetOrganisationDto } from '@/interfaces/OrganisationInterface/Organisation/getOrganisationDto';
 
 enum ViewState {
   LIST = 'LIST',
@@ -82,7 +83,7 @@ const testObjects: GetOrganisationDto[] = [
 
 const OrganisationComponent = () => {
   // Etat pour la liste des organisations et la page courante
-  const [organisations, setOrganisations] = useState<GetOrganisationDto[]>(testObjects);
+  const [organisations, setOrganisations] = useState<GetOrganisationDto[] | null>(testObjects);
   const [selectedOrganisation, setSelectedOrganisation] = useState<GetOrganisationDto | null>(null);
   const [viewState, setViewState] = useState<ViewState>(ViewState.LIST);
   const [page, setPage] = useState<number>(1);
@@ -90,12 +91,14 @@ const OrganisationComponent = () => {
   const organisationAction = new OrganisationAction();
 
   const handlePageChange = async (event: React.ChangeEvent<unknown>, value: number) => {
-    try {
-      setPage(value);
-      const response: ServiceResponse<GetOrganisationDto> | PaginationResponse<GetOrganisationDto> = await organisationAction.GetAllOrganisation(value, 5);
-      setOrganisations(response.Data || []);
-    } catch (error) {
-      console.error('Failed to load organisations:', error);
+    try 
+    {
+        setPage(value);
+        const response: ServiceResponse<GetOrganisationDto> | PaginationResponse<GetOrganisationDto> = await organisationAction.GetAllOrganisation(value, 5);
+        setOrganisations(Array.isArray(response.Data) ? response.Data : []);
+    } catch (error) 
+    {
+        console.error('Failed to load organisations:', error);
     }
   };
 
@@ -117,66 +120,73 @@ const OrganisationComponent = () => {
 
   const goBackToList = () => {
     setViewState(ViewState.LIST);
-    setSelectedOrganisation(null);
+
   };
 
   return (
     <Box display={'flex'} flex={4}>
-      <Box flexGrow={1}>
-        <Box className="float-end" mb={2}>
-          <ModalComponent
-            
-            ButtonTitle="Add Organisation"
-            Title="Add Organisation"
-            Description="Allows you to add an organisation"
-            children={<AddNewOrganisation />}
-          />
+        <Box flexGrow={1}>
+            <Box className="float-end" mb={2}>
+              <ModalComponent
+                  ButtonTitle="Add Organisation"
+                  Title="Add Organisation"
+                  Description="Allows you to add an organisation"
+                  children={<AddNewOrganisation />}
+              />
+            </Box>
+
+            {/* Affiche le tableau dans la vue LIST */}
+            {viewState === ViewState.LIST && (
+              <>
+                <OrganisationTable
+                    Organisation={organisations}
+                    OnDetails={handleOrganisationDetail}
+                    OnUpdate={handleOrganisationUpdate}
+                    onAddress={handleAddressDetail}
+                />
+                <Pagination
+                    page={page}
+                    className="float-end"
+                    onChange={handlePageChange}
+                    count={10}
+                />
+              </>
+            )}
         </Box>
 
-        {/* Affiche le tableau dans la vue LIST */}
-        {viewState === ViewState.LIST && (
-          <>
-            <OrganisationTable
-              Organisation={organisations}
-              OnDetails={handleOrganisationDetail}
-              OnUpdate={handleOrganisationUpdate}
-              onAddress={handleAddressDetail}
-            />
-            <Pagination
-              page={page}
-              className="float-end"
-              onChange={handlePageChange}
-              count={10}
-            />
-          </>
-        )}
-      </Box>
+        <Box className="mx-10 px-10 bg-white rounded-md" 
+             flex={1}>
+          {/* Rendu conditionnel selon l'état de la vue */}
+          {viewState === ViewState.DETAIL && selectedOrganisation && (
+            <>
+              <OrganisationDetails 
+                      data={selectedOrganisation} />
+              <Button 
+                      onClick={goBackToList}>Back to List</Button>
+            </>
+          )}
 
-      <Box className="mx-10 px-10 bg-white rounded-md" flex={1}>
-        {/* Rendu conditionnel selon l'état de la vue */}
-        {viewState === ViewState.DETAIL && selectedOrganisation && (
-          <>
-            <OrganisationDetails data={selectedOrganisation} />
-            <Button onClick={goBackToList}>Back to List</Button>
-          </>
-        )}
+          {viewState === ViewState.EDIT && selectedOrganisation && (
+            <>
 
-        {viewState === ViewState.EDIT && selectedOrganisation && (
-          <>
+              <UpdateOrganisation 
+                  data={selectedOrganisation} 
+                  handleCallBackResponse={goBackToList} />
+              <Button 
+                  onClick={goBackToList}>Back to List</Button>
+            </>
+          )}
 
-            <UpdateOrganisation data={selectedOrganisation} handleCallBackResponse={goBackToList} />
-            <Button onClick={goBackToList}>Back to List</Button>
-          </>
-        )}
-
-        {viewState === ViewState.ADDRESS && selectedOrganisation && (
-          <>
-            
-            <AddressDetail props={selectedOrganisation.address} />
-            <Button onClick={goBackToList}>Back to List</Button>
-          </>
-        )}
-      </Box>
+          {viewState === ViewState.ADDRESS && selectedOrganisation && (
+            <>
+              
+              <AddressDetail 
+                  props={selectedOrganisation.address} />
+              <Button 
+                  onClick={goBackToList}>Back to List</Button>
+            </>
+          )}
+        </Box>
     </Box>
   );
 };

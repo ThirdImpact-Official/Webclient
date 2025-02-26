@@ -1,12 +1,12 @@
 import { HttpClient } from './httpClient';
-import { GetOrganisationDto } from '../interfaces/Organisation/getOrganisationDto';
+import { GetOrganisationDto } from '../interfaces/OrganisationInterface/Organisation/getOrganisationDto';
 import { PaginationResponse, ServiceResponse } from '@/interfaces/ServiceResponse';
-import { AddUserOrganisationDto } from '../interfaces/UserOrganisation/addUserOrganisationDto';
+import { AddUserOrganisationDto } from '../interfaces/OrganisationInterface/UserOrganisation/addUserOrganisationDto';
 import { ErrorType } from '@/enums/RequestType';
-import  {AddOrganisationDto}  from '@/interfaces/Organisation/addOrganisationDto';
-import { UpdateUserOrganisationDto } from '@/interfaces/UserOrganisation/updateUserOrganisationDto';
-import { UpdateAdressDto } from '../interfaces/Adress/updateAdressDto';
-import { error } from 'console';
+import  {AddOrganisationDto}  from '@/interfaces/OrganisationInterface/Organisation/addOrganisationDto';
+import { UpdateUserOrganisationDto } from '@/interfaces/OrganisationInterface/UserOrganisation/updateUserOrganisationDto';
+import { UpdateAdressDto } from '../interfaces/OrganisationInterface/Adress/updateAdressDto';
+
 import { GetUserDto } from '@/interfaces/User/GetUserDto';
 
 

@@ -1,5 +1,5 @@
 import { useState, FC } from 'react';
-import { AddUserOrganisationDto } from '../../../interfaces/UserOrganisation/addUserOrganisationDto';
+import { AddUserOrganisationDto } from '../../../interfaces/OrganisationInterface/UserOrganisation/addUserOrganisationDto';
 import { Box, TextField,Button } from '@mui/material';
 import { OrganisationAction } from '@/actions/OrganisationActions';
 
@@ -36,10 +36,10 @@ const AddUserOrganisation: FC<AddUserOrganisationProps> = ({organisationId}) => 
                     <div>Label</div>
                     <div>
                         <TextField
-                        id=""
-                        label="Email"
-                        value={email}
-                        onChange={handleChange}
+                            id=""
+                            label="Email"
+                            value={email}
+                            onChange={handleChange}
                         
                         />
                     </div>

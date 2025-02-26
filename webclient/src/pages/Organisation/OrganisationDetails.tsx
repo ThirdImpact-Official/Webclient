@@ -1,4 +1,4 @@
-import { GetOrganisationDto } from '@/interfaces/Organisation/getOrganisationDto';
+import { GetOrganisationDto } from '@/interfaces/OrganisationInterface/Organisation/getOrganisationDto';
 import { Box, Button, Divider, Typography } from '@mui/material';
 import { FC } from 'react';
 

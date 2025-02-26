@@ -80,7 +80,7 @@ const Sidebar: React.FC = () => {
             <ListItemText primary="Tableau de bord" />
           </ListItemButton>
         <ListItem disablePadding>
-          <ListItemButton onClick={() => handleredirection("/organisation/user")}>
+          <ListItemButton onClick={() => handleredirection("/organisation/user/1")}>
             <ListItemIcon>
               <Settings />
             </ListItemIcon>
@@ -88,7 +88,7 @@ const Sidebar: React.FC = () => {
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
-          <ListItemButton onClick={() => handleredirection("/escapeGame")}>
+          <ListItemButton onClick={() => handleredirection("/escapegame/1")}>
             <ListItemIcon>
               <Settings />
             </ListItemIcon>

@@ -1,5 +1,5 @@
-import { AddAdressDto } from "@/interfaces/Adress/addAdressDto";
-import { AddOrganisationDto } from "@/interfaces/Organisation/addOrganisationDto";
+import { AddAdressDto } from "@/interfaces/OrganisationInterface/Adress/addAdressDto";
+import { AddOrganisationDto } from "@/interfaces/OrganisationInterface/Organisation/addOrganisationDto";
 import { Button, Input, TextareaAutosize, TextField } from "@mui/material";
 import React, {  useState } from "react";
 

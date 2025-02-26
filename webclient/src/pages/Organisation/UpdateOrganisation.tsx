@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import { Box, Button,  TextareaAutosize, TextField } from "@mui/material";
-import { UpdateOrganisationDto } from "@/interfaces/Organisation/updateOrganisationDto";
+import { UpdateOrganisationDto } from "@/interfaces/OrganisationInterface/Organisation/updateOrganisationDto";
 
 interface FormProps {
   data: UpdateOrganisationDto;

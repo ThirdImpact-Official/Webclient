@@ -1,5 +1,5 @@
 import React,{FC}from 'react';
-import { GetAdressDto } from '../../../interfaces/Adress/getAdressDto';
+import { GetAdressDto } from '../../../interfaces/OrganisationInterface/Adress/getAdressDto';
 import { Box, Typography, Button, Divider } from '@mui/material';
 
 

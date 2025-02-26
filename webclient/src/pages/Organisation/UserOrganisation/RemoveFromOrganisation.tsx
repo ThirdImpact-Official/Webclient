@@ -1,6 +1,6 @@
 import { OrganisationAction } from "@/actions/OrganisationActions";
 import ModalComponent from "@/components/factory/GenericComponent/Modal";
-import { UpdateUserOrganisationDto } from "@/interfaces/UserOrganisation/updateUserOrganisationDto";
+import { UpdateUserOrganisationDto } from "@/interfaces/OrganisationInterface/UserOrganisation/updateUserOrganisationDto";
 import { Box, Typography,Button, Divider } from "@mui/material";
 import { FC } from "react";
 

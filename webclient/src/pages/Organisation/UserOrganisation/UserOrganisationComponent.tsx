@@ -3,7 +3,7 @@ import { Box, Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import UserOrganisationTable from "./UserOrganisationTable";
 import UserOrganisationDetails from "./UserOrganisationDetails";
-import { GetOrganisationDto } from "@/interfaces/Organisation/getOrganisationDto";
+import { GetOrganisationDto } from "@/interfaces/OrganisationInterface/Organisation/getOrganisationDto";
 import { GetUserDto } from "@/interfaces/User/GetUserDto";
 import OrganisationDetails from "../OrganisationDetails";
 import { useParams } from "react-router-dom";

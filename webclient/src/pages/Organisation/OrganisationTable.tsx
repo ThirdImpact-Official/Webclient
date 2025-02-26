@@ -1,6 +1,6 @@
 import { Table, TableCell, TableContainer, TableHead, TableRow, TableBody, Button, Paper, Pagination } from '@mui/material';
 
-import { GetOrganisationDto } from '@/interfaces/Organisation/getOrganisationDto';
+import { GetOrganisationDto } from '@/interfaces/OrganisationInterface/Organisation/getOrganisationDto';
 
 
 interface OrganisationTableProps
