@@ -1,12 +1,10 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   Box,
-  Button,
   Pagination,
 } from '@mui/material';
-import ModalComponent from '@/components/factory/GenericComponent/Modal';
 import AddNewOrganisation from './AddOrganisation';
-import UpdateOrganisation from './UpdateOrganisation';
+
 import AddressDetail from './AddressComposant/AdressDetail';
 import OrganisationDetails from './OrganisationDetails';
 import OrganisationTable from './OrganisationTable';
@@ -14,13 +12,12 @@ import OrganisationTable from './OrganisationTable';
 import { OrganisationAction } from '@/actions/OrganisationActions';
 import { PaginationResponse, ServiceResponse } from '@/interfaces/ServiceResponse';
 import { GetOrganisationDto } from '@/interfaces/OrganisationInterface/Organisation/getOrganisationDto';
+import GenericTabs, { TabItem } from '@/components/factory/GenericComponent/TabGénéric';
+import UpdateOrganisationForm from './UpdateOrganisation';
+import AddOrganisation from './AddOrganisation';
 
-enum ViewState {
-  LIST = 'LIST',
-  DETAIL = 'DETAIL',
-  EDIT = 'EDIT',
-  ADDRESS = 'ADDRESS'
-}
+
+
 
 const testObjects: GetOrganisationDto[] = [
   {
@@ -83,9 +80,9 @@ const testObjects: GetOrganisationDto[] = [
 
 const OrganisationComponent = () => {
   // Etat pour la liste des organisations et la page courante
+  const tabsRef = useRef<{ changeTab: (index: number) => void } | null>(null);
   const [organisations, setOrganisations] = useState<GetOrganisationDto[] | null>(testObjects);
-  const [selectedOrganisation, setSelectedOrganisation] = useState<GetOrganisationDto | null>(null);
-  const [viewState, setViewState] = useState<ViewState>(ViewState.LIST);
+  const [selectedOrganisation, setSelectedOrganisation] = useState<GetOrganisationDto | null>(testObjects[0]);
   const [page, setPage] = useState<number>(1);
 
   const organisationAction = new OrganisationAction();
@@ -105,88 +102,87 @@ const OrganisationComponent = () => {
   // Callbacks pour mettre à jour l'état et changer la vue
   const handleOrganisationDetail = (organisation: GetOrganisationDto) => {
     setSelectedOrganisation(organisation);
-    setViewState(ViewState.DETAIL);
+    goToTab(1)
   };
 
   const handleOrganisationUpdate = (organisation: GetOrganisationDto) => {
     setSelectedOrganisation(organisation);
-    setViewState(ViewState.EDIT);
+    goToTab(3)
   };
 
   const handleAddressDetail = (organisation: GetOrganisationDto) => {
     setSelectedOrganisation(organisation);
-    setViewState(ViewState.ADDRESS);
+    goToTab(4)
   };
+  
 
-  const goBackToList = () => {
-    setViewState(ViewState.LIST);
+  const tab: TabItem[] =[
+    {
+      label: "Add  Organisation",
+      content: <>
+            <AddNewOrganisation />  
+      </>
+    },
+    {
+      label: "Table",
+      content: <>              <>
+      <OrganisationTable
+          Organisation={organisations}
+          OnDetails={handleOrganisationDetail}
+          OnUpdate={handleOrganisationUpdate}
+          onAddress={handleAddressDetail}
+      />
+      <Pagination
+          page={page}
+          className="float-end"
+          onChange={handlePageChange}
+          count={10}
+      />
+    </></>
+    },
+    {
+      label: "Details",
+      content:
+                <OrganisationDetails 
+                    data={selectedOrganisation} />
+                
+    },
+    {
+      label: "Update",
+      content: <>
+                  <UpdateOrganisationForm
+                     data={selectedOrganisation}
+                     handleCallBackResponse={()=> console.log("")} />
+              </>
+    },
+    {
+      label: "Create",
+      content: <>
+        <AddOrganisation />
+      </>
+    },
+    {
+      label: "Adress",
+      content:
+      <>
+         <AddressDetail 
+                  props={selectedOrganisation.address} />
+      </>
+    }
+  ]
 
+  const goToTab = (index: number) => {
+    if (tabsRef.current) {
+      tabsRef.current.changeTab(index);
+    }
   };
-
   return (
     <Box display={'flex'} flex={4}>
-        <Box flexGrow={1}>
-            <Box className="float-end" mb={2}>
-              <ModalComponent
-                  ButtonTitle="Add Organisation"
-                  Title="Add Organisation"
-                  Description="Allows you to add an organisation"
-                  children={<AddNewOrganisation />}
-              />
-            </Box>
+       
 
-            {/* Affiche le tableau dans la vue LIST */}
-            {viewState === ViewState.LIST && (
-              <>
-                <OrganisationTable
-                    Organisation={organisations}
-                    OnDetails={handleOrganisationDetail}
-                    OnUpdate={handleOrganisationUpdate}
-                    onAddress={handleAddressDetail}
-                />
-                <Pagination
-                    page={page}
-                    className="float-end"
-                    onChange={handlePageChange}
-                    count={10}
-                />
-              </>
-            )}
-        </Box>
+        <GenericTabs ref={tabsRef} tabs={tab} defaultTab={0} ChangeTab={goToTab} ariaLabel="generic tabs"/>
 
-        <Box className="mx-10 px-10 bg-white rounded-md" 
-             flex={1}>
-          {/* Rendu conditionnel selon l'état de la vue */}
-          {viewState === ViewState.DETAIL && selectedOrganisation && (
-            <>
-              <OrganisationDetails 
-                      data={selectedOrganisation} />
-              <Button 
-                      onClick={goBackToList}>Back to List</Button>
-            </>
-          )}
-
-          {viewState === ViewState.EDIT && selectedOrganisation && (
-            <>
-
-              <UpdateOrganisation 
-                  data={selectedOrganisation} 
-                  handleCallBackResponse={goBackToList} />
-              <Button 
-                  onClick={goBackToList}>Back to List</Button>
-            </>
-          )}
-
-          {viewState === ViewState.ADDRESS && selectedOrganisation && (
-            <>
-              
-              <AddressDetail 
-                  props={selectedOrganisation.address} />
-              <Button 
-                  onClick={goBackToList}>Back to List</Button>
-            </>
-          )}
-        </Box>
+      
     </Box>
   );
 };

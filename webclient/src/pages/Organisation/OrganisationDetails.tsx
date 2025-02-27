@@ -13,9 +13,11 @@ const OrganisationDetails: FC<OrganisationDetailsProps> = ({ data }) => {
     }
 
     return (
-        <Box className="flex items-center  mx-15 w-4/6 rounded-md ">
-            <Box className="mx-15 space-y-6 px-10">
-                <Typography className="flex-1 text-center" variant="h4">Details</Typography>
+        <Box className="flex items-center justify-center  mx-15 rounded-md ">
+            <Box className="bg-white mx-15 space-y-6 px-10">
+                <Box>
+                    <Typography className="flex-1 text-center p-4" variant="h4">Details</Typography>
+                </Box>
                 <Box className="flex items-center gap-4">
                     <Typography variant="h5" className="text-start">ID:</Typography>
                     <Typography variant="body1" className="mx-2 text-center">{data.orgId}</Typography>

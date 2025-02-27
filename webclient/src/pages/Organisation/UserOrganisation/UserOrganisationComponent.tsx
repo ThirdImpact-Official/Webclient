@@ -1,6 +1,6 @@
 import ModalComponent from "@/components/factory/GenericComponent/Modal";
 import { Box, Button } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import UserOrganisationTable from "./UserOrganisationTable";
 import UserOrganisationDetails from "./UserOrganisationDetails";
 import { GetOrganisationDto } from "@/interfaces/OrganisationInterface/Organisation/getOrganisationDto";
@@ -10,14 +10,10 @@ import { useParams } from "react-router-dom";
 import { OrganisationAction } from "@/actions/OrganisationActions";
 import RemoveFromOrganisation from "./RemoveFromOrganisation";
 import AddUserOrganisation from "./AddUserOrganisation";
+import GenericTabs, { TabItem } from "@/components/factory/GenericComponent/TabGénéric";
 
 
-enum ViewState {
-  LIST = "LIST",
-  DETAIL = "DETAIL",
-  UPDATE = "UPDATE",
-  // Ajoutez d'autres états si nécessaire (ex : CREATE)
-}
+
 const mockUsers: GetUserDto[] = [
   {
     userId: 1,
@@ -82,24 +78,28 @@ const selOrganisation = {
 }
 const UserOrganisationComponent = () => {
   const { id } = useParams<{ id: string }>();
+  const tabsRef = useRef<{ changeTab: (index: number) => void } | null>(null);
+  const goToTab = (index: number) => {
+      if (tabsRef.current) {
+        tabsRef.current.changeTab(index);
+      }
+  };
   const [selectedOrganisation, setSelectedOrganisation] = useState<GetOrganisationDto | null>(selOrganisation);
   const [users, setUsers] = useState<GetUserDto[]>(mockUsers);
-  const [selectedUser, setSelectedUser] = useState<GetUserDto | null>(null);
-  const [viewState, setViewState] = useState<ViewState>(ViewState.LIST);
+  const [selectedUser, setSelectedUser] = useState<GetUserDto | null>(mockUsers[0]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleUserDetails = (user: GetUserDto) => {
     setSelectedUser(user);
-    setViewState(ViewState.DETAIL);
+    goToTab(1)
   };
 
   const handleUserUpdate = (user: GetUserDto) => {
     setSelectedUser(user);
-    setViewState(ViewState.UPDATE);
+      goToTab(2)
   };
 
   const handleGoBackToList = () => {
-    setViewState(ViewState.LIST);
     setSelectedOrganisation(null);
     setSelectedUser(null);
   };
@@ -129,17 +129,11 @@ const UserOrganisationComponent = () => {
     }
   }, [id]);
 
-
-    return (
-      <Box display="flex" flex={4}>
-        <Box flex={1} className="bg-white rounded-md p-10 mx-4">
-          <OrganisationDetails 
-              data={selectedOrganisation} />
-        </Box>
-        <Box flexGrow={1}>
-        
-          {viewState === ViewState.LIST && (
-            <>
+  const colt: TabItem[] =[
+      {
+        label:"Table",
+        content:( 
+          <>
               <ModalComponent
                   children={
                     <AddUserOrganisation 
@@ -155,25 +149,46 @@ const UserOrganisationComponent = () => {
                 onUpdate={handleUserUpdate}
             />
             </>
-          )}
-        </Box>
-        <Box ml={2} className="bg-white rounded-md w-75vh" flex={2}>
-          {viewState === ViewState.DETAIL && selectedUser && (
-            <>
-              <UserOrganisationDetails 
-                  data={selectedUser} />
-              <Button 
-                  onClick={handleGoBackToList}>Back to List</Button>
-            </>
-          )}
-          {viewState === ViewState.UPDATE && selectedUser && (
-            <>
-             
-               <RemoveFromOrganisation organisationId={selectedOrganisation?.orgId as number} userId={selectedUser.userId} />
+        )
+      },
+      {
+        label:"User details",
+        content:(
+          <>
+          <UserOrganisationDetails 
+              data={selectedUser} />
+          <Button 
+              onClick={handleGoBackToList}>Back to List</Button>
+        </>
+        )
+      },
+      {
+        label:"Delete",
+        content:(
+          <>
+            <RemoveFromOrganisation organisationId={selectedOrganisation?.orgId} userId={selectedUser.userId} />
               <Button onClick={handleGoBackToList}>Back to List</Button>
-            </>
-          )}
+          </>
+        )
+      }
+
+    ]
+
+    return (
+      <Box display="flex" flex={4}>
+        <Box flex={1} className="bg-white rounded-md p-10 mx-4">
+          <OrganisationDetails 
+              data={selectedOrganisation} />
         </Box>
+        <Box flexGrow={1}>
+        
+          <GenericTabs /// <reference path="" />
+                tabs={colt}
+                defaultTab={0}
+                ChangeTab={goToTab}
+              />
+        </Box>
+      
       </Box>
     );
   

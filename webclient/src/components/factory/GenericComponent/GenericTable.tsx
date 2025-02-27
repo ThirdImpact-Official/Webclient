@@ -1,68 +1,63 @@
+import { Table, TableRow, TableCell,TableContainer,TableHead,TableBody, Button, Paper } from "@mui/material";
 
 
-import { TableProps } from "@/interfaces/GenericInterface/GenericInterfaceComponent";
-import { useState } from "react";
-import { ArrowUp, ArrowDown } from "lucide-react";
-import Table from "@mui/material/Table";
-import { TableRow, TableHead, Button, TableBody, TableCell } from "@mui/material";
-
-function GenericTable<T>({ data, columns, actions }: TableProps<T>) {
-    const [sortConfig, setSortConfig] = useState<{ key: keyof T; direction: "asc" | "desc" } | null>(null);
-
-    const sortedData = [...data].sort((a, b) => {
-        if (!sortConfig) return 0;
-        const { key, direction } = sortConfig;
-        if (a[key] < b[key]) return direction === "asc" ? -1 : 1;
-        if (a[key] > b[key]) return direction === "asc" ? 1 : -1;
-        return 0;
-    });
-
-    const handleSort = (columnKey: keyof T) => {
-        setSortConfig((prevConfig) => {
-            if (prevConfig?.key === columnKey) {
-                return { key: columnKey, direction: prevConfig.direction === "asc" ? "desc" : "asc" };
-            }
-            return { key: columnKey, direction: "asc" };
-        });
-    };
-
-    return (
-        <Table>
-            <TableHead>
-                <TableRow>
-                    {columns.map(({ key, label, sortable }) => (
-                        <TableCell key={String(key)}>
-                            <div className="flex items-center gap-2">
-                                {label}
-                                {sortable && (
-                                    <Button variant="text"  onClick={() => handleSort(key)}>
-                                        {sortConfig?.key === key ? (
-                                            sortConfig.direction === "asc" ? <ArrowUp size={16} /> : <ArrowDown size={16} />
-                                        ) : (
-                                            <ArrowUp size={16} className="opacity-50" />
-                                        )}
-                                    </Button>
-                                )}
-                            </div>
-                        </TableCell>
-                    ))}
-                    {actions && <TableCell>Actions</TableCell>}
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {sortedData.map((row, index) => (
-                    <TableRow key={index}>
-                        {columns.map(({ key, render }) => (
-                            <TableCell key={String(key)}>
-                            {render ? render(row[key], row) : row[key] ?? "N/A"}
-                        </TableCell>
-                        ))}
-                        {actions && <TableCell>{actions(row)}</TableCell>}
-                    </TableRow>
-                ))}
-            </TableBody>
-        </Table>
-    );
+interface GenerationTableProps<T> {
+    data: T[];
+    columns: {label:string; accessor: keyof T}[];
+    OnDetails: (org: T) => void;
+    OnUpdate: (org: T) => void;
 }
+
+
+/**
+ * GenericTable renders a table with columns and rows based on the given data.
+ * It accepts an array of data and an array of column objects, where each column
+ * object has a label and accessor key. It also accepts two optional functions
+ * OnDetails and OnUpdate, which are called when the Details or Update buttons
+ * are clicked.
+ * @param {GenerationTableProps} props
+ * @returns {React.ReactElement}
+ */
+const GenericTable =<T,> ({data, columns, OnDetails, OnUpdate}: GenerationTableProps<T>) => {
+    return (
+        <TableContainer component={Paper}>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        {columns.map((col) => (
+                        <TableCell key={col.accessor as string}>{col.label}</TableCell>
+                    ))}
+                    {OnDetails && <TableCell>Details</TableCell>}
+                    {OnUpdate && <TableCell>Update</TableCell>}
+                  
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                {data.map((item, index) => (
+                        <TableRow key={index}>
+                            {columns.map((col) => (
+                            <TableCell key={col.accessor as string}>{String(item[col.accessor])}</TableCell>
+                            ))}
+                            {OnDetails && (
+                            <TableCell>
+                                <Button variant="outlined" onClick={() => OnDetails(item)}>
+                                Details
+                                </Button>
+                            </TableCell>
+                            )}
+                            {OnUpdate && (
+                            <TableCell>
+                                <Button variant="contained" color="primary" onClick={() => OnUpdate(item)}>
+                                Update
+                                </Button>
+                            </TableCell>
+                            )}
+                        </TableRow>
+                        ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
+    )
+};
 
 export default GenericTable;

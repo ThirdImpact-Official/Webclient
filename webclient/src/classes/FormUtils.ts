@@ -1,6 +1,7 @@
 import { GetDifficultyLevelDto } from "@/interfaces/EscapeGameInterface/DifficultyLevel/getDifficultyLevelDto";
 import { GetPriceDto } from "@/interfaces/EscapeGameInterface/Price/getPriceDto";
 
+
  class FormUtils<T extends Record<string, unknown>> {
   /**
    * Handles form submission by preventing default event behavior and calling the provided onSubmit function.
@@ -89,6 +90,12 @@ import { GetPriceDto } from "@/interfaces/EscapeGameInterface/Price/getPriceDto"
       typeof value.indicePrice === "number"
     );
   }
+
+  public static TableMapper<T>(labelName: string, accessorName: keyof T)
+  {
+    return {label: labelName, accessor: accessorName };
+  }
 }
+
 
 export default FormUtils;

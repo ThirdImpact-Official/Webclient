@@ -1,6 +1,7 @@
 import React,{FC}from 'react';
 import { GetAdressDto } from '../../../interfaces/OrganisationInterface/Adress/getAdressDto';
-import { Box, Typography, Button, Divider } from '@mui/material';
+import { Box, Typography, Divider } from '@mui/material';
+import ModalComponent from '@/components/factory/GenericComponent/Modal';
 
 
 
@@ -15,9 +16,11 @@ const AddressDetail: FC<AddressDetailProps> = ({ props: address }) => {
   }
 
   return (
-    <Box className="flex flex-col mt-4 p-4 text-center w-4/6">
-      <Typography variant="h4">Address Details</Typography>
-      <Box className="mx-10 my-4 space-y-2">
+    <Box className=" items-center justify-center bg-white selection:flex flex-col m-10 p-4 text-center ">
+      <Box className="p-4">
+        <Typography variant="h4">Address Details</Typography>
+      </Box>
+      <Box className=" bg-white mx-10 my-4 space-y-2">
         <Box className="flex gap-4 justify-between">
           <Typography sx={{pe:'5px'}} variant="h5">Street:</Typography>
           <Typography variant="body1">{address.street}</Typography>
@@ -36,8 +39,15 @@ const AddressDetail: FC<AddressDetailProps> = ({ props: address }) => {
         </Box>
         <Divider />
         <Box className="flex justify-between mt-2">
-          <Button color="primary">Update</Button>
-          <Button color="error">Delete</Button>
+          <ModalComponent ButtonTitle='Update' 
+                          children={<>formupdate</>} 
+                          Title='' 
+                          Description="" />
+                          
+          <ModalComponent ButtonTitle='Delete' 
+                          children={<>DeletepopUP</>} 
+                          Title='' 
+                          Description="" />
         </Box>
       </Box>
     </Box>

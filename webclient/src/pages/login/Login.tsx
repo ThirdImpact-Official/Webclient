@@ -1,4 +1,4 @@
-import GenericForm from "@/components/factory/GenericComponent/GenericForm";
+
 import React, { useState } from "react";
 
 type logindata=
@@ -28,9 +28,7 @@ const Login:React.FC = () => {
     }
     return(
         <main>
-            <GenericForm data={formData} 
-            onSubmit={handleSubmit} onChange={handleOnChange}                 
-           />
+
         </main>
     )
 }

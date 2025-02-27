@@ -37,13 +37,13 @@ const UpdateOrganisationForm: FC<FormProps> = ({ data, handleCallBackResponse}) 
   return (
     <Box sx={{ display: "flex", justifyContent: "center", margin: "auto", marginTop: "20px" }}>
       <form
-        className="flex flex-col  text-center border-collapse border-spacing-2"
+        className="flex flex-col bg-white text-center border-collapse border-spacing-2" 
         onSubmit={handleSubmit}>
-        <div className="grid ">
-          <div className="">
-            <h3 className="text-2xl">Organisation :</h3>
+        <Box className="grid">
+          <Box className="p-4">
+            <h3 className="text-2xl p-4">Organisation :</h3>
             <hr />
-            <div className="flex flex-col">
+            <Box className="flex flex-col ">
               <label className="form-label" htmlFor="email">Email</label>
               <TextField
                   placeholder="insert email"
@@ -53,8 +53,8 @@ const UpdateOrganisationForm: FC<FormProps> = ({ data, handleCallBackResponse}) 
                   type="text"
                   onChange={(e) => handleFieldChange("email", e.target.value)}
               />
-            </div>
-            <div className="flex flex-col">
+            </Box>
+            <Box className="flex flex-col">
               <label htmlFor="phoneNumber">PhoneNumber</label>
               <TextField
                   placeholder="insert phone number"
@@ -64,8 +64,8 @@ const UpdateOrganisationForm: FC<FormProps> = ({ data, handleCallBackResponse}) 
                   type="text"
                   onChange={(e) => handleFieldChange("phoneNumber", e.target.value)}
               />
-            </div>
-            <div className="flex flex-col">
+            </Box>
+            <Box className="flex flex-col">
               <label htmlFor="name">Name</label>
               <TextField
                   id="name"
@@ -74,8 +74,8 @@ const UpdateOrganisationForm: FC<FormProps> = ({ data, handleCallBackResponse}) 
                   value={organisation.name}
                   onChange={(e) => handleFieldChange("name", e.target.value)}
               />
-            </div>
-            <div className="flex flex-col">
+            </Box>
+            <Box className="flex flex-col">
               <label className="form-label" htmlFor="description">
                 Description
               </label>
@@ -86,17 +86,17 @@ const UpdateOrganisationForm: FC<FormProps> = ({ data, handleCallBackResponse}) 
                   className="form-control"
                   value={organisation.description}
                   onChange={(e) => handleFieldChange("description", e.target.value)}/>
-            </div>
-          </div>
-        </div>
-        <div className="pt-4">
+            </Box>
+          </Box>
+        </Box>
+        <Box className="pt-4">
           <Button
               onClick={(e) => handleSubmit(e)}
               className="bg-blue-500 p-2 border-rounded rounded-sm text-center"
               type="submit">
             Ajouter
           </Button>
-        </div>
+        </Box>
       </form>
     </Box>);
 };

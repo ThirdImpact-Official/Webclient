@@ -7,7 +7,6 @@ import RenderDetail from '@/components/factory/GenericComponent/RenderDetails';
 
 interface EscapeGameDetailsProps {
     data?: GetEscapeGameDto | null;
-    onBackButton:()=> void;
     onUpdateButton:(org: GetEscapeGameDto)=> void;
 }
 
