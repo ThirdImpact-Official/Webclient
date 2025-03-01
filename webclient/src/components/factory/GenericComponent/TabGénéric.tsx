@@ -41,11 +41,15 @@ const GenericTabs = forwardRef(({ tabs, defaultTab = 0, ariaLabel = "generic tab
   
     useImperativeHandle(ref, () => ({
       changeTab: (tabIndex: number) => {
-        if (tabIndex >= 0 && tabIndex < tabs.length) {
-          setValue(tabIndex);
-          if (ChangeTab) ChangeTab(tabIndex);
-        }
-      }
+        setValue((prev) => {
+          if (tabIndex >= 0 && tabIndex < tabs.length && tabIndex !== prev) {
+            if (ChangeTab) ChangeTab(tabIndex);
+            return tabIndex;
+          }
+          return prev;
+        });
+      },
+      currentTab: () => value // 👈 Rend currentTab une méthode
     }));
   
     return (

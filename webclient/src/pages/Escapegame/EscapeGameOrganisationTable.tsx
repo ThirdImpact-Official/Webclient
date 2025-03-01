@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { GetEscapeGameDto } from '../../interfaces/EscapeGameInterface/EscapeGame/getEscapeGameDto';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Paper } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Paper} from '@mui/material';
+
 
 interface EscapeGameOrganisationTableProps {
     data: GetEscapeGameDto [];
@@ -10,6 +11,7 @@ interface EscapeGameOrganisationTableProps {
 }
 
 const EscapeGameOrganisationTable: FC<EscapeGameOrganisationTableProps> = ({data, OnDetails, OnUpdate}) => {
+
     return (
         <TableContainer component={Paper}>
             <Table>
@@ -21,6 +23,7 @@ const EscapeGameOrganisationTable: FC<EscapeGameOrganisationTableProps> = ({data
                         <TableCell>Creation Date</TableCell>
                         <TableCell>Details</TableCell>
                         <TableCell>Update</TableCell>
+                        <TableCell>Session</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -37,10 +40,13 @@ const EscapeGameOrganisationTable: FC<EscapeGameOrganisationTableProps> = ({data
                                 }).format(new Date(escapeGame.eSG_CreationDate))}
                             </TableCell>
                             <TableCell>
-                                <Button onClick={() => OnDetails(escapeGame)}>Details</Button>
+                                <Button variant='contained' onClick={() => OnDetails(escapeGame)}>Details</Button>
                             </TableCell>
                             <TableCell>
-                                <Button onClick={() => OnUpdate(escapeGame)}>Update</Button>
+                                <Button variant='contained' onClick={() => OnUpdate(escapeGame)}>Update</Button>
+                            </TableCell>
+                            <TableCell>
+                                <Button variant='contained' onClick={() =>window.location.href =(`${escapeGame.eSGId}/session`)}>session</Button>
                             </TableCell>
                         </TableRow>
                     ))}

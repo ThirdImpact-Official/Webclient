@@ -15,6 +15,7 @@ import EscapeGame from "./app/Escapgame";
 import VerifyEmail from "./app/VerifyEmail";
 import NotFound from "./app/NotFound";
 import Session from "./app/Session";
+import Reservation from "./app/Reservation";
 
 /**
  * Webclient app entry point.
@@ -32,6 +33,7 @@ const App: React.FC = () => {
           <Route path="organisation/user/:id" element={<UserOrganisation />} />
           <Route path="escapegame/:id" element={<EscapeGame />} />
           <Route path="escapegame/:id/session" element={<Session />} />
+          <Route path="escapegame/:id/session/:id/reservation" element={<Reservation/>} />
         </Route>
 
         <Route element={<AuthLayout />}>

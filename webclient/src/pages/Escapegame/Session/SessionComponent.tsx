@@ -6,6 +6,7 @@ import UpdateSessionGame from "./UpdateSession";
 import AddSessionGame from "./AddSession";
 import DetailsComponent from "@/components/factory/GenericComponent/DetailsComponent";
 import { useParams } from "react-router";
+import { Box, Button, Divider } from "@mui/material";
 
 
 
@@ -57,6 +58,7 @@ const mockSessions: GetSessionGameDto[] = [
 const SessionComponent = () => {   
 
     const tabsRef = useRef<{ changeTab: (index: number) => void } | null>(null);
+    console.log(tabsRef);
     const {id} =useParams()
     const [tableSession,setTableSession]= useState(mockSessions)
     const [selectSession,setSelectSession] = useState(mockSessions[0])
@@ -79,7 +81,10 @@ const SessionComponent = () => {
             label:"Get all Session",
             content:(
              <>
-                <GenericTable data={tableSession} columns={columns}  OnDetails={handleDetails} OnUpdate={handleUpdate} />
+                <GenericTable data={tableSession} 
+                              columns={columns}  
+                              OnDetails={handleDetails} 
+                              OnUpdate={handleUpdate} />
              </>)
         },
         {
@@ -88,8 +93,22 @@ const SessionComponent = () => {
             content:(
                 <>
                
-                    <DetailsComponent  data={selectSession} columns={columns} />
-            
+                    <DetailsComponent  data={selectSession} 
+                                       columns={columns} />
+                    <Divider className="mt-4 p-4" />
+                    <Box className="items-center flex flex-rows justify-evenly ">
+                       
+                            <Button color="success" 
+                                    onClick={()=>window.location.href=`session/${selectSession.segId}/reservation`}>Reservation</Button>
+                            <Divider orientation="vertical" 
+                                     flexItem />
+                            <Button color="primary" 
+                                    onClick={()=>goToTab(3)} >Update</Button>
+                            <Divider orientation="vertical" 
+                                     flexItem />
+                            <Button color="error">Delete</Button>
+                        
+                    </Box>
                 </>)
         },
         {

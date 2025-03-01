@@ -109,7 +109,7 @@ const testObjects: GetEscapeGameDto[] = [
         "eSG_UpdateTime": "2022-02-01T12:00:00.000Z"
     },
     {
-        "eSGId": 1,
+        "eSGId": 5,
         "eSGNom": "Escape Game 1",
         "eSGCreator": "John Doe",
         "eSGTitle": "The Lost City",
@@ -133,7 +133,7 @@ const testObjects: GetEscapeGameDto[] = [
         "eSG_UpdateTime": "2022-01-01T12:00:00.000Z"
       },
       {
-        "eSGId": 2,
+        "eSGId": 6,
         "eSGNom": "Escape Game 2",
         "eSGCreator": "Jane Doe",
         "eSGTitle": "The Haunted Mansion",
@@ -157,7 +157,7 @@ const testObjects: GetEscapeGameDto[] = [
         "eSG_UpdateTime": "2022-01-15T12:00:00.000Z"
       },
       {
-        "eSGId": 3,
+        "eSGId": 7,
         "eSGNom": "Escape Game 3",
         "eSGCreator": "Bob Smith",
         "eSGTitle": "The Sci-Fi Adventure",
@@ -201,7 +201,7 @@ const EscapeGameComponent = () => {
   };
 
   const goToTab = (index: number) => {
-    if (tabsRef.current) {
+    if (tabsRef.current !== null) {
       tabsRef.current.changeTab(index);
     }
   };

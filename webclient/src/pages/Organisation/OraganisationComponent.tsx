@@ -14,7 +14,7 @@ import { PaginationResponse, ServiceResponse } from '@/interfaces/ServiceRespons
 import { GetOrganisationDto } from '@/interfaces/OrganisationInterface/Organisation/getOrganisationDto';
 import GenericTabs, { TabItem } from '@/components/factory/GenericComponent/TabGénéric';
 import UpdateOrganisationForm from './UpdateOrganisation';
-import AddOrganisation from './AddOrganisation';
+
 
 
 
@@ -102,7 +102,7 @@ const OrganisationComponent = () => {
   // Callbacks pour mettre à jour l'état et changer la vue
   const handleOrganisationDetail = (organisation: GetOrganisationDto) => {
     setSelectedOrganisation(organisation);
-    goToTab(1)
+    goToTab(2)
   };
 
   const handleOrganisationUpdate = (organisation: GetOrganisationDto) => {
@@ -155,12 +155,7 @@ const OrganisationComponent = () => {
                      handleCallBackResponse={()=> console.log("")} />
               </>
     },
-    {
-      label: "Create",
-      content: <>
-        <AddOrganisation />
-      </>
-    },
+   
     {
       label: "Adress",
       content:

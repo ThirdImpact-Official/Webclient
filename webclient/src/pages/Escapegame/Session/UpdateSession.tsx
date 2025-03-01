@@ -42,7 +42,7 @@ const UpdateSessionGame:FC<UpdateSessionGameProps> =({data})=>
         <p>Ka Pla</p>   
             <Box>
                 <form>
-                    <Box className=" p-10 shadow-sm space-y-4">
+                    <Box className=" p-10 shadow-sm space-y-4 w-[400px]">
                         <Box>
                             <Typography> ID : {formValues.segId}</Typography>
                         </Box>

@@ -1,6 +1,8 @@
 import FormUtils from "@/classes/FormUtils";
-import {  Grid2, Typography } from "@mui/material";
+import {  Grid2, Typography,Box } from "@mui/material";
+
 import { FC } from "react";
+import Item from "./Item";
 
 interface RenderProps {
     label: string;
@@ -57,17 +59,19 @@ const RenderDetail: FC<RenderProps> = ({ label, value }) => {
     };
 
     return (
-        <Grid2 container spacing={2} alignItems="center" justifyContent="space-between">
-            <Grid2  size={6}>
-                <Typography variant="h6" sx={{ textAlign: "start", color: "black" }}>
-                    {label}:
-                </Typography>
-            </Grid2>
-            <Grid2  size={6}>
-                <Typography variant="body1">
-                    {formatValue(value)}
-                </Typography>
-            </Grid2>
+        <Grid2 container spacing={2} >
+            <Box className="flex gap-4 justify-between text">
+                <Box >
+                    <Typography variant="h6" sx={{ textAlign: "start", color: "black" }}>
+                        {label}:
+                    </Typography>
+                </Box>
+                <Box sx={{ textAlign: "start", color: "black" }} >
+                    <Typography variant="body1">
+                        {formatValue(value)}
+                    </Typography>
+                </Box>
+            </Box>
         </Grid2>
     );
 };

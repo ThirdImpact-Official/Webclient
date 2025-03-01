@@ -61,9 +61,9 @@ const Sidebar: React.FC = () => {
       <Divider />
 
       {/* Menu */}
+  
+        
       <List>
-        <ListItem disablePadding>
-
         <ListItem disablePadding>
         <ListItemButton onClick={() => handleredirection("/organisation")}>
             <ListItemIcon>
@@ -72,13 +72,16 @@ const Sidebar: React.FC = () => {
             <ListItemText primary="Admin" />
           </ListItemButton>
         </ListItem>
-        </ListItem>
+
+        <ListItem disablePadding>
           <ListItemButton onClick={() => handleredirection("/")}>
             <ListItemIcon>
               <Dashboard />
             </ListItemIcon>
             <ListItemText primary="Tableau de bord" />
           </ListItemButton>
+        </ListItem>
+
         <ListItem disablePadding>
           <ListItemButton onClick={() => handleredirection("/organisation/user/1")}>
             <ListItemIcon>
@@ -87,6 +90,7 @@ const Sidebar: React.FC = () => {
             <ListItemText  primary="Organisation" />
           </ListItemButton>
         </ListItem>
+
         <ListItem disablePadding>
           <ListItemButton onClick={() => handleredirection("/escapegame/1")}>
             <ListItemIcon>
@@ -95,6 +99,7 @@ const Sidebar: React.FC = () => {
             <ListItemText primary="EscapeGame" />
           </ListItemButton>
         </ListItem>
+
         <ListItem disablePadding>
           <ListItemButton onClick={() => handleredirection("/reservation")}>
             <ListItemIcon>
@@ -103,6 +108,7 @@ const Sidebar: React.FC = () => {
             <ListItemText primary="Reservation" />
           </ListItemButton>
         </ListItem>
+
         <ListItem disablePadding>
           <ListItemButton onClick={() => handleredirection("/session")}>
             <ListItemIcon>
@@ -111,6 +117,7 @@ const Sidebar: React.FC = () => {
             <ListItemText  primary="Session" />
           </ListItemButton>
         </ListItem>
+
         <ListItem disablePadding>
           <ListItemButton onClick={() => handleredirection("/statistic")}>
             <ListItemIcon>
@@ -119,6 +126,7 @@ const Sidebar: React.FC = () => {
             <ListItemText primary="Statisitic" />
           </ListItemButton>
         </ListItem>
+
         <ListItem disablePadding >
         <ListItemButton onClick={() => handleredirection("/parameters")} >
             <ListItemIcon>
@@ -127,6 +135,7 @@ const Sidebar: React.FC = () => {
             <ListItemText  primary="Parametres" />
           </ListItemButton>
         </ListItem>
+
         <ListItem disablePadding>
           <ListItemButton>
             <ListItemIcon>

@@ -3,6 +3,7 @@ import { Typography, Box, Divider, Button, Grid2 } from '@mui/material';
 import NotFound from '../app/NotFound';
 import { GetEscapeGameDto } from '@/interfaces/EscapeGameInterface/EscapeGame/getEscapeGameDto';
 import RenderDetail from '@/components/factory/GenericComponent/RenderDetails';
+import Item from '@/components/factory/GenericComponent/Item';
  
 
 interface EscapeGameDetailsProps {
@@ -23,18 +24,13 @@ interface EscapeGameDetailsProps {
 
 const EscapeGameDetails: FC<EscapeGameDetailsProps> = ({
     data,
-    onBackButton,
     onUpdateButton,
 }) => {
     if (!data) return <NotFound />;
 
     return (
-        <Box className="column items-center mx-15 space-y-6 px-10">
-            <Box className="flex items-center gap-4">
-                <Button color="success" onClick={() => onBackButton()}>Back</Button>
-                <Button color="primary" onClick={() => onUpdateButton(data)}>Update</Button>
-                <Button color="error" onClick={() => onUpdateButton(data)}>Delete</Button>
-            </Box>
+        <Box className="bg-white column items-center mx-15 space-y-6 px-10">
+    
             <Typography variant="h4">Escape Game Details</Typography>
             <Grid2 container spacing={4}>
                 <Grid2 size={8}>
@@ -51,8 +47,20 @@ const EscapeGameDetails: FC<EscapeGameDetailsProps> = ({
                     <RenderDetail label="Creation Date" value={data.eSG_CreationDate} />
                     <RenderDetail label="Update Date" value={data.eSG_UpdateTime} />
                 </Grid2>
+                <Grid2 size={6}>
+                    <Item>
+                        <img src={data.eSGImgResources} alt="Image" />
+                    </Item>
+                </Grid2>
             </Grid2>
             <Divider />
+            <Box className="flex flex-row  justify-center items-center gap-4">
+                <Button onClick={() => onUpdateButton(data)} color='success'> Session </Button>
+                <Divider orientation='vertical' flexItem />
+                <Button color="primary" onClick={() => onUpdateButton(data)}>Update</Button>
+                <Divider orientation='vertical' flexItem />
+                <Button color="error" onClick={() => onUpdateButton(data)}>Delete</Button>
+            </Box>
         </Box>
     );
 };
