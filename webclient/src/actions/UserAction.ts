@@ -1,4 +1,4 @@
-import { ServiceResponse } from "@/interfaces/ServiceResponse";
+import { PaginationResponse, ServiceResponse } from "@/interfaces/ServiceResponse";
 import { HttpClient } from "./httpClient";
 import { ErrorType } from "@/enums/RequestType";
 import { GetUserDto } from "@/interfaces/User/GetUserDto";
@@ -22,9 +22,9 @@ export class UserAction
      *          be false.
      * @throws {Error} If the request to retrieve the users fails.
      */ 
-    public async GetAllUser(): Promise<ServiceResponse<GetUserDto[]>> {
+    public async GetAllUser(): Promise<ServiceResponse<GetUserDto> | PaginationResponse<GetUserDto>> {
         try {
-            const response = await this._httpClient.GetRequestType("").execute<GetUserDto[]>();
+            const response = await this._httpClient.GetRequestType("").execute<GetUserDto>();
 
             if(response.Success)
             {
@@ -50,7 +50,7 @@ export class UserAction
      *          be false.
      * @throws {Error} If the request to retrieve the organisation fails.
      */ 
-    public async GetUserById(id: number): Promise<ServiceResponse<GetUserDto>> {
+    public async GetUserById(id: number): Promise<ServiceResponse<GetUserDto> | PaginationResponse<GetUserDto>> {
         try 
         {
             const response = await this._httpClient.GetRequestType("/" + id).execute<GetUserDto>();

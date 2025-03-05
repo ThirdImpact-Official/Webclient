@@ -1,5 +1,5 @@
 import ModalComponent from "@/components/factory/GenericComponent/Modal";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Skeleton } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import UserOrganisationTable from "./UserOrganisationTable";
 import UserOrganisationDetails from "./UserOrganisationDetails";
@@ -100,8 +100,7 @@ const UserOrganisationComponent = () => {
   };
 
   const handleGoBackToList = () => {
-    setSelectedOrganisation(null);
-    setSelectedUser(null);
+    goToTab(0);
   };
 
   useEffect(() => {
@@ -174,23 +173,41 @@ const UserOrganisationComponent = () => {
 
     ]
 
-    return (
-      <Box display="flex" flex={4}>
-        <Box flex={1} className="bg-white rounded-md p-10 mx-4">
-          <OrganisationDetails 
-              data={selectedOrganisation} />
-        </Box>
-        <Box flexGrow={1}>
-        
-          <GenericTabs /// <reference path="" />
-                tabs={colt}
-                defaultTab={0}
-                ChangeTab={goToTab}
-              />
-        </Box>
       
-      </Box>
-    );
+        return (
+          <Box display="flex" flex={4}>
+            <Box flex={1} className="bg-white rounded-md p-10 mx-4">
+              {isLoading ? (
+                
+                <Skeleton 
+                  width={210}
+                  height={118}/>
+              ): (
+                <OrganisationDetails 
+                    data={selectedOrganisation} />
+              )}
+            </Box>
+            <Box flexGrow={1}>
+            {
+              isLoading ? (
+                <Skeleton
+                width={210}
+                height={118} />
+              ): (
+            
+                <GenericTabs /// <reference path="" />
+                      ref={tabsRef}
+                      tabs={colt}
+                      defaultTab={0}
+                      ChangeTab={goToTab}
+                    />
+              )
+            }
+            </Box>
+          
+          </Box>
+        );
+    
   
 };
 
