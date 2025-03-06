@@ -10,7 +10,7 @@ import {
   ListItemIcon,
   ListItemText
 } from '@mui/material';
-import { Dashboard, ExitToApp } from '@mui/icons-material';
+import {Comment, BarChart, Dashboard, ExitToApp, Home, HomeWork, BookOnline } from '@mui/icons-material';
 import { Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -67,7 +67,7 @@ const Sidebar: React.FC = () => {
         <ListItem disablePadding>
         <ListItemButton onClick={() => handleredirection("/organisation")}>
             <ListItemIcon>
-              <Dashboard />
+              <Home />
             </ListItemIcon>
             <ListItemText primary="Admin" />
           </ListItemButton>
@@ -85,7 +85,7 @@ const Sidebar: React.FC = () => {
         <ListItem disablePadding>
           <ListItemButton onClick={() => handleredirection("/organisation/user/1")}>
             <ListItemIcon>
-              <Settings />
+              <HomeWork />
             </ListItemIcon>
             <ListItemText  primary="Organisation" />
           </ListItemButton>
@@ -94,34 +94,25 @@ const Sidebar: React.FC = () => {
         <ListItem disablePadding>
           <ListItemButton onClick={() => handleredirection("/escapegame/1")}>
             <ListItemIcon>
-              <Settings />
-            </ListItemIcon>
-            <ListItemText primary="EscapeGame" />
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem disablePadding>
-          <ListItemButton onClick={() => handleredirection("/reservation")}>
-            <ListItemIcon>
-              <Settings />
+              <BookOnline />
             </ListItemIcon>
             <ListItemText primary="Reservation" />
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding>
-          <ListItemButton onClick={() => handleredirection("/session")}>
+          <ListItemButton onClick={() => handleredirection("/faq")}>
             <ListItemIcon>
-              <Settings />
+              <Comment />
             </ListItemIcon>
-            <ListItemText  primary="Session" />
+            <ListItemText  primary="FAQ" />
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding>
           <ListItemButton onClick={() => handleredirection("/statistic")}>
             <ListItemIcon>
-              <Settings />
+              <BarChart />
             </ListItemIcon>
             <ListItemText primary="Statisitic" />
           </ListItemButton>

@@ -172,7 +172,7 @@ const OrganisationComponent = () => {
     }
   };
   return (
-    <Box display={'flex'} flex={4}>
+    <Box className="flex items-center justify-center">
        
 
         <GenericTabs ref={tabsRef} tabs={tab} defaultTab={0} ChangeTab={goToTab} ariaLabel="generic tabs"/>

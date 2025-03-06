@@ -1,10 +1,10 @@
+
 import GenericTabs, { TabItem } from "@/components/factory/GenericComponent/TabGénéric";
-import { Box } from "@mui/material";
+import { Box } from "@mui/material"
 import { useRef } from "react";
 
 
-const FaqComponent = () => {
-
+const statisticComponent = () => {
     const tabsRef = useRef<{ changeTab: (index: number) => void } | null>(null);
     const goToTab = (index: number) => {
         if (tabsRef.current) {
@@ -13,22 +13,17 @@ const FaqComponent = () => {
     };
     const tabs: TabItem[]=[
         {
-            label:"Forums",
+            label:"tab1",
             content:<></>
         },
         {
             
-            label:"Selected Topic",
+            label:"tab1",
             content:<></>
         },
         {
             
-            label:"Create Topic",
-            content:<></>
-        },
-        {
-            
-            label:"Created Topic",
+            label:"tab1",
             content:<></>
         },
         {
@@ -38,14 +33,14 @@ const FaqComponent = () => {
         }
 
     ]
-
-
     return(
-    <>
+    <Box className="flex items-center justify-center">
+       
         <Box>
-            <GenericTabs ref={tabsRef} tabs={tabs} defaultTab={0}  ChangeTab={goToTab} />
+            <GenericTabs ref={tabsRef} tabs={tabs} defaultTab={0}  ChangeTab={goToTab}  />
         </Box>
-    </>)
-};
+    </Box>
+    )
+}
 
-export  default FaqComponent;
+export default statisticComponent

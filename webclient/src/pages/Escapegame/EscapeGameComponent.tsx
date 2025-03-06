@@ -242,7 +242,7 @@ const EscapeGameComponent = () => {
 
   return (
     <Grid2 container spacing={2}>
-      <Item>
+      <Item className="flex items-center justify-center">
         <GenericTabs
           ref={tabsRef}
           tabs={tabs}

@@ -1,12 +1,11 @@
-import FaqComponent from "../FAQ/FAqComponent";
+import { Box } from "@mui/material";
+import FaqComponent from "../FAQ/FaqComponent";
 
 const FAQ = () => {
     return (
-        <div>
-            <h1>FAQ</h1>
-
+        <Box className="flex items-center justify-center">
             <FaqComponent />
-        </div>
+        </Box>
     );
 }
 
