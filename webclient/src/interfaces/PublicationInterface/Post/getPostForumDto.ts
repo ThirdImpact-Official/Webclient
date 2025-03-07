@@ -1,4 +1,5 @@
-export interface GetPostForumDto extends BaseDto {
+export interface GetPostForumDto {
+    PostId: number;
     content: string;
     userId: number;
     forumId: number | null;
@@ -8,3 +9,7 @@ export interface GetPostForumDto extends BaseDto {
     creationDate: string;
     updatedDate: string;
 }
+
+export interface HasLike {  
+    id: number;
+} 

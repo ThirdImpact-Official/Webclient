@@ -1,4 +1,4 @@
-export interface AddPostForumDto extends AddDto {
+export interface AddPostForumDto {
     content: string;
     userId: number;
     forumId: number | null;
