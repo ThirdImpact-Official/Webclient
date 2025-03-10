@@ -1,7 +1,7 @@
 import { GetForumDto } from "@/interfaces/PublicationInterface/Forum/getForumDto";
-import ForumTabItem from "./ForumComponent/ForumTabItem";
+import ForumTabItem from "./ForumTabItem";
 import { Box } from '@mui/material';
-import PostList from "./PostComponent/PostList";
+import PostList from "../PostComponent/PostList";
 import img from "@/assets/Image/miaou.jpg";
 
 
