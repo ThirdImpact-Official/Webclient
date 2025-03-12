@@ -1,5 +1,5 @@
 import ModalComponent from "@/components/factory/GenericComponent/Modal";
-import { Box, Button, Skeleton } from "@mui/material";
+import { Box, Button, Skeleton,Typography,MenuItem,Select,FormControl } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import UserOrganisationTable from "./UserOrganisationTable";
 import UserOrganisationDetails from "./UserOrganisationDetails";
@@ -133,15 +133,37 @@ const UserOrganisationComponent = () => {
         label:"Table",
         content:( 
           <>
-              <ModalComponent
-                  children={
-                    <AddUserOrganisation 
-                        organisationId={selectedOrganisation?.orgId as number} />
-                  }
-                  ButtonTitle="Add User"
-                  Description="Add a user to an organisation"
-                  Title="Add User"
-              />
+              <Box className="flex gap-4 justify-start">
+                <ModalComponent
+                    children={
+                      <AddUserOrganisation 
+                          organisationId={selectedOrganisation?.orgId as number} />
+                    }
+                    ButtonTitle="Add User"
+                    Description="Add a user to an organisation"
+                    Title="Add User"/>
+              </Box>
+              <Box className="flex gap-4 justify-end">
+                <Typography variant="h5">Filtre</Typography>
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <Select>
+                    <MenuItem>A</MenuItem>
+                    <MenuItem>B</MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <Select>
+                    <MenuItem>A</MenuItem>
+                    <MenuItem>B</MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <Select>
+                    <MenuItem>A</MenuItem>
+                    <MenuItem>B</MenuItem>
+                  </Select>
+                </FormControl>
+                </Box>
             <UserOrganisationTable
                 GetUserDto={users}
                 onDetails={handleUserDetails}

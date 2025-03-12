@@ -5,8 +5,8 @@ export interface GetEventDto {
     escapegameId: number;
     eventTitle: string;
     eventDescription: string;
-    startDate: string;
-    endDate: string;
+    startDate: Date;
+    endDate: Date;
 }
 export const EventTypeColumns=[
     FormUtils.TableMapper("ID", "eventId"),

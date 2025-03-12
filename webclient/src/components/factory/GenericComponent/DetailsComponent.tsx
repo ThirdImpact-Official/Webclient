@@ -9,6 +9,12 @@ interface DetailsProps<T>
 }
 
 const DetailsComponent=<T,>({data, columns}: DetailsProps<T>)=> {
+    if(data === null) {
+        return(
+        <Box className="items-center flex flex-col">
+            <Typography variant="h5">No data</Typography>
+        </Box>)
+    }
     return(
         <Box className="w-[400px]">
             <Box className="items-center m-2 p-4 flex flex-col ">

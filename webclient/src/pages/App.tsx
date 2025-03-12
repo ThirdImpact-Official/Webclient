@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 //pages.
-import Login from "@/pages/login/Login";
+import Login from "@/pages/auth/login/Login";
 import UserAppLayout from "@/pages/app/AppLayout";
 import Home from "./app/Home";
 import  Contact from "./app/Contact";
@@ -18,14 +18,16 @@ import Session from "./app/Session";
 import Reservation from "./app/Reservation";
 import FAQ from "./app/FAQ";
 import Statistic from "./app/Statistic";
+import Event from "./app/Event";
 
+import ActivityPlacePage from "./app/ActivityPlace";
 /**
  * Webclient app entry point.
  * @returns 
  */
 const App: React.FC = () => {
   return (
-    <div className="h-full flex items-center justify-center">
+    <div className="">
       <Routes>
         <Route path="/" element={<DashboardLayout />}>
           <Route index element={<Dashboard />} />
@@ -36,6 +38,8 @@ const App: React.FC = () => {
           <Route path="escapegame/:id" element={<EscapeGame />} />
           <Route path="escapegame/:id/session" element={<Session />} />
           <Route path="escapegame/:id/session/:id/reservation" element={<Reservation/>} />
+          <Route path="escapegame/:id/event" element={<Event />} />
+          <Route path="escapegame/:id/activity" element={<ActivityPlacePage />} />
           <Route path="faq" element={<FAQ />} />
           <Route path="statistic" element={<Statistic />} />
         </Route>

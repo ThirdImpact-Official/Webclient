@@ -1,4 +1,4 @@
-import ReservationComponent from "../Escapegame/Reservation/ReservationComponent";
+import ReservationComponent from "./Escapegame/Reservation/ReservationComponent";
 
 const Reservation=() => {
     return (

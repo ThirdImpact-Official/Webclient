@@ -1,4 +1,4 @@
-import StatisticComponent from "../Statistic/StatisticComponent";
+import StatisticComponent from "./Statistic/StatisticComponent";
 
 const statistic = () => {
     return(

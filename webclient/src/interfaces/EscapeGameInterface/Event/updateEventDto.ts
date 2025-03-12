@@ -1,7 +1,8 @@
-export interface UpdateEventDto extends UpdateDto {
+export interface UpdateEventDto {
     eventId: number;
     escapegameId: number;
-    escapegame: Escapegame | null;
     eventTitle: string;
     eventDescription: string;
+    startDate: Date;
+    endDate: Date;
 }

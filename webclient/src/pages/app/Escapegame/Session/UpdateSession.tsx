@@ -2,7 +2,7 @@ import { Box, Button, Typography } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider/LocalizationProvider";
-import { UpdateSessionGameDto } from '../../../interfaces/EscapeGameInterface/Session/updateSessionGameDto';
+import { UpdateSessionGameDto } from '@/interfaces/EscapeGameInterface/Session/updateSessionGameDto';
 import { FC, useState } from "react";
 import dayjs from "dayjs";
 import FormInput from "@/components/factory/GenericComponent/FormInput";
@@ -26,20 +26,18 @@ const UpdateSessionGame:FC<UpdateSessionGameProps> =({data})=>
         placeavailable: data.placeavailable,
         pLacemaximum: data.pLacemaximum
     });
-    const handleDateChange = (selectedDate: dayjs.Dayjs | null) => {
-        if(selectedDate)
-        {
-            setDateValue(selectedDate);
+    const handleDateChange = (newDate: dayjs.Dayjs | null) => {
+        if (newDate) {
+            setDateValue(newDate);
             setFormValues((prevValues) => ({
                 ...prevValues,
-                date: selectedDate ? selectedDate.format() : null,
+                date: new Date(newDate.format()),
             }));
         }
-            
     };
     return (
     <>
-        <p>Ka Pla</p>   
+       
             <Box>
                 <form>
                     <Box className=" p-10 shadow-sm space-y-4 w-[400px]">

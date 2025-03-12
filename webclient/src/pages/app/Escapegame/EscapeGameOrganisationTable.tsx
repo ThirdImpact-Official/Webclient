@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { GetEscapeGameDto } from '../../interfaces/EscapeGameInterface/EscapeGame/getEscapeGameDto';
+import { GetEscapeGameDto } from '@/interfaces/EscapeGameInterface/EscapeGame/getEscapeGameDto';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Paper} from '@mui/material';
 
 
@@ -24,6 +24,7 @@ const EscapeGameOrganisationTable: FC<EscapeGameOrganisationTableProps> = ({data
                         <TableCell>Details</TableCell>
                         <TableCell>Update</TableCell>
                         <TableCell>Session</TableCell>
+                        <TableCell>Event</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -47,6 +48,9 @@ const EscapeGameOrganisationTable: FC<EscapeGameOrganisationTableProps> = ({data
                             </TableCell>
                             <TableCell>
                                 <Button variant='contained' onClick={() =>window.location.href =(`${escapeGame.eSGId}/session`)}>session</Button>
+                            </TableCell>
+                            <TableCell>
+                                <Button variant='contained' onClick={() =>window.location.href =(`${escapeGame.eSGId}/event`)}>Event</Button>
                             </TableCell>
                         </TableRow>
                     ))}

@@ -1,4 +1,4 @@
-import OrganisationComponent from "../Organisation/OraganisationComponent";
+import OrganisationComponent from "./Organisation/OraganisationComponent";
 
  const Organisation: React.FC = () => {
     return(

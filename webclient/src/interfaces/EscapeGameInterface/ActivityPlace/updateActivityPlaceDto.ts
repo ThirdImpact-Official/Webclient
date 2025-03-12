@@ -2,8 +2,9 @@ import { GetActivityPlaceTypeDto } from './getActivityPlaceTypeDto';
 export interface UpdateActivityPlaceDto {
     acpId: number;
     acpEsgId: number;
-    activityType: GetActivityPlaceTypeDto | null;
+    name: string;
+    description: string;
     activityId: number;
-    adress: string;
+    address: string;
     imgressources: string;
 }

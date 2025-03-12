@@ -1,12 +1,18 @@
 import GenericTabs, { TabItem } from "@/components/factory/GenericComponent/TabGénéric";
 import { useRef, useState } from "react";
-import { GetSessionGameDto, Sessioncolumns } from '../../../interfaces/EscapeGameInterface/Session/getSessionGameDto';
+import { GetSessionGameDto, Sessioncolumns } from "@/interfaces/EscapeGameInterface/Session/getSessionGameDto";
 import GenericTable from "@/components/factory/GenericComponent/GenericTable";
 import UpdateSessionGame from "./UpdateSession";
 import AddSessionGame from "./AddSession";
 import DetailsComponent from "@/components/factory/GenericComponent/DetailsComponent";
 import { useParams } from "react-router";
-import { Box, Button, Divider } from "@mui/material";
+import { Box, Button, Divider,Select,FormControl,MenuItem,Typography, Grid2} from "@mui/material";
+import GetsessionFromEscapeGame from './GetSessionFromEscapegame';
+import SessionDetails from './SessionDetails';
+
+import EscapeGameDetails from "../EscapegameDetails";
+import { GetEscapeGameDto, EscapeGameColumns} from "@/interfaces/EscapeGameInterface/EscapeGame/getEscapeGameDto";
+import Item from "@/components/factory/GenericComponent/Item";
 
 
 
@@ -53,6 +59,28 @@ const mockSessions: GetSessionGameDto[] = [
     },
 ];
 
+const mockEscape: GetEscapeGameDto = {
+    "eSGId": 1,
+    "eSGNom": "Escape Game 1",
+    "eSGCreator": "John Doe",
+    "eSGTitle": "The Lost City",
+    "eSGContent": "Find the hidden treasure",
+    "eSGImgResources": "https://example.com/image1.jpg",
+    "eSGWebsite": "https://example.com/game1",
+    "eSGPhoneNumber": "123-456-7890",
+    "eSG_IsDeleting": false,
+    "eSG_IsForChildren": true,
+    "eSG_Price_Id": 1,
+    "eSG_DILE_Id": 1,
+    "price": {
+      "id": 1,
+      "indicePrice": 19.99
+    },
+    "difficultyLevel": "Medium", // Ajout de la propriété manquante
+    "eSG_CreationDate": new Date("2024-01-01T12:00:00Z"), // Ajout avec une date valide
+    "eSG_UpdateTime": new Date("2024-03-12T15:30:00Z") // Ajout avec une date valide
+  };
+  
 
 
 const SessionComponent = () => {   
@@ -60,8 +88,11 @@ const SessionComponent = () => {
     const tabsRef = useRef<{ changeTab: (index: number) => void } | null>(null);
     console.log(tabsRef);
     const {id} =useParams()
+    //session
     const [tableSession,setTableSession]= useState(mockSessions)
     const [selectSession,setSelectSession] = useState(mockSessions[0])
+    //escapegame
+    const [escapegame]=useState<GetEscapeGameDto>(mockEscape)
     const goToTab = (index: number) => {
         if (tabsRef.current) {
           tabsRef.current.changeTab(index);
@@ -81,10 +112,11 @@ const SessionComponent = () => {
             label:"Get all Session",
             content:(
              <>
-                <GenericTable data={tableSession} 
-                              columns={columns}  
-                              OnDetails={handleDetails} 
-                              OnUpdate={handleUpdate} />
+              <GetsessionFromEscapeGame
+                        data={tableSession}
+                        columns={columns}
+                        onDetails={handleDetails}
+                        onUpdate={handleUpdate} />
              </>)
         },
         {
@@ -92,23 +124,7 @@ const SessionComponent = () => {
             label:"Details",
             content:(
                 <>
-               
-                    <DetailsComponent  data={selectSession} 
-                                       columns={columns} />
-                    <Divider className="mt-4 p-4" />
-                    <Box className="items-center flex flex-rows justify-evenly ">
-                       
-                            <Button color="success" 
-                                    onClick={()=>window.location.href=`session/${selectSession.segId}/reservation`}>Reservation</Button>
-                            <Divider orientation="vertical" 
-                                     flexItem />
-                            <Button color="primary" 
-                                    onClick={()=>goToTab(3)} >Update</Button>
-                            <Divider orientation="vertical" 
-                                     flexItem />
-                            <Button color="error">Delete</Button>
-                        
-                    </Box>
+                    <SessionDetails data={selectSession} columns={columns} OnUpdate={handleUpdate} />
                 </>)
         },
         {
@@ -129,9 +145,18 @@ const SessionComponent = () => {
         }
     ]
     return(
-        <>
-            <GenericTabs ref={tabsRef} tabs={tabs} defaultTab={0}  ChangeTab={goToTab}  />
-        </>
+        <Grid2 container spacing={2} className="flex justify-evenly items-center">
+            <Box className="flex flex-row gap-4">
+                <Item>
+                    <section>
+                        <EscapeGameDetails data={escapegame}  />
+                    </section>
+                </Item>
+                <Item>
+                    <GenericTabs ref={tabsRef} tabs={tabs} defaultTab={0}  ChangeTab={goToTab}  />
+                </Item>
+            </Box>
+        </Grid2>
     )
 }
 export default SessionComponent;

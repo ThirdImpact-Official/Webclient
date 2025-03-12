@@ -79,11 +79,13 @@ const UpdateOrganisationForm: FC<FormProps> = ({ data, handleCallBackResponse}) 
               <label className="form-label" htmlFor="description">
                 Description
               </label>
-              <TextareaAutosize
+              <TextField
                   placeholder="insert description"
                   id="description"
-                  style={{ width: "350px", height: "100px" , borderRadius: "5px" ,border: "1px solid #ccc"}}
                   className="form-control"
+                  fullWidth
+                  multiline
+                  rows={4}
                   value={organisation.description}
                   onChange={(e) => handleFieldChange("description", e.target.value)}/>
             </Box>

@@ -59,81 +59,82 @@ const AddEscapeGameForm = () => {
     <div>
       <form onSubmit={handleSubmit}>
         <Box className="items-center flex flex-col justify-center">
-          <Grid2 container spacing={4}>
-            <Grid2 size={12}>
+          <Box >
+            <Box className="" >
               <Typography variant="h4" className="text-center">
                 Create Escape Game
               </Typography>
-            </Grid2>
-            <Grid2 size={12}>
-              <Item className="flex flex-col space-y-4">
-                <Grid2 container spacing={4}>
-                  <Grid2  size={6}>
+            </Box>
+            <Box className="space-y-4" >
+                
+                  <Box  >
                     <TextField
                       name="name"
                       label="Name"
+                      fullWidth
                       placeholder="Name"
                       value={escapeGameData.eSGNom}
                       onChange={handleInputChange}
                     />
-                  </Grid2>
-                  <Grid2  size={6}>
+                  </Box>
+                  <Box >
                     <TextField
                       name="content"
                       label="Content"
+                      fullWidth
                       placeholder="Content"
                       value={escapeGameData.eSGContent}
                       onChange={handleInputChange}
                     />
-                  </Grid2>
-                </Grid2>
-                <Grid2 container spacing={4}>
-                  <Grid2  size={6}>
+                  </Box>
+                  <Box>
                     <TextField
                       name="creator"
                       label="Creator"
+                      fullWidth
                       placeholder="Creator"
                       value={escapeGameData.eSGCreator}
                       onChange={handleInputChange}
                     />
-                  </Grid2>
-                  <Grid2  size={6}>
+                  </Box>
+                  <Box>
                     <TextField
                       name="website"
                       label="Website"
+                      fullWidth
                       placeholder="Website"
                       value={escapeGameData.eSGWebsite}
                       onChange={handleInputChange}
                     />
-                  </Grid2>
-                </Grid2>
-                <Grid2 container spacing={4}>
-                  <Grid2  size={6}>
+                  </Box>
+                  <Box>
                     <TextField
                       name="phoneNumber"
                       label="Phone Number"
+                      fullWidth
                       placeholder="Phone Number"
                       value={escapeGameData.eSGPhoneNumber}
                       onChange={handleInputChange}
                     />
-                  </Grid2>
-                  <Grid2 size={6}>
-                    <Input
+                  </Box>
+                  <Box>
+                    <TextField 
+                      fullWidth
                       type="file"
                       onChange={handleFileChange}
                     />
-                  </Grid2>
-                </Grid2>
-                <Grid2 container spacing={4}>
-                  <Grid2 size={6}>
+                  </Box>
+                </Box>
+                <Box>
+                  <Box>
                     <InputLabel>Is For Children</InputLabel>
                     <Checkbox
                       name="isForChildren"
                       checked={escapeGameData.eSG_IsForChildren}
                       onChange={handleCheckboxChange}
                     />
-                  </Grid2>
-                  <Grid2 size={6}>
+                  </Box>
+                  <Box>
                     <Box>
                       <InputLabel>Price</InputLabel>
                       <Select
@@ -151,10 +152,9 @@ const AddEscapeGameForm = () => {
                         <MenuItem value={PriceLevel.High}>High</MenuItem>
                       </Select>
                     </Box>
-                  </Grid2>
-                </Grid2>
-                <Grid2 container spacing={4}>
-                  <Grid2 size={6}>
+                  </Box>
+                </Box>
+                <Box>
                     <Box>
                       <InputLabel>Difficulty</InputLabel>
                       <Select
@@ -173,18 +173,15 @@ const AddEscapeGameForm = () => {
                         </MenuItem>
                       </Select>
                     </Box>
-                  </Grid2>
-                </Grid2>
-              </Item>
-            </Grid2>
-            <Grid2 size={12}>
+            </Box>
+            <Box>
               <Box className="flex-1 items-center text-center p-4 mx-10">
                 <Button variant="contained" type="submit">
                   Create
                 </Button>
               </Box>
-            </Grid2>
-          </Grid2>
+            </Box>
+          </Box>
         </Box>
       </form>
     </div>

@@ -1,4 +1,4 @@
-import SessionComponent from "../Escapegame/Session/SessionComponent";
+import SessionComponent from "./Escapegame/Session/SessionComponent";
 
 const Session=()=> {
     return(

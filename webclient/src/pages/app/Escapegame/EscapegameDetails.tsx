@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Typography, Box, Divider, Button, Grid2 } from '@mui/material';
-import NotFound from '../app/NotFound';
+import NotFound from '@/pages/app/NotFound';
 import { GetEscapeGameDto } from '@/interfaces/EscapeGameInterface/EscapeGame/getEscapeGameDto';
 import RenderDetail from '@/components/factory/GenericComponent/RenderDetails';
 import Item from '@/components/factory/GenericComponent/Item';
@@ -8,7 +8,8 @@ import Item from '@/components/factory/GenericComponent/Item';
 
 interface EscapeGameDetailsProps {
     data?: GetEscapeGameDto | null;
-    onUpdateButton:(org: GetEscapeGameDto)=> void;
+    displayButton?:boolean;
+    onUpdateButton?:(org: GetEscapeGameDto)=> void;
 }
 
 /**
@@ -24,7 +25,7 @@ interface EscapeGameDetailsProps {
 
 const EscapeGameDetails: FC<EscapeGameDetailsProps> = ({
     data,
-    onUpdateButton,
+    onUpdateButton,displayButton
 }) => {
     if (!data) return <NotFound />;
 
@@ -53,14 +54,22 @@ const EscapeGameDetails: FC<EscapeGameDetailsProps> = ({
                     </Item>
                 </Grid2>
             </Grid2>
-            <Divider />
-            <Box className="flex flex-row  justify-center items-center gap-4">
-                <Button onClick={() => onUpdateButton(data)} color='success'> Session </Button>
-                <Divider orientation='vertical' flexItem />
-                <Button color="primary" onClick={() => onUpdateButton(data)}>Update</Button>
-                <Divider orientation='vertical' flexItem />
-                <Button color="error" onClick={() => onUpdateButton(data)}>Delete</Button>
-            </Box>
+            <Divider className="mt-4 p-4" orientation="horizontal" flexItem />
+            { displayButton ? 
+                <Box className="flex flex-row  justify-center items-center gap-4">
+                    <Button onClick={() => onUpdateButton(data)} color='success'> Session </Button>
+                    <Divider orientation='vertical' flexItem />
+                    <Button onClick={() =>window.location.href =(`${data.eSGId}/event`)}>Event</Button>
+                    <Divider orientation='vertical' flexItem />
+                    <Button onClick={() =>window.location.href =(`${data.eSGId}/activity`)}>Activity</Button>
+                    <Divider orientation="vertical" flexItem /> 
+                    <Button color="primary" onClick={() => onUpdateButton(data)}>Update</Button>
+                    <Divider orientation='vertical' flexItem />
+                    <Button color="error" onClick={() => onUpdateButton(data)}>Delete</Button>
+                </Box>
+                :
+                <>
+                </>}
         </Box>
     );
 };

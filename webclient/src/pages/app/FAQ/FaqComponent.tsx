@@ -3,7 +3,7 @@ import { GetForumDto } from "@/interfaces/PublicationInterface/Forum/getForumDto
 import { AddForumDto } from "@/interfaces/PublicationInterface/Forum/addForumDto";
 import {UpdateForumDto} from "@/interfaces/PublicationInterface/Forum/updateForumDto";
 import { Forum } from "@mui/icons-material";
-import { Box ,Snackbar,CircularProgress,Alert, Typography } from "@mui/material";
+import { Box ,Snackbar,CircularProgress,Alert, Typography, FormControl, Select, MenuItem, Grid2 } from "@mui/material";
 import { useRef, useState } from "react";
 import ForumTabList from "./ForumComponent/ForumList";
 import SelectedForum from "./ForumComponent/SelectedForum";
@@ -62,12 +62,22 @@ const mockServerData = [
     }
   ]
 const FaqComponent = () => {
-
+    //data to set up
     const tabsRef = useRef<{ changeTab: (index: number) => void } | null>(null);
     const [serverData, setServerData] = useState<GetForumDto[]>(mockServerData);
     const [forumData, setForumData] = useState<GetForumDto>(mockServerData[0]);
+    //setup filtering  
+    const [filter, setFilter] = useState();
+    
+    //use a snackbar 
     const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
     const [snackbarMessage, setSnackbarMessage] = useState<string>("");
+
+/**
+ * Navigates to the specified tab index.
+ * Utilizes the tabsRef to change the current tab.
+ * @param index The index of the tab to navigate to.
+ */
 
     const goToTab = (index: number) => {
         if (tabsRef.current) {
@@ -99,19 +109,20 @@ const FaqComponent = () => {
       return data && typeof data === "object" && "id" in data;
   };
 
-    const onSubmit = (data: AddForumDto | UpdateForumDto) => {
-        if(data === null || data === undefined) {
-          setSnackbarMessage(" Unable to submit Successfully");
-          setSnackbarOpen(true);
-          return;
-        }
-      if(isUpdateForumDto(data)) 
-      {
+
+    const onSubmit = (data: AddForumDto | UpdateForumDto) =>
+    {
+      if(data === null || data === undefined) {
+        setSnackbarMessage(" Unable to submit Successfully");
+        setSnackbarOpen(true);
+        return;
+      }
+      if(isUpdateForumDto(data)){
         console.log("Data submitted:", data);
       }
       else{
           console.log("Data submitted:", data);
-        }
+      }
     }
     
     /**
@@ -120,13 +131,20 @@ const FaqComponent = () => {
     const handleCloseSnackbar = () => {
       setSnackbarOpen(false);
     }
+    /*
+      Handle the addition of a new forum
+      and Provide a toast notification
+    */
     const handleAddForum=(data:AddForumDto)=> 
     {
       onSubmit(data);
       setSnackbarMessage("Forum Created Successfully");
       setSnackbarOpen(true);
     };
-
+    /*
+      Handle the addition of an updated forum
+      and Provide a toast notification
+    */
     const handleUpdateForum=(data:UpdateForumDto)=> 
     {
       onSubmit(data);
@@ -139,11 +157,27 @@ const FaqComponent = () => {
             label:"Forums",
             content:
             <>
-                <nav>
-                  <Typography variant="h2">Filtre</Typography>
-                  <>
-                  </>
-                </nav>
+                <Box className="flex gap-4 justify-end">
+                <Typography variant="h5">Filtre</Typography>
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <Select>
+                    <MenuItem>A</MenuItem>
+                    <MenuItem>B</MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <Select>
+                    <MenuItem>A</MenuItem>
+                    <MenuItem>B</MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <Select>
+                    <MenuItem>A</MenuItem>
+                    <MenuItem>B</MenuItem>
+                  </Select>
+                </FormControl>
+                </Box>
                 <ForumTabList data={serverData}  OnDetails={handeDetails}/>
             </>
         },
@@ -172,9 +206,8 @@ const FaqComponent = () => {
     ]
 
     return(
-    <>
-        <Box>
-       
+    <Grid2>
+        <section>
           <GenericTabs ref={tabsRef} tabs={tabs} defaultTab={0}  ChangeTab={goToTab} />
           <Snackbar
            open={snackbarOpen}
@@ -184,8 +217,8 @@ const FaqComponent = () => {
                   {snackbarMessage}
               </Alert>
           </Snackbar>  
-        </Box>
-    </>)
+        </section>
+    </Grid2>)
 };
 
 export  default FaqComponent;

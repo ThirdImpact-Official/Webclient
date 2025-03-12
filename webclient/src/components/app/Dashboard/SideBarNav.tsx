@@ -45,6 +45,13 @@ const AccountUser = () => {
 
 
 // Main Sidebar Component
+interface sidebarprops
+{
+  nom:string;
+  link:string;
+  icon: React.ReactNode;
+
+}
 
 const Sidebar: React.FC = () => {
 
@@ -52,7 +59,43 @@ const Sidebar: React.FC = () => {
   const handleredirection= (arg: string) => {
     navigate(arg);
   }
-
+  const sidebarElement =[
+    {
+      nom:"Admin",
+      link:"/organisation",
+      icon:(<Home/>),
+    },
+    {
+      nom:"Dashboard",
+      link:"/",
+      icon:(<Dashboard/>),
+    },
+    {
+      nom:"organisation",
+      link:"/organisation/user/1",
+      icon:(<HomeWork/>),
+    },
+    {
+      nom:"Reservation",
+      link:"/escapegame/1",
+      icon:(<BookOnline/>),
+    },
+    {
+      nom:"Faq",
+      link:"/Faq",
+      icon:(  <Comment />),
+    },
+    {
+      nom:"Statistic",
+      link:"/stat",
+      icon:( <BarChart />),
+    },
+    {
+      nom:"Déconnexion",
+      link:"/",
+      icon:( <ExitToApp/>),
+    }
+  ]
   return (
     <Box sx={{ width: 240, bgcolor: "background.paper", height: "100%" }}>
       {/* Logo */}
@@ -63,78 +106,18 @@ const Sidebar: React.FC = () => {
       {/* Menu */}
   
         
-      <List>
-        <ListItem disablePadding>
-        <ListItemButton onClick={() => handleredirection("/organisation")}>
-            <ListItemIcon>
-              <Home />
-            </ListItemIcon>
-            <ListItemText primary="Admin" />
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem disablePadding>
-          <ListItemButton onClick={() => handleredirection("/")}>
-            <ListItemIcon>
-              <Dashboard />
-            </ListItemIcon>
-            <ListItemText primary="Tableau de bord" />
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem disablePadding>
-          <ListItemButton onClick={() => handleredirection("/organisation/user/1")}>
-            <ListItemIcon>
-              <HomeWork />
-            </ListItemIcon>
-            <ListItemText  primary="Organisation" />
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem disablePadding>
-          <ListItemButton onClick={() => handleredirection("/escapegame/1")}>
-            <ListItemIcon>
-              <BookOnline />
-            </ListItemIcon>
-            <ListItemText primary="Reservation" />
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem disablePadding>
-          <ListItemButton onClick={() => handleredirection("/faq")}>
-            <ListItemIcon>
-              <Comment />
-            </ListItemIcon>
-            <ListItemText  primary="FAQ" />
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem disablePadding>
-          <ListItemButton onClick={() => handleredirection("/statistic")}>
-            <ListItemIcon>
-              <BarChart />
-            </ListItemIcon>
-            <ListItemText primary="Statisitic" />
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem disablePadding >
-        <ListItemButton onClick={() => handleredirection("/parameters")} >
-            <ListItemIcon>
-              <Settings />
-            </ListItemIcon>
-            <ListItemText  primary="Parametres" />
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem disablePadding>
-          <ListItemButton>
-            <ListItemIcon>
-              <ExitToApp />
-            </ListItemIcon>
-            <ListItemText primary="Déconnexion" />
-          </ListItemButton>
-        </ListItem>
+      <List className="w-full h-fit flex flex-col gap-4 items-center justify-start">
+        {sidebarElement.map((item: sidebarprops) =>(
+            <ListItem disablePadding>
+            <ListItemButton onClick={() => handleredirection(item.link)}>
+                <ListItemIcon>
+                {item.icon}
+                </ListItemIcon>
+                <ListItemText primary={item.nom} />
+              </ListItemButton>
+            </ListItem>
+        ))}
+     
       </List>
     </Box>
   );

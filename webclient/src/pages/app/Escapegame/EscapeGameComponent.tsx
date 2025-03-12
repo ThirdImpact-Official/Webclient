@@ -1,5 +1,5 @@
 import { GetEscapeGameDto } from '@/interfaces/EscapeGameInterface/EscapeGame/getEscapeGameDto';
-import {  Box,Grid2} from '@mui/material';
+import {  Box,Grid2,Typography,Select,FormControl,MenuItem} from '@mui/material';
 import { useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import EscapeGameOrganisationTable from './EscapeGameOrganisationTable';
@@ -8,7 +8,10 @@ import EscapeGameDetails from './EscapegameDetails';
 import GenericTabs, { TabItem } from '@/components/factory/GenericComponent/TabGénéric';
 import AddEscapeGameDto from './AddEscapegame';
 import Item from '@/components/factory/GenericComponent/Item';
-
+import Organisation from '../Organisation';
+import OrganisationDetails from '../Organisation/OrganisationDetails';
+import { GetOrganisationDto } from '@/interfaces/OrganisationInterface/Organisation/getOrganisationDto';
+import { mock } from 'node:test';
 const testObjects: GetEscapeGameDto[] = [
     {
         "eSGId": 1,
@@ -183,13 +186,29 @@ const testObjects: GetEscapeGameDto[] = [
       }
 ];
 
+const mockOrganisation=  {
+  orgId: 1,
+  name: 'Test Organisation',
+  email: 'test@example.com',
+  phoneNumber: '1234567890',
+  description: '',
+  address: {
+    adressId: 0,
+    street: '123 Main St',
+    city: 'Anytown',
+    country: 'CA',
+    postalCode: '12345',
+    latitude: 0,
+    longitude: 0
+  }
+};
 
 const EscapeGameComponent = () => {
   const { id } = useParams();
   const tabsRef = useRef<{ changeTab: (index: number) => void } | null>(null);
   const [escapeGames, setEscapeGames] = useState<GetEscapeGameDto[]>(testObjects);
   const [selectedEscapeGame, setSelectedEscapeGame] = useState<GetEscapeGameDto>(testObjects[0]);
-
+   const [organisationData] =useState<GetOrganisationDto>(mockOrganisation);
   const handleDetails = (escapeGame: GetEscapeGameDto) => {
     setSelectedEscapeGame(escapeGame);
     goToTab(1);
@@ -210,11 +229,34 @@ const EscapeGameComponent = () => {
     {
       label: 'List',
       content: (
+      <>
+        <Box className="flex gap-4 p-4 justify-end">
+                <Typography variant="h5">Filtre</Typography>
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <Select>
+                    <MenuItem>A</MenuItem>
+                    <MenuItem>B</MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <Select>
+                    <MenuItem>A</MenuItem>
+                    <MenuItem>B</MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <Select>
+                    <MenuItem>A</MenuItem>
+                    <MenuItem>B</MenuItem>
+                  </Select>
+                </FormControl>
+        </Box>
         <EscapeGameOrganisationTable
               data={escapeGames}
               OnDetails={handleDetails}
               OnUpdate={handleUpdate}
         />
+      </>
       ),
     },
     {
@@ -223,6 +265,7 @@ const EscapeGameComponent = () => {
         <EscapeGameDetails
               data={selectedEscapeGame}
               onUpdateButton={handleUpdate}
+              displayButton={true}
         />
       ),
     },
@@ -241,17 +284,21 @@ const EscapeGameComponent = () => {
   ];
 
   return (
-    <Grid2 container spacing={2}>
-      <Item className="flex items-center justify-center">
-        <GenericTabs
-          ref={tabsRef}
-          tabs={tabs}
-          defaultTab={0}
-          ChangeTab={goToTab}
-          ariaLabel="generic tabs"
-        />
-      </Item>
-      <Box className="w-5/6 mx-10 px-10 bg-white rounded-md"></Box>
+    <Grid2 className="flex flex-row justify-evenly items-center" container spacing={2}>
+      <Box className="flex flex-row gap-4">
+        <Item>
+          <OrganisationDetails data={organisationData} />
+        </Item>
+        <Item className="flex ">
+          <GenericTabs
+            ref={tabsRef}
+            tabs={tabs}
+            defaultTab={0}
+            ChangeTab={goToTab}
+            ariaLabel="generic tabs"
+          />
+        </Item>
+      </Box>
     </Grid2>
   );
 };

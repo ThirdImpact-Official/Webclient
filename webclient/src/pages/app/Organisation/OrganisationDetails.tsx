@@ -38,7 +38,7 @@ const OrganisationDetails: FC<OrganisationDetailsProps> = ({ data }) => {
                     <Typography variant="h5">Phone Number:</Typography>
                     <Typography variant="body1" className="mx-2 text-center">{data.phoneNumber}</Typography>
                 </Box>
-                <Divider />
+                <Divider className="mt-4 p-4" orientation="horizontal" flexItem />
                 <Box className="flex items-center justify-center m-4 p-2">
                     <Button sx={{ mr: 2 }} variant="contained" color="error">Delete</Button>
                 </Box>

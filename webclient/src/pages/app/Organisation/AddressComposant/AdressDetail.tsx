@@ -2,6 +2,7 @@ import React,{FC}from 'react';
 import { GetAdressDto } from '../../../interfaces/OrganisationInterface/Adress/getAdressDto';
 import { Box, Typography, Divider } from '@mui/material';
 import ModalComponent from '@/components/factory/GenericComponent/Modal';
+import UpdateAdress from './UpdateAdress';
 
 
 
@@ -40,7 +41,7 @@ const AddressDetail: FC<AddressDetailProps> = ({ props: address }) => {
         <Divider />
         <Box className="flex justify-between mt-2">
           <ModalComponent ButtonTitle='Update' 
-                          children={<>formupdate</>} 
+                          children={<><UpdateAdress data={address} OnSubmit={() => {}} /></>} 
                           Title='' 
                           Description="" />
                           

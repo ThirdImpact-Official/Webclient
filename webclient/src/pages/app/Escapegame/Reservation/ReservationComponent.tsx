@@ -1,10 +1,11 @@
 import GenericTabs, { TabItem } from "@/components/factory/GenericComponent/TabGénéric";
-import { Box } from "@mui/material";
+import { Box ,Typography,Select,FormControl,MenuItem,Grid2} from "@mui/material";
 import { useRef, useState } from "react";
 import { GetSessionReservedDto, reservationcolumns } from "@/interfaces/EscapeGameInterface/Reservation/getSessionReservedDto";
 import GetReservation from "./GetReservation";
 import GetReservationTable from './GetReservationTable';
 import { useParams } from "react-router-dom";
+import Item from "@/components/factory/GenericComponent/Item";
 
 
 
@@ -89,11 +90,34 @@ const ReservationComponent = () => {
         {
             label: 'List',
             content: (
+            <>
+                <Box className="flex gap-4 justify-end">
+                <Typography variant="h5">Filtre</Typography>
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <Select>
+                    <MenuItem>A</MenuItem>
+                    <MenuItem>B</MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <Select>
+                    <MenuItem>A</MenuItem>
+                    <MenuItem>B</MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <Select>
+                    <MenuItem>A</MenuItem>
+                    <MenuItem>B</MenuItem>
+                  </Select>
+                </FormControl>
+                </Box>
                 <GetReservationTable
                     data={reservations}
                     columns={columns}
                     OnDetails={handleDetails}
                     OnUpdate={handleUpdate} />
+            </>
             ),
         },
         {
@@ -110,13 +134,20 @@ const ReservationComponent = () => {
     ];
 
     return (
-        <Box>
-            <GenericTabs
-                ref={tabsRef} 
-                tabs={tabs}
-                defaultTab={1}
-                ChangeTab={goToTab}/>
-        </Box>
+        <Grid2 container spacing={2} className="items-center justify-evenly"> 
+            <Box className="flex flex-row gap-2">
+                <Item>
+
+                </Item>
+                <Item>
+                    <GenericTabs
+                        ref={tabsRef} 
+                        tabs={tabs}
+                        defaultTab={1}
+                        ChangeTab={goToTab}/>
+                </Item>
+            </Box>
+        </Grid2>
     );
 };
 

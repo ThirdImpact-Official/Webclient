@@ -1,5 +1,5 @@
 
-import UserOrganisationComponent from "../Organisation/UserOrganisation/UserOrganisationComponent";
+import UserOrganisationComponent from "./Organisation/UserOrganisation/UserOrganisationComponent";
 
  const Organisation: React.FC = () => {
     return(

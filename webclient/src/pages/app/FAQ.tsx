@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import FaqComponent from "../FAQ/FaqComponent";
+import FaqComponent from "./FAQ/FaqComponent";
 
 const FAQ = () => {
     return (
