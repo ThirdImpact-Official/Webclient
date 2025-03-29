@@ -8,7 +8,7 @@ export class UserAction
 
     private _httpClient: HttpClient;
     private apibaseurl: string;
-    constructor(apibaseurl: string = "http://localhost:5000/api/v1/user") { 
+    constructor(apibaseurl: string = "http://localhost:7159/escape-game/user") { 
         this.apibaseurl = apibaseurl;
         this._httpClient = HttpClient.getInstance();
         this._httpClient.setBaseUrl(this.apibaseurl);

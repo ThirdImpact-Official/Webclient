@@ -15,7 +15,7 @@ export class SessionAction {
 
     constructor() {
         this.httpClient = HttpClient.getInstance();
-        this.httpClient.setBaseUrl('http://localhost:5258/api/v1/Session'); // Remplacez par l'URL de votre API
+        this.httpClient.setBaseUrl('http://localhost:7159/escape-game/session'); // Remplacez par l'URL de votre API
     }
 
     // Méthodes pour les Sessions de Jeu

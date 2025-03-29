@@ -15,7 +15,7 @@ export class EscapeGameActions {
     private readonly httpClient: HttpClient;
     private readonly apibaseurl: string;
 
-    constructor(apibaseurl: string = "http://localhost:5258/api/v1/") {
+    constructor(apibaseurl: string = "http://localhost:7159/escape-game/escapegame") {
         this.apibaseurl = apibaseurl;
         this.httpClient = HttpClient.getInstance();
         this.httpClient.setBaseUrl(this.apibaseurl);

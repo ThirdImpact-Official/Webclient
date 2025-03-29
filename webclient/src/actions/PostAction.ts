@@ -9,7 +9,7 @@ export class PostAction {
 
     constructor() {
         this.httpClient = HttpClient.getInstance();
-        this.httpClient.setBaseUrl('https://api.publicationservice.com/api/v1/post'); // Remplacez par l'URL de votre API
+        this.httpClient.setBaseUrl('http://localhost:7159/publication/post'); // Remplacez par l'URL de votre API
     }
 
     // Méthodes pour les Posts

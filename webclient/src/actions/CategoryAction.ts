@@ -11,7 +11,7 @@ export class CategoryAction {
 
     constructor() {
         this.httpClient = HttpClient.getInstance();
-        this.httpClient.setBaseUrl('https://api.escapegame.com/api/v1/categorie'); // Remplacez par l'URL de votre API
+        this.httpClient.setBaseUrl('http://localhost:7159/escape-game/categorie'); // Remplacez par l'URL de votre API
     }
 
     // Méthodes pour les catégories
