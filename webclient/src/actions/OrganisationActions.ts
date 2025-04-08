@@ -75,7 +75,7 @@ export class OrganisationAction {
             }
             else
             {
-                return response;    
+                throw new Error(response.Message);
             }
             throw new Error(response.Message);
         } catch (error) {

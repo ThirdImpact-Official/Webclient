@@ -26,6 +26,11 @@ export class EscapeGameActions {
             .GetRequestType("escapegame")
             .execute<GetEscapeGameDto>();
     }
+    public async getAllEscapeGamesFromOrganisation(orgId:number): Promise<ServiceResponse<GetEscapeGameDto> | PaginationResponse<GetEscapeGameDto>> {
+        return await this.httpClient
+            .GetRequestType("escapegame/organisation/"+orgId)
+            .execute<GetEscapeGameDto>();
+    }
 
     public async getEscapeGameById(id: number): Promise<ServiceResponse<GetEscapeGameDto> | PaginationResponse<GetEscapeGameDto>> {
         return await this.httpClient

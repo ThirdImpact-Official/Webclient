@@ -11,6 +11,8 @@ import { OrganisationAction } from "@/actions/OrganisationActions";
 import RemoveFromOrganisation from "./RemoveFromOrganisation";
 import AddUserOrganisation from "./AddUserOrganisation";
 import GenericTabs, { TabItem } from "@/components/factory/GenericComponent/TabGénéric";
+import { Console } from "console";
+import { ServiceResponse } from "@/interfaces/ServiceResponse";
 
 
 
@@ -84,8 +86,8 @@ const UserOrganisationComponent = () => {
         tabsRef.current.changeTab(index);
       }
   };
-  const [selectedOrganisation, setSelectedOrganisation] = useState<GetOrganisationDto | null>(selOrganisation);
-  const [users, setUsers] = useState<GetUserDto[]>(mockUsers);
+  const [selectedOrganisation, setSelectedOrganisation] = useState<GetOrganisationDto >();
+  const [users, setUsers] = useState<GetUserDto[]>(new Array<GetUserDto>());
   const [selectedUser, setSelectedUser] = useState<GetUserDto | null>(mockUsers[0]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -103,31 +105,58 @@ const UserOrganisationComponent = () => {
     goToTab(0);
   };
 
+  const organisationAction = new OrganisationAction();
   useEffect(() => {
     
-  const organisationAction = new OrganisationAction();
     const fetchOrganisation = async () => {
       setIsLoading(true);
       try {
         const responseOrganisation = await organisationAction.GetOrganisationById(Number.parseInt(id, 10));
-        const responseUser = await organisationAction.GetUserOrganisation(Number.parseInt(id, 10));
-
+        
         if (responseOrganisation.Success) {
-          setSelectedOrganisation(responseOrganisation.Data as GetOrganisationDto);
+          //assigniation du serviceresponse de l'organisation
+          const organisationfromResponse =Array.isArray(responseOrganisation.Data) ? 
+            responseOrganisation.Data[0] 
+          : responseOrganisation.Data;
+          console.log("----------------------");
+          console.log(organisationfromResponse);
+          //assignation a l'etat de l'organisation
+          setSelectedOrganisation(organisationfromResponse as GetOrganisationDto);
+          console.log("---------------------");
+          console.log('Get selected organisation', selectedOrganisation.address);
+          console.log(selectedOrganisation);
         }
+      }
+      catch (error) {
+        console.log(error);
+      }
+       finally {
+        setIsLoading(false);
+      }
+
+    };
+    const fetchUserOrganisation = async () => {
+      try {
+        
+        const responseUser = await organisationAction.GetUserOrganisation(Number.parseInt(id, 10));
         if (responseUser.Success) {
           setUsers(responseUser.Data as GetUserDto[]);
         }
-      } finally {
-        setIsLoading(false);
       }
-    };
-
+      catch (e) {
+        console.log(e);
+      }
+    }
     if (id) {
       fetchOrganisation();
+      fetchUserOrganisation();
     }
   }, [id]);
-
+  useEffect(() => {
+    if (selectedOrganisation) {
+      console.log("État mis à jour - selectedOrganisation:", selectedOrganisation);
+    }
+  }, [selectedOrganisation]);
   const colt: TabItem[] =[
       {
         label:"Table",

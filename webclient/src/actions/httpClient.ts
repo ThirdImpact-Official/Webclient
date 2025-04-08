@@ -96,12 +96,12 @@ export class HttpClient
                         url: actionurl, 
                         method: methodes,
                         data: data})
-                .then((response) => {
+                .then((axiosResponse) => {
                         resolve({
-                            Data: response.data, 
-                            Success: true, 
-                            Message: "Success", 
-                            ErrorType: ErrorType.Good})    
+                            Data: axiosResponse.data.data, 
+                            Success: axiosResponse.data.success, 
+                            Message: axiosResponse.data.message, 
+                            ErrorType: axiosResponse.data.errorType});    
                 })
                 .catch((error) => {
                         resolve({

@@ -71,7 +71,7 @@ const Sidebar: React.FC = () => {
       icon:(<Dashboard/>),
     },
     {
-      nom:"organisation",
+      nom:"Organisation",
       link:"/organisation/user/1",
       icon:(<HomeWork/>),
     },
@@ -81,7 +81,7 @@ const Sidebar: React.FC = () => {
       icon:(<BookOnline/>),
     },
     {
-      nom:"Faq",
+      nom:"F.A.Q.",
       link:"/Faq",
       icon:(  <Comment />),
     },
