@@ -12,7 +12,7 @@ import Organisation from '../Organisation';
 import OrganisationDetails from '../Organisation/OrganisationDetails';
 import { GetOrganisationDto } from '@/interfaces/OrganisationInterface/Organisation/getOrganisationDto';
 import { mock } from 'node:test';
-import { EscapeGameActions } from '@/actions/EscapeGameAction';
+import { EscapeGameAction } from '@/actions/EscapeGameAction';
 import { OrganisationAction } from '@/actions/OrganisationActions';
 
 
@@ -21,13 +21,15 @@ const EscapeGameComponent = () => {
   const { id } = useParams();
   const tabsRef = useRef<{ changeTab: (index: number) => void } | null>(null);
   //Actions httpclient;
-  const EscapeActions:EscapeGameActions = new EscapeGameActions();
+  const EscapeAction = new EscapeGameAction();
   const OrgaAction = new OrganisationAction();
   //getter Setter  ---------------
+  const [page,setPage] = useState(1);
+  const [pageSize,setPageSize] = useState(5); 
   const [escapeGames, setEscapeGames] = useState<GetEscapeGameDto[]>(null);
   const [selectedEscapeGame, setSelectedEscapeGame] = useState<GetEscapeGameDto>(null);
   const [organisationData,setOrganisationData] =useState<GetOrganisationDto>(null);
-  //-----------------------------
+  //-------------------Methodes de handle pour les update et create
     const handleDetails = (escapeGame: GetEscapeGameDto) => {
     setSelectedEscapeGame(escapeGame);
     goToTab(1);
@@ -43,39 +45,40 @@ const EscapeGameComponent = () => {
       tabsRef.current.changeTab(index);
     }
   };
+  
+  //-------------Function------------
 
+  const fetchEscapeGames = async () => {
+        try {
+          const response = await EscapeAction.getAllEscapeGamesFromOrganisation(Number.parseInt(id),page,pageSize);
+    
+          if (response.Success) {
+            setEscapeGames(response.Data as GetEscapeGameDto[]);
+            console.log(response.Data);
+            setSelectedEscapeGame(response.Data[0]);
+            console.log(response.Data[0]);
+          }
+        }
+        catch (error) {
+          console.log(error);
+        }
+      };
+  
+  const fetchOrganisation= async () => {
+        try {
+          const response = await OrgaAction.GetOrganisationById(Number.parseInt(id));
+          if (response.Success) {
+            console.log(response.Data);
+            setOrganisationData(response.Data as GetOrganisationDto);
+          }
+          
+        } catch (error) {
+          console.error(error);
+        }
+      }
+  //-------------Useeffect------------
 
   useEffect(() => {
-
-    const fetchEscapeGames = async () => {
-      try {
-        const response = await EscapeActions.getAllEscapeGames();
-  
-        if (response.Success) {
-          setEscapeGames(response.Data as GetEscapeGameDto[]);
-          console.log(response.Data);
-          setSelectedEscapeGame(response.Data[0]);
-          console.log(response.Data[0]);
-        }
-      }
-      catch (error) {
-        console.log(error);
-      }
-    };
-
-    const fetchOrganisation= async () => {
-      try {
-        const response = await OrgaAction.GetOrganisationById(Number.parseInt(id));
-  
-        if (response.Success) {
-          console.log(response.Data);
-          setOrganisationData(response.Data as GetOrganisationDto);
-        }
-        
-      } catch (error) {
-        console.error(error);
-      }
-    }
     if(id != null){
       fetchEscapeGames();
       fetchOrganisation();

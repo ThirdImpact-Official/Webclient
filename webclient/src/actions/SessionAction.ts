@@ -14,17 +14,21 @@ export class SessionAction {
     private httpClient: HttpClient;
 
     constructor() {
-        this.httpClient = HttpClient.getInstance();
+        this.httpClient = new HttpClient();
         this.httpClient.setBaseUrl('http://localhost:7159/escape-game/session'); // Remplacez par l'URL de votre API
     }
 
     // Méthodes pour les Sessions de Jeu
-    public async getSessionByEscapeGameId(id: number): Promise<ServiceResponse<GetSessionGameDto> | PaginationResponse<GetSessionGameDto>> {
+    public async getSessionById(id: number): Promise<ServiceResponse<GetSessionGameDto> | PaginationResponse<GetSessionGameDto>> {
         return await this.httpClient
-            .GetRequestType(`/escapegame/${id}`)
+            .GetRequestType(`/${id}`)
             .execute<GetSessionGameDto>();
     }
-
+    public async getSessionEscapeGameById(id: number, page: number, pageSize: number): Promise<ServiceResponse<GetSessionGameDto> | PaginationResponse<GetSessionGameDto>> {
+        return await this.httpClient
+            .GetRequestType(`/escapegame/${id}?page=${page}&pageSize=${pageSize}`)
+            .execute<GetSessionGameDto>();
+    }
     public async createSessionGame(session: AddSessionGameDto): Promise<ServiceResponse<GetSessionGameDto> | PaginationResponse<GetSessionGameDto>> {
         return await this.httpClient
             .PostRequestType('')

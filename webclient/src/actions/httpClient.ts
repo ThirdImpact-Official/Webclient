@@ -67,6 +67,7 @@ export class HttpClient
     */
     private Sendrequest<T>( actionurl: string, requestType: RequestType, data?: T ): Promise<ServiceResponse<T> |PaginationResponse<T>>
     {
+        this.ResetState();
         return new Promise<ServiceResponse<T>>((resolve)=>
             {
                 let methodes:string;
@@ -191,6 +192,7 @@ export class HttpClient
     {
         this.requestType = RequestType.GET;
         this.url = url;
+        console.log( "this.url : " + this.url );
         return this;
     }
     /**
@@ -245,7 +247,11 @@ export class HttpClient
         this.Data = data;
         return this;
     }
-
+    private ResetState(): void {
+        this.url = '';
+        this.requestType = RequestType.GET;
+        this.Data = null;
+    }
 /**
  * Executes an HTTP request based on the configured request type and URL.
  * 
@@ -256,6 +262,13 @@ export class HttpClient
 
     public async execute<T>(): Promise<ServiceResponse<T> | PaginationResponse<T>>
     {
+        const currentState= {
+            baseUrl: this.baseUrl,
+            url: this.url,
+            requestType: this.requestType,
+            Data: this.Data,
+        }
+
         if (!this.baseUrl) {
             return {
                 Data: null,
@@ -275,15 +288,18 @@ export class HttpClient
             if(this.requestType == RequestType.GET)
             {
                  response = await this.Sendrequest(fullUrl, this.requestType);
+                 console.log("Full url :"+fullUrl);
             }
             else
             {
                 if(this.Data == null)
                 {
+                   
                     response = await this.Sendrequest(fullUrl, this.requestType);
                 }
                 else
                 {
+                    
                     response = await this.Sendrequest(fullUrl, this.requestType, this.Data as T);
                 }
             }
@@ -296,6 +312,12 @@ export class HttpClient
                 Message: error.message,
                 ErrorType: ErrorType.Bad,
             };
+        }finally
+        {
+           this.baseUrl = currentState.baseUrl;
+           this.url = currentState.url;
+           this.requestType = currentState.requestType;
+           this.Data = currentState.Data;
         }
     }
  

@@ -68,7 +68,7 @@ const UpdateEscapeGameForm: FC<UpdateEscapeGameProps> = ({ data, onSubmit }) => 
                   label="Name"
                   fullWidth
                   placeholder="Name"
-                  value={updatedEscapeGame.eSGNom}
+                  value={updatedEscapeGame.esgNom}
                   onChange={handleInputChange}
                 />
               </Box>
@@ -78,7 +78,7 @@ const UpdateEscapeGameForm: FC<UpdateEscapeGameProps> = ({ data, onSubmit }) => 
                   label="Description"
                   fullWidth
                   placeholder="Description"
-                  value={updatedEscapeGame.eSGContent}
+                  value={updatedEscapeGame.esgContent}
                   onChange={handleInputChange}
                 />
               </Box>
@@ -88,7 +88,7 @@ const UpdateEscapeGameForm: FC<UpdateEscapeGameProps> = ({ data, onSubmit }) => 
                   label="Creator"
                   placeholder="Creator"
                   fullWidth
-                  value={updatedEscapeGame.eSGCreator}
+                  value={updatedEscapeGame. esgCreator}
                   onChange={handleInputChange}
                 />
               </Box>
@@ -98,7 +98,7 @@ const UpdateEscapeGameForm: FC<UpdateEscapeGameProps> = ({ data, onSubmit }) => 
                   label="Website"
                   fullWidth
                   placeholder="Website"
-                  value={updatedEscapeGame.eSGWebsite}
+                  value={updatedEscapeGame.esgWebsite}
                   onChange={handleInputChange}
                 />
               </Box>
@@ -108,7 +108,7 @@ const UpdateEscapeGameForm: FC<UpdateEscapeGameProps> = ({ data, onSubmit }) => 
                 label="Phone Number"
                 fullWidth
                 placeholder="Phone Number"
-                value={updatedEscapeGame.eSGPhoneNumber}
+                value={updatedEscapeGame.esgPhoneNumber}
                 onChange={handleInputChange}
               />
               </Box>
@@ -124,7 +124,7 @@ const UpdateEscapeGameForm: FC<UpdateEscapeGameProps> = ({ data, onSubmit }) => 
               <InputLabel>Is For Children</InputLabel>
               <Checkbox
                 name="isForChildren"
-                checked={updatedEscapeGame.eSG_IsForChildren}
+                checked={updatedEscapeGame.esg_IsForChildren}
                 onChange={handleCheckboxChange}
               />
             </Box>
@@ -132,7 +132,7 @@ const UpdateEscapeGameForm: FC<UpdateEscapeGameProps> = ({ data, onSubmit }) => 
                 <InputLabel>Price</InputLabel>
                 <Select
                   name="priceId"
-                  value={updatedEscapeGame.eSG_Price_Id}
+                  value={updatedEscapeGame. esg_Price_Id}
                   onChange={handleSelectChange}
                 >
                   <MenuItem value={PriceLevel.VeryLow}>Very Low</MenuItem>
@@ -145,7 +145,7 @@ const UpdateEscapeGameForm: FC<UpdateEscapeGameProps> = ({ data, onSubmit }) => 
                 <InputLabel>Difficulty</InputLabel>
                 <Select
                   name="difficultyLevelId"
-                  value={updatedEscapeGame.eSG_DILE_Id}
+                  value={updatedEscapeGame.esg_DILE_Id}
                   onChange={handleSelectChange}
                 >
                   <MenuItem value={DifficultyLevel.Easy}>Easy</MenuItem>

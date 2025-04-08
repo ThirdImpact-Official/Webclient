@@ -10,7 +10,7 @@ export class CategoryAction {
     private httpClient: HttpClient;
 
     constructor() {
-        this.httpClient = HttpClient.getInstance();
+        this.httpClient = new HttpClient();
         this.httpClient.setBaseUrl('http://localhost:7159/escape-game/categorie'); // Remplacez par l'URL de votre API
     }
 

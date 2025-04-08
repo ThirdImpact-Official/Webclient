@@ -16,7 +16,7 @@ const SessionDetails :FC<SessionDetailsProps> = (prop)=> {
    
     return (
         <Box className="flex flex-col items-center justify-center ">    
-            <DetailsComponent  data={prop.data} 
+            <DetailsComponent key={prop.data.segId}  data={prop.data} 
                                        columns={prop.columns} />
             <Divider className="mt-4 p-4" orientation="horizontal" flexItem />
             <Box className="items-center flex flex-row ">

@@ -13,7 +13,7 @@ export class CreadentialAction
     private apibaseurl: string
     constructor(apibaseurl: string = "http://localhost:5000/api/v1/user") { 
         this.apibaseurl = apibaseurl;
-        this._httpClient = HttpClient.getInstance();
+        this._httpClient = new HttpClient();
         this._httpClient.setBaseUrl(this.apibaseurl);
     }
 

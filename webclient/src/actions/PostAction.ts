@@ -8,7 +8,7 @@ export class PostAction {
     private httpClient: HttpClient;
 
     constructor() {
-        this.httpClient = HttpClient.getInstance();
+        this.httpClient = new HttpClient();
         this.httpClient.setBaseUrl('http://localhost:7159/publication/post'); // Remplacez par l'URL de votre API
     }
 

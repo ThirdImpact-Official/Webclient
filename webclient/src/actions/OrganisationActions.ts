@@ -20,7 +20,7 @@ export class OrganisationAction {
 
     constructor(apibaseurl: string = "http://localhost:7159/escape-game/organisation") {
         this.apibaseurl = apibaseurl;
-        this._httpClient = HttpClient.getInstance();
+        this._httpClient = new HttpClient();
         this._httpClient.setBaseUrl(this.apibaseurl);
     }
 

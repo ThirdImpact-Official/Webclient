@@ -35,22 +35,22 @@ const EscapeGameDetails: FC<EscapeGameDetailsProps> = ({
             <Typography variant="h4">Escape Game Details</Typography>
             <Grid2 container spacing={4}>
                 <Grid2 size={8}>
-                    <RenderDetail label="ID" value={data.eSGId} />
-                    <RenderDetail label="Title" value={data.eSGTitle} />
-                    <RenderDetail label="Content" value={data.eSGContent} />
-                    <RenderDetail label="Phone Number" value={data.eSGPhoneNumber} />
-                    <RenderDetail label="Is For Children" value={data.eSG_IsForChildren} />
-                    <RenderDetail label="Website" value={data.eSGWebsite} />
+                    <RenderDetail label="ID" value={data.esgId} />
+                    <RenderDetail label="Title" value={data.esgTitle} />
+                    <RenderDetail label="Content" value={data.esgContent} />
+                    <RenderDetail label="Phone Number" value={data.esgPhoneNumber} />
+                    <RenderDetail label="Is For Children" value={data.esg_IsForChildren} />
+                    <RenderDetail label="Website" value={data.esgWebsite} />
                 </Grid2>
                 <Grid2 size={6}>
-                    <RenderDetail label="Price" value={data.price.indicePrice} />
-                    <RenderDetail label="Difficulty" value={data.difficultyLevel.dowName} />
-                    <RenderDetail label="Creation Date" value={data.eSG_CreationDate} />
-                    <RenderDetail label="Update Date" value={data.eSG_UpdateTime} />
+                    <RenderDetail label="Price" value={data.esg_Price_Id} />
+                    <RenderDetail label="Difficulty" value={data.difficultyLevel} />
+                    <RenderDetail label="Creation Date" value={data.esg_CreationDate} />
+                    <RenderDetail label="Update Date" value={data.esg_UpdateTime} />
                 </Grid2>
                 <Grid2 size={6}>
                     <Item>
-                        <img src={data.eSGImgResources} alt="Image" />
+                        <img src={data.esgImgResources} alt="Image" />
                     </Item>
                 </Grid2>
             </Grid2>
@@ -59,9 +59,9 @@ const EscapeGameDetails: FC<EscapeGameDetailsProps> = ({
                 <Box className="flex flex-row  justify-center items-center gap-4">
                     <Button onClick={() => onUpdateButton(data)} color='success'> Session </Button>
                     <Divider orientation='vertical' flexItem />
-                    <Button onClick={() =>window.location.href =(`${data.eSGId}/event`)}>Event</Button>
+                    <Button onClick={() =>window.location.href =(`${data.esgId}/event`)}>Event</Button>
                     <Divider orientation='vertical' flexItem />
-                    <Button onClick={() =>window.location.href =(`${data.eSGId}/activity`)}>Activity</Button>
+                    <Button onClick={() =>window.location.href =(`${data.esgId}/activity`)}>Activity</Button>
                     <Divider orientation="vertical" flexItem /> 
                     <Button color="primary" onClick={() => onUpdateButton(data)}>Update</Button>
                     <Divider orientation='vertical' flexItem />

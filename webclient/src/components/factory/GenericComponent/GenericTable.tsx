@@ -1,63 +1,61 @@
-import { Table, TableRow, TableCell,TableContainer,TableHead,TableBody, Button, Paper } from "@mui/material";
-
+import { Table, TableRow, TableCell, TableContainer, TableHead, TableBody, Button, Paper, Skeleton } from "@mui/material";
 
 interface GenerationTableProps<T> {
     data: T[];
-    columns: {label:string; accessor: keyof T}[];
-    OnDetails: (org: T) => void;
-    OnUpdate: (org: T) => void;
+    columns: { label: string; accessor: keyof T }[];
+    OnDetails?: (org: T) => void;
+    OnUpdate?: (org: T) => void;
 }
 
+const GenericTable = <T,>({ data, columns, OnDetails, OnUpdate }: GenerationTableProps<T>) => {
+    // Affiche un Skeleton en mode chargement ou si aucune donnée n'est renvoyée.
+    if (data.length === 0)
+        return (
+            <>
+                <Skeleton variant="rectangular" height={200} />
+            </>
+        );
 
-/**
- * GenericTable renders a table with columns and rows based on the given data.
- * It accepts an array of data and an array of column objects, where each column
- * object has a label and accessor key. It also accepts two optional functions
- * OnDetails and OnUpdate, which are called when the Details or Update buttons
- * are clicked.
- * @param {GenerationTableProps} props
- * @returns {React.ReactElement}
- */
-const GenericTable =<T,> ({data, columns, OnDetails, OnUpdate}: GenerationTableProps<T>) => {
     return (
         <TableContainer component={Paper}>
             <Table>
                 <TableHead>
                     <TableRow>
                         {columns.map((col) => (
-                        <TableCell key={col.accessor as string}>{col.label}</TableCell>
-                    ))}
-                    {OnDetails && <TableCell>Details</TableCell>}
-                    {OnUpdate && <TableCell>Update</TableCell>}
-                  
+                            <TableCell key={String(col.accessor)}>{col.label}</TableCell>
+                        ))}
+                        {OnDetails && <TableCell>Details</TableCell>}
+                        {OnUpdate && <TableCell>Update</TableCell>}
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                {data.map((item, index) => (
+                    {data.map((item, index) => (
                         <TableRow key={index}>
                             {columns.map((col) => (
-                            <TableCell key={col.accessor as string}>{String(item[col.accessor])}</TableCell>
+                                <TableCell key={String(col.accessor)}>
+                                    {item[col.accessor] != null ? String(item[col.accessor]) : ''}
+                                </TableCell>
                             ))}
                             {OnDetails && (
-                            <TableCell>
-                                <Button variant="outlined" onClick={() => OnDetails(item)}>
-                                Details
-                                </Button>
-                            </TableCell>
+                                <TableCell>
+                                    <Button variant="outlined" onClick={() => OnDetails(item)}>
+                                        Details
+                                    </Button>
+                                </TableCell>
                             )}
                             {OnUpdate && (
-                            <TableCell>
-                                <Button variant="contained" color="primary" onClick={() => OnUpdate(item)}>
-                                Update
-                                </Button>
-                            </TableCell>
+                                <TableCell>
+                                    <Button variant="contained" color="primary" onClick={() => OnUpdate(item)}>
+                                        Update
+                                    </Button>
+                                </TableCell>
                             )}
                         </TableRow>
-                        ))}
+                    ))}
                 </TableBody>
             </Table>
         </TableContainer>
-    )
+    );
 };
 
 export default GenericTable;

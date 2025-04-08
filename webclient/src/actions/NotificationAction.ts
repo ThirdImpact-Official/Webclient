@@ -9,7 +9,7 @@ export class NotificationAction {
     private httpClient: HttpClient;
 
     constructor() {
-        this.httpClient = HttpClient.getInstance();
+        this.httpClient = new HttpClient();
         this.httpClient.setBaseUrl('http://localhost:7159/notificaiton/notification'); // Remplacez par l'URL de votre API
     }
 

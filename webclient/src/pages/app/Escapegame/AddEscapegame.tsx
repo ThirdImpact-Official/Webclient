@@ -6,17 +6,17 @@ import { ChangeEvent, useState } from "react";
 
 const AddEscapeGameForm = () => {
   const [escapeGameData, setEscapeGameData] = useState<AddEscapeGameDto>({
-    eSGNom: "",
-    eSGCreator: '',
-    eSGTitle: '',
-    eSGContent: '',
-    eSGImgResources: '',
-    eSGWebsite: '',
-    eSGPhoneNumber: '',
-    eSG_IsDeleting: false,
-    eSG_IsForChildren: false,
-    eSG_Price_Id: 1,
-    eSG_DILE_Id: 1,
+    esgNom: "",
+    esgCreator: '',
+    esgTitle: '',
+    esgContent: '',
+    esgImgResources: '',
+    esgWebsite: '',
+    esgPhoneNumber: '',
+    esg_IsDeleting: false,
+    esg_IsForChildren: false,
+    esg_Price_Id: 1,
+    esg_DILE_Id: 1,
   });
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -73,7 +73,7 @@ const AddEscapeGameForm = () => {
                       label="Name"
                       fullWidth
                       placeholder="Name"
-                      value={escapeGameData.eSGNom}
+                      value={escapeGameData.esgNom}
                       onChange={handleInputChange}
                     />
                   </Box>
@@ -83,7 +83,7 @@ const AddEscapeGameForm = () => {
                       label="Content"
                       fullWidth
                       placeholder="Content"
-                      value={escapeGameData.eSGContent}
+                      value={escapeGameData. esgContent}
                       onChange={handleInputChange}
                     />
                   </Box>
@@ -93,7 +93,7 @@ const AddEscapeGameForm = () => {
                       label="Creator"
                       fullWidth
                       placeholder="Creator"
-                      value={escapeGameData.eSGCreator}
+                      value={escapeGameData.esgCreator}
                       onChange={handleInputChange}
                     />
                   </Box>
@@ -103,7 +103,7 @@ const AddEscapeGameForm = () => {
                       label="Website"
                       fullWidth
                       placeholder="Website"
-                      value={escapeGameData.eSGWebsite}
+                      value={escapeGameData.esgWebsite}
                       onChange={handleInputChange}
                     />
                   </Box>
@@ -113,7 +113,7 @@ const AddEscapeGameForm = () => {
                       label="Phone Number"
                       fullWidth
                       placeholder="Phone Number"
-                      value={escapeGameData.eSGPhoneNumber}
+                      value={escapeGameData.esgPhoneNumber}
                       onChange={handleInputChange}
                     />
                   </Box>
@@ -130,7 +130,7 @@ const AddEscapeGameForm = () => {
                     <InputLabel>Is For Children</InputLabel>
                     <Checkbox
                       name="isForChildren"
-                      checked={escapeGameData.eSG_IsForChildren}
+                      checked={escapeGameData. esg_IsForChildren}
                       onChange={handleCheckboxChange}
                     />
                   </Box>
@@ -139,7 +139,7 @@ const AddEscapeGameForm = () => {
                       <InputLabel>Price</InputLabel>
                       <Select
                         name="priceId"
-                        value={escapeGameData.eSG_Price_Id}
+                        value={escapeGameData.esg_Price_Id}
                         onChange={handleSelectChange}
                       >
                         <MenuItem value={PriceLevel.VeryLow}>
@@ -159,7 +159,7 @@ const AddEscapeGameForm = () => {
                       <InputLabel>Difficulty</InputLabel>
                       <Select
                         name="difficultyLevelId"
-                        value={escapeGameData.eSG_DILE_Id}
+                        value={escapeGameData.esg_DILE_Id}
                         onChange={handleSelectChange}
                       >
                         <MenuItem value={DifficultyLevel.Easy}>

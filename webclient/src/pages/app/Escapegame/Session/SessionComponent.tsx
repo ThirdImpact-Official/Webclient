@@ -1,98 +1,40 @@
 import GenericTabs, { TabItem } from "@/components/factory/GenericComponent/TabGénéric";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { GetSessionGameDto, Sessioncolumns } from "@/interfaces/EscapeGameInterface/Session/getSessionGameDto";
 import GenericTable from "@/components/factory/GenericComponent/GenericTable";
 import UpdateSessionGame from "./UpdateSession";
 import AddSessionGame from "./AddSession";
 import DetailsComponent from "@/components/factory/GenericComponent/DetailsComponent";
 import { useParams } from "react-router";
-import { Box, Button, Divider,Select,FormControl,MenuItem,Typography, Grid2} from "@mui/material";
+import { Box, Button, Divider,Select,FormControl,MenuItem,Typography, Grid2, Skeleton} from "@mui/material";
 import GetsessionFromEscapeGame from './GetSessionFromEscapegame';
 import SessionDetails from './SessionDetails';
 
 import EscapeGameDetails from "../EscapegameDetails";
 import { GetEscapeGameDto, EscapeGameColumns} from "@/interfaces/EscapeGameInterface/EscapeGame/getEscapeGameDto";
 import Item from "@/components/factory/GenericComponent/Item";
+import { EscapeGameAction } from '@/actions/EscapeGameAction';
+import { SessionAction } from "@/actions/SessionAction";
 
 
 
-const mockSessions: GetSessionGameDto[] = [
-    {
-        segId: 1,
-        escapeGameId: 101,
-        date: new Date("2025-03-15T14:00:00"),
-        price: 25.99,
-        placeavailable: 8,
-        pLacemaximum: 10,
-    },
-    {
-        segId: 2,
-        escapeGameId: 102,
-        date: new Date("2025-03-16T16:30:00"),
-        price: 30.50,
-        placeavailable: 5,
-        pLacemaximum: 8,
-    },
-    {
-        segId: 3,
-        escapeGameId: 103,
-        date: new Date("2025-03-17T18:00:00"),
-        price: 20.00,
-        placeavailable: 10,
-        pLacemaximum: 12,
-    },
-    {
-        segId: 4,
-        escapeGameId: 104,
-        date: new Date("2025-03-18T20:00:00"),
-        price: 27.75,
-        placeavailable: 6,
-        pLacemaximum: 10,
-    },
-    {
-        segId: 5,
-        escapeGameId: 105,
-        date: new Date("2025-03-19T13:00:00"),
-        price: 22.00,
-        placeavailable: 4,
-        pLacemaximum: 6,
-    },
-];
-
-const mockEscape: GetEscapeGameDto = {
-    "eSGId": 1,
-    "eSGNom": "Escape Game 1",
-    "eSGCreator": "John Doe",
-    "eSGTitle": "The Lost City",
-    "eSGContent": "Find the hidden treasure",
-    "eSGImgResources": "https://example.com/image1.jpg",
-    "eSGWebsite": "https://example.com/game1",
-    "eSGPhoneNumber": "123-456-7890",
-    "eSG_IsDeleting": false,
-    "eSG_IsForChildren": true,
-    "eSG_Price_Id": 1,
-    "eSG_DILE_Id": 1,
-    "price": {
-      "id": 1,
-      "indicePrice": 19.99
-    },
-    "difficultyLevel": "Medium", // Ajout de la propriété manquante
-    "eSG_CreationDate": new Date("2024-01-01T12:00:00Z"), // Ajout avec une date valide
-    "eSG_UpdateTime": new Date("2024-03-12T15:30:00Z") // Ajout avec une date valide
-  };
-  
 
 
 const SessionComponent = () => {   
 
     const tabsRef = useRef<{ changeTab: (index: number) => void } | null>(null);
     console.log(tabsRef);
-    const {id} =useParams()
+    const { id } =useParams()
     //session
-    const [tableSession,setTableSession]= useState(mockSessions)
-    const [selectSession,setSelectSession] = useState(mockSessions[0])
+    const [tableSession,setTableSession]= useState([])
+    const [selectSession,setSelectSession] = useState(tableSession[0])
+    const [page,setPage] = useState<number>(0);  
     //escapegame
-    const [escapegame]=useState<GetEscapeGameDto>(mockEscape)
+    const [escapegame, setEscapeGame]=useState<GetEscapeGameDto>(null)
+    // Api call-------------
+    const EscapeGameActions = new EscapeGameAction();
+    const SessionActions = new SessionAction();
+    //----------------------
     const goToTab = (index: number) => {
         if (tabsRef.current) {
           tabsRef.current.changeTab(index);
@@ -106,17 +48,52 @@ const SessionComponent = () => {
         setSelectSession(item)
         goToTab(3)
     }
+    // API Function to fetch escape game details by ID
+    async function fetchEscapeGameById(id: string) {
+        try {
+            const response = await EscapeGameActions.getEscapeGameById(Number.parseInt(id));
+            if (response.Success) {
+                setEscapeGame(response.Data as GetEscapeGameDto);
+            }
+        } catch (error) {
+            console.error('Error fetching escape game:', error);
+        }
+    }
+    // API Function to fetch sessions by escape game ID
+    async function fetchSessionsByEscapeGameId(escapeGameId: string) {
+        try {
+            const response = await SessionActions.getSessionEscapeGameById(Number.parseInt(id),page,5);
+            if (response.Success) {
+                console.log("response", console.log(response.Data));
+                setTableSession(response.Data as GetSessionGameDto[]);
+            }
+        } catch (error) {
+            console.error('Error fetching sessions:', error);
+        }
+    }
+    //UseEffect
+    useEffect(()=>{
+
+        if(id != null){
+            fetchSessionsByEscapeGameId(id);
+            fetchEscapeGameById(id);
+        }
+    },[id]);
     const columns = Sessioncolumns;
     const tabs: TabItem[]=[
         {
             label:"Get all Session",
             content:(
              <>
-              <GetsessionFromEscapeGame
-                        data={tableSession}
-                        columns={columns}
-                        onDetails={handleDetails}
-                        onUpdate={handleUpdate} />
+             {
+                tableSession ? 
+                <GetsessionFromEscapeGame
+                          data={tableSession}
+                          columns={columns}
+                          onDetails={handleDetails}
+                          onUpdate={handleUpdate} />
+                          : <Skeleton variant="rectangular" height={500} />
+             }
              </>)
         },
         {
@@ -124,7 +101,11 @@ const SessionComponent = () => {
             label:"Details",
             content:(
                 <>
+                {selectSession != null ?
+
                     <SessionDetails data={selectSession} columns={columns} OnUpdate={handleUpdate} />
+                    :<Skeleton variant="rectangular" height={500} />
+                }
                 </>)
         },
         {

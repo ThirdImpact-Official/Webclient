@@ -22,10 +22,17 @@ const UpdateSessionGame:FC<UpdateSessionGameProps> =({data})=>
         segId:data.segId,
         price: data.price,
         escapeGameId: data.escapeGameId,
-        date:data.date,
+        date:dateValue.toDate(),
         placeavailable: data.placeavailable,
         pLacemaximum: data.pLacemaximum
     });
+        function FormatDate(dateString: string | null | undefined) {
+            if (!dateString) return 'Date inconnue';
+        
+            const date = new Date(dateString);
+            return isNaN(date.getTime()) ? 'Date inconnue' : new Intl.DateTimeFormat('fr-FR').format(date);
+        
+        }
     const handleDateChange = (newDate: dayjs.Dayjs | null) => {
         if (newDate) {
             setDateValue(newDate);
@@ -35,9 +42,13 @@ const UpdateSessionGame:FC<UpdateSessionGameProps> =({data})=>
             }));
         }
     };
-    return (
-    <>
-       
+    if(!data || !data.date)
+    {
+        return <Typography>les données de la session ne sont pas disponible </Typography>;
+    }
+    else{
+        return (
+        <>
             <Box>
                 <form>
                     <Box className=" p-10 shadow-sm space-y-4 w-[400px]">
@@ -75,8 +86,10 @@ const UpdateSessionGame:FC<UpdateSessionGameProps> =({data})=>
                         <Button variant="contained" color='primary' onClick={()=>console.log(formValues)}> Update </Button>
                     </Box>
                 </form>
-        </Box>
-    </>);
+            </Box>
+        </>);
+
+    }
 
 
 }

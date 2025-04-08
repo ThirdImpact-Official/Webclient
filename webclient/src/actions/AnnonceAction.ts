@@ -9,7 +9,7 @@ export class AnnonceService {
     private httpClient: HttpClient;
 
     constructor() {
-        this.httpClient = HttpClient.getInstance();
+        this.httpClient = new HttpClient();
         this.httpClient.setBaseUrl('https://localhost:7159/notificaiton/annonce'); // Remplacez par l'URL de votre API
     }
 

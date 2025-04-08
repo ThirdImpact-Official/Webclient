@@ -1,13 +1,13 @@
 export interface AddEscapeGameDto  {
-    eSGNom: string;
-    eSGCreator: string;
-    eSGTitle: string;
-    eSGContent: string;
-    eSGImgResources: string;
-    eSGWebsite: string;
-    eSGPhoneNumber: string;
-    eSG_IsDeleting: boolean;
-    eSG_IsForChildren: boolean;
-    eSG_Price_Id: number;
-    eSG_DILE_Id: number;
+    esgNom: string;
+    esgCreator: string;
+    esgTitle: string;
+    esgContent: string;
+    esgImgResources: string;
+    esgWebsite: string;
+    esgPhoneNumber: string;
+    esg_IsDeleting: boolean;
+    esg_IsForChildren: boolean;
+    esg_Price_Id: number;
+    esg_DILE_Id: number;
 }
