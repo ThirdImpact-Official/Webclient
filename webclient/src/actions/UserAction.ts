@@ -70,4 +70,24 @@ export class UserAction
             }
         }
     }
+    public async GetCurrentUser(): Promise<ServiceResponse<GetUserDto> | PaginationResponse<GetUserDto>> {
+        try 
+        {
+            const response = await this._httpClient.GetRequestType("").execute<GetUserDto>();
+            if(response.Success)
+            {
+                return response;
+            }
+            throw new Error(response.Message);
+        }
+        catch(error)
+        {
+            return {
+                Data: null,
+                Success: false,
+                Message: error instanceof Error ? error.message : 'An error occurred',
+                ErrorType: ErrorType.Bad,
+            }
+        }
+    }
 }

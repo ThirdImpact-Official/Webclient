@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { 
   Box, 
   Avatar, 
@@ -10,37 +10,68 @@ import {
   ListItemIcon,
   ListItemText
 } from '@mui/material';
-import {Comment, BarChart, Dashboard, ExitToApp, Home, HomeWork, BookOnline } from '@mui/icons-material';
+import {Comment, BarChart, Dashboard, ExitToApp, Home, HomeWork, BookOnline, NotificationAddSharp } from '@mui/icons-material';
 import { Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
+import { UserAction } from '@/actions/UserAction';
+import { GetUserDto } from '@/interfaces/User/GetUserDto';
 
 
 // Account User Component
 const AccountUser = () => {
-  return (
-    <Box className="flex items-center p-6 gap-3">
-      <Avatar
-        alt="User Avatar"
-        src="/api/placeholder/36/36"
-        className="h-9 w-9"
-      />
-      <Box className="flex flex-col flex-grow">
-        <Typography 
-          variant="body2" 
-          className="font-medium leading-tight"
-        >
-          John Doe
-        </Typography>
-        <Typography 
-          variant="caption" 
-          color="text.secondary"
-        >
-          johnDoe@gmail.com
+  const [user,setUser]=React.useState<GetUserDto | null>(null);
+  const action=new UserAction();
+  //--------------
+  const fetchUser = async () => {
+    try {
+      const response = await  action.GetCurrentUser();
+      if(response.Success) {
+        setUser(response.Data as GetUserDto || null);
+      }
+
+    } catch (error) {
+      console.error('Error fetching user:', error);
+    }
+  }
+  const userpicture=user?.picture==null ? user?.firstName.charAt(0) : user?.picture
+  useEffect(()=>{
+    fetchUser();
+  },[user]);
+  if(user !== null){
+
+    return  (
+      <Box className="flex items-center p-6 gap-3">
+        <Avatar
+          alt={userpicture}
+          src="/api/placeholder/36/36"
+          className="h-9 w-9"
+        />
+        <Box className="flex flex-col flex-grow">
+          <Typography 
+            variant="body2" 
+            className="font-medium leading-tight"
+          >
+            {user.username}
+          </Typography>
+          <Typography 
+            variant="caption" 
+            color="text.secondary"
+          >
+             {user.email}
+          </Typography>
+        </Box>
+      </Box>
+    );
+  }
+  else{
+    return(
+      <Box>
+        <Typography variant="body2" color="">
+          Chargement
         </Typography>
       </Box>
-    </Box>
-  );
+    )
+  }
 };
 
 
@@ -69,6 +100,11 @@ const Sidebar: React.FC = () => {
       nom:"Dashboard",
       link:"/",
       icon:(<Dashboard/>),
+    },
+    {
+      nom:"Notifications",
+      link:"/notification",
+      icon:(<NotificationAddSharp/>),
     },
     {
       nom:"Organisation",
@@ -108,7 +144,7 @@ const Sidebar: React.FC = () => {
         
       <List className="w-full h-fit flex flex-col gap-4 items-center justify-start">
         {sidebarElement.map((item: sidebarprops) =>(
-            <ListItem disablePadding>
+            <ListItem key={item.nom} disablePadding>
             <ListItemButton onClick={() => handleredirection(item.link)}>
                 <ListItemIcon>
                 {item.icon}

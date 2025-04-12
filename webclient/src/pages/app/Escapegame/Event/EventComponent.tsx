@@ -98,13 +98,21 @@ const EventComponentTab = () => {
             content: <UpdateEvent onSubmit={handleFormSubmit} data={selectedEvent} />,
         },
     ];
+
+    // récupération des information d'un escapeGame 
     const fetchEscapeGame = async ()  => {
-        const response= await escapeAction.getEscapeGameById(Number.parseInt(id));
-        if(response.Success){
-            setEscapeGame(response.Data as GetEscapeGameDto);
+        try {     
+            const response= await escapeAction.getEscapeGameById(Number.parseInt(id));
+            if(response.Success){
+                setEscapeGame(response.Data as GetEscapeGameDto);
+            }
+        } catch (error) {
+            console.error(error);
         }
       
     }
+
+
     const fetchEventList = async () => {
         const response = await escapeAction.getEventsByEscapeGameId(Number.parseInt(id), page, 10);
         if (response.Success) {

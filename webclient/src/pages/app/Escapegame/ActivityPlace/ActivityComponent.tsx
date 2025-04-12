@@ -1,7 +1,7 @@
 import { Box, Snackbar,Alert, Grid2} from '@mui/material';
 import Item from "@/components/factory/GenericComponent/Item";
 import { useParams } from 'react-router-dom';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { GetActivityPlaceDto, ActivityPlaceColumns } from '@/interfaces/EscapeGameInterface/ActivityPlace/getActivityPlaceDto';
 import GenericTabs from '@/components/factory/GenericComponent/TabGénéric';
 import DetailsComponent from '@/components/factory/GenericComponent/DetailsComponent';
@@ -13,6 +13,7 @@ import { AddActivityPlaceDto } from '@/interfaces/EscapeGameInterface/ActivityPl
 import { UpdateActivityPlaceDto } from '@/interfaces/EscapeGameInterface/ActivityPlace/updateActivityPlaceDto';
 import { GetEscapeGameDto } from '@/interfaces/EscapeGameInterface/EscapeGame/getEscapeGameDto';
 import EscapeGameDetails from '../EscapegameDetails';
+import { EscapeGameAction } from '@/actions/EscapeGameAction';
 
 export const mockActivityPlaces: GetActivityPlaceDto[] = [
   {
@@ -57,6 +58,10 @@ export const mockActivityPlaces: GetActivityPlaceDto[] = [
 const ActivityPlaceComponent = () => {
   const { id } = useParams();
   const tabsRef = useRef<{ changeTab: (index: number) => void } | null>(null);
+  //-----
+  const EscapeAction= new EscapeGameAction();
+  //-----Variable
+  const [page,setPage]=useState(1);
   const [activityPlaces, setActivityPlaces] = useState<GetActivityPlaceDto[]>(mockActivityPlaces);
   const [escapeGame,setEscapegame]= useState<GetEscapeGameDto>();
   const [selectedPlace, setSelectedPlace] = useState<GetActivityPlaceDto | null>(activityPlaces[0]);
@@ -83,6 +88,41 @@ const ActivityPlaceComponent = () => {
   const handleSubmit=(item: AddActivityPlaceDto | UpdateActivityPlaceDto)=> {
     console.log(item);
   }
+  
+  //Call Api ---Méthodes 
+  const fetchEscapegameById = async () =>
+  {
+    try {
+      const response = await EscapeAction.getEscapeGameById(Number.parseInt(id));
+      if (response.Success) {
+        setEscapegame(response.Data as GetEscapeGameDto);
+      }
+    }
+    catch (error) {
+      console.error('Error fetching escape game:', error);
+    }
+  }
+
+  const fetchActivityByEscapeGameId = async () => {
+    try {
+      const response = await EscapeAction.getActivityPlacesByEscapeGame(Number.parseInt(id),page,5);
+      if (response.Success) {
+        setActivityPlaces(response.Data as GetActivityPlaceDto[]);
+      }
+    } 
+    catch (error) {
+      console.error('Error fetching escape game:', error);
+    }
+  }
+
+  useEffect(() => {
+    if (id) {
+      fetchEscapegameById();
+      fetchActivityByEscapeGameId();
+    }
+  },[id])
+
+  //Tableau d'ellement a charger 
   const tabItems = [
     {
       label: "List",

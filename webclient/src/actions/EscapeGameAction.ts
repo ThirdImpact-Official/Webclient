@@ -73,7 +73,13 @@ export class EscapeGameAction {
             .GetRequestType('escapegame/activityplace'+param)
             .execute<GetActivityPlaceDto>();
     }
-
+    public async getActivityPlacesByEscapeGame(id:number,page: number, pageSize: number, activityTypeId: number=null): Promise<ServiceResponse<GetActivityPlaceDto> |PaginationResponse<GetActivityPlaceDto>> {
+        const param: string = activityTypeId === null ? `?page=${page}&pageSize=${pageSize}` 
+                                                      : `?page=${page}&pageSize=${pageSize}&activityTypeId=${activityTypeId}`;
+        return await this.httpClient
+            .GetRequestType('escapegame/activityplace/escapegame/'+id+param)
+            .execute<GetActivityPlaceDto>();
+    }
     public async getActivityPlaceById(id: number): Promise<ServiceResponse<GetActivityPlaceDto> | PaginationResponse<GetActivityPlaceDto>> {
         return await this.httpClient
             .GetRequestType(`escapegame/activityplace/${id}`)

@@ -10,6 +10,7 @@ import AuthLayout from "@/components/app/Layout/AuthLayout";
 import DashboardLayout from "@/components/app/Layout/MainLayout";
 import { Layout } from "@/components/app/Layout/Layout";
 import Organisation from "./app/Organisation";
+import Notification from "./app/Notification";
 import UserOrganisation from "./app/UserOrganisation";
 import EscapeGame from "./app/Escapgame";
 import VerifyEmail from "./app/VerifyEmail";
@@ -33,6 +34,7 @@ const App: React.FC = () => {
           <Route index element={<Dashboard />} />
           <Route path="user" element={<UserAppLayout />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="notification" element={<Notification />} />
           <Route path="organisation" element={<Organisation />} />
           <Route path="organisation/user/:id" element={<UserOrganisation />} />
           <Route path="escapegame/:id" element={<EscapeGame />} />

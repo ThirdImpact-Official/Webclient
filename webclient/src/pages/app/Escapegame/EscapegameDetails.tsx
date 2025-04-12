@@ -57,7 +57,7 @@ const EscapeGameDetails: FC<EscapeGameDetailsProps> = ({
             <Divider className="mt-4 p-4" orientation="horizontal" flexItem />
             { displayButton ? 
                 <Box className="flex flex-row  justify-center items-center gap-4">
-                    <Button onClick={() => onUpdateButton(data)} color='success'> Session </Button>
+                    <Button onClick={() => window.location.href =(`${data.esgId}/session`)} color='success'> Session </Button>
                     <Divider orientation='vertical' flexItem />
                     <Button onClick={() =>window.location.href =(`${data.esgId}/event`)}>Event</Button>
                     <Divider orientation='vertical' flexItem />

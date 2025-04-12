@@ -1,7 +1,8 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Box,
   Pagination,
+  Skeleton,
 } from '@mui/material';
 import AddNewOrganisation from './AddOrganisation';
 
@@ -16,73 +17,11 @@ import GenericTabs, { TabItem } from '@/components/factory/GenericComponent/TabG
 import UpdateOrganisationForm from './UpdateOrganisation';
 
 
-
-
-
-const testObjects: GetOrganisationDto[] = [
-  {
-    orgId: 1,
-    name: 'Test Organisation',
-    email: 'test@example.com',
-    phoneNumber: '1234567890',
-    description: '',
-    address: {
-      adressId: 0,
-      street: '123 Main St',
-      city: 'Anytown',
-      country: 'CA',
-      postalCode: '12345',
-      latitude: 0,
-      longitude: 0
-    }
-  },
-  {
-    orgId: 2,
-    name: 'Another Test Organisation',
-    email: 'another@example.com',
-    phoneNumber: '9876543210',
-    description: '',
-    address: null
-  },
-  {
-    orgId: 3,
-    name: 'Empty Organisation',
-    email: '',
-    description: '',
-    phoneNumber: '',
-    address: null
-  },
-  {
-    orgId: 4,
-    name: 'Invalid Organisation',
-    email: ' invalid email',
-    phoneNumber: ' invalid phone number',
-    description: '',
-    address: {
-      adressId: 0,
-      street: ' invalid street',
-      city: ' invalid city',
-      country: ' invalid state',
-      postalCode: ' invalid zip',
-      latitude: 0,
-      longitude: 0
-    }
-  },
-  {
-    orgId: 5,
-    name: 'Organisation with missing address',
-    email: 'missing@example.com',
-    phoneNumber: '1234567890',
-    address: undefined,
-    description: ''
-  }
-];
-
 const OrganisationComponent = () => {
   // Etat pour la liste des organisations et la page courante
   const tabsRef = useRef<{ changeTab: (index: number) => void } | null>(null);
-  const [organisations, setOrganisations] = useState<GetOrganisationDto[] | null>(testObjects);
-  const [selectedOrganisation, setSelectedOrganisation] = useState<GetOrganisationDto | null>(testObjects[0]);
+  const [organisations, setOrganisations] = useState<GetOrganisationDto[] | null>(null);
+  const [selectedOrganisation, setSelectedOrganisation] = useState<GetOrganisationDto | null>(null);
   const [page, setPage] = useState<number>(1);
 
   const organisationAction = new OrganisationAction();
@@ -115,7 +54,18 @@ const OrganisationComponent = () => {
     goToTab(4)
   };
   
-
+  useEffect(() => {
+    const fetchOrganisations = async () => {
+      try {
+        const response: ServiceResponse<GetOrganisationDto> | PaginationResponse<GetOrganisationDto> = await organisationAction.GetAllOrganisation(page, 5);
+        setOrganisations(Array.isArray(response.Data) ? response.Data : []);
+        setSelectedOrganisation(response.Data[0]);
+      } catch (error) {
+        console.error('Failed to load organisations:', error);
+      }
+    };
+    fetchOrganisations();
+  }, [page]);
   const tab: TabItem[] =[
     {
       label: "Add  Organisation",
@@ -125,20 +75,23 @@ const OrganisationComponent = () => {
     },
     {
       label: "Table",
-      content: <>              <>
-      <OrganisationTable
-          Organisation={organisations}
-          OnDetails={handleOrganisationDetail}
-          OnUpdate={handleOrganisationUpdate}
-          onAddress={handleAddressDetail}
-      />
-      <Pagination
-          page={page}
-          className="float-end"
-          onChange={handlePageChange}
-          count={10}
-      />
-    </></>
+      content: organisations != null ?(
+      <>          
+        <>
+          <OrganisationTable
+              Organisation={organisations}
+              OnDetails={handleOrganisationDetail}
+              OnUpdate={handleOrganisationUpdate}
+              onAddress={handleAddressDetail}
+          />
+          <Pagination
+              page={page}
+              className="float-end"
+              onChange={handlePageChange}
+              count={10}
+          />
+        </>
+    </>):<Skeleton></Skeleton>
     },
     {
       label: "Details",
@@ -158,11 +111,12 @@ const OrganisationComponent = () => {
    
     {
       label: "Adress",
-      content:
-      <>
-         <AddressDetail 
-                  props={selectedOrganisation.address} />
-      </>
+      content: selectedOrganisation != null ? (
+        <>
+          <AddressDetail 
+                    props={selectedOrganisation.address} />
+        </>
+      ): <Skeleton></Skeleton>
     }
   ]
 

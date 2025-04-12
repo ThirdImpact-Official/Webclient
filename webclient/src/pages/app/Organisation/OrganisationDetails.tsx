@@ -1,5 +1,5 @@
 import { GetOrganisationDto } from '@/interfaces/OrganisationInterface/Organisation/getOrganisationDto';
-import { Box, Button, Divider, Typography } from '@mui/material';
+import { Box, Button, Divider, Typography, } from '@mui/material';
 import { FC } from 'react';
 
 
@@ -25,6 +25,10 @@ const OrganisationDetails: FC<OrganisationDetailsProps> = ({ data }) => {
                 <Box className="flex gap-4 justify-between">
                     <Typography variant="h5" className="text-start">Name:</Typography>
                     <Typography variant="body1" className="text-center">{data.name}</Typography>
+                </Box>
+                <Box className="flex gap-4 justify-between">
+                    <Typography variant="h5" className="text-start">Logo:</Typography>
+                    <img src={data.logo} className="h-10 w-10" alt="Logo" />
                 </Box>
                 <Box className="flex gap-4 justify-between">
                     <Typography variant="h5">Email:</Typography>
