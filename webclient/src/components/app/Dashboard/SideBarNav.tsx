@@ -10,7 +10,7 @@ import {
   ListItemIcon,
   ListItemText
 } from '@mui/material';
-import {Comment, BarChart, Dashboard, ExitToApp, Home, HomeWork, BookOnline, NotificationAddSharp } from '@mui/icons-material';
+import {Comment, BarChart, Dashboard, ExitToApp, Home, HomeWork, BookOnline, NotificationAddSharp, PermDeviceInformation } from '@mui/icons-material';
 import { Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { UserAction } from '@/actions/UserAction';
@@ -35,9 +35,13 @@ const AccountUser = () => {
   }
   const userpicture=user?.picture==null ? user?.firstName.charAt(0) : user?.picture
   useEffect(()=>{
-    fetchUser();
+    if(user==null)
+    {
+      fetchUser();
+    }
   },[user]);
-  if(user !== null){
+
+  if(user != null){
 
     return  (
       <Box className="flex items-center p-6 gap-3">
@@ -95,6 +99,11 @@ const Sidebar: React.FC = () => {
       nom:"Admin",
       link:"/organisation",
       icon:(<Home/>),
+    },
+    {
+      nom:"Profils",
+      link:"/profile",
+      icon:(<PermDeviceInformation/>),
     },
     {
       nom:"Dashboard",

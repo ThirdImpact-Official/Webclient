@@ -302,4 +302,24 @@ export class OrganisationAction {
             }
         }
     }
+    public async GetUserOrganisationlst(): Promise<ServiceResponse<GetUserDto> | PaginationResponse<GetUserDto>> {
+        try 
+        {
+            const response = await this._httpClient.GetRequestType("/user").execute<GetUserDto>();   
+
+            if(response.Success)
+            {
+                return response;
+            }
+        }
+        catch(error)
+        {
+            return {
+                Data: null,
+                Success: false,
+                Message: error instanceof Error ? error.message : 'An error occurred',
+                ErrorType: ErrorType.Bad,
+            }
+        }
+    }
 }

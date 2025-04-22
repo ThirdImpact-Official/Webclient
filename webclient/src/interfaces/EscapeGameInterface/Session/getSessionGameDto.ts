@@ -5,8 +5,9 @@ export interface GetSessionGameDto {
     escapeGameId: number;
     date: Date;
     price: number;
-    placeavailable: number;
-    pLacemaximum: number;
+    isReserved: boolean;
+    placeAvailable: number;
+    pLaceMaximum: number;
 }
 
 // Définition correcte des colonnes
@@ -15,6 +16,7 @@ export const Sessioncolumns: Array<{ label: string; accessor: keyof GetSessionGa
     FormUtils.TableMapper("Escape Game ID", "escapeGameId"),
     FormUtils.TableMapper("Date", "date"),
     FormUtils.TableMapper("Price", "price"),
-    FormUtils.TableMapper("Places Available", "placeavailable"),
-    FormUtils.TableMapper("Max Places", "pLacemaximum"),
+    FormUtils.TableMapper("Is Reserved", "isReserved"),
+    FormUtils.TableMapper("Places Available", "placeAvailable"),
+    FormUtils.TableMapper("Max Places", "pLaceMaximum"),
 ];

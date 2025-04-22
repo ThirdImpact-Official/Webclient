@@ -4,6 +4,8 @@ import { HttpClient } from "./httpClient";
 import { GetUserDto } from "@/interfaces/User/GetUserDto";
 import { ErrorType } from "@/enums/RequestType";
 import { LoginCredentials } from "@/interfaces/login/loginCredentials";
+import { LoginDto } from "@/interfaces/Credentials/loginDto";
+import { RegisterDto } from "@/interfaces/Credentials/RegisterDto";
 
 
 
@@ -84,12 +86,12 @@ export class CreadentialAction
      *          be false.
      * @throws {Error} If the request to register the user fails.
      */
-    public async Register(credentials: RequestCredentials): Promise<ServiceResponse<GetUserDto> | PaginationResponse<GetUserDto>> {
+    public async Register(login : RegisterDto): Promise<ServiceResponse<GetUserDto> | PaginationResponse<GetUserDto>> {
         try
         {
             const response = await this._httpClient
                                        .PostRequestType("/register")
-                                       .setData(credentials)
+                                       .setData(login)
                                        .execute<GetUserDto>();
             if(response.Success)
             {

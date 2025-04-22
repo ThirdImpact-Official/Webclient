@@ -2,7 +2,7 @@ import FormUtils from "@/classes/FormUtils";
 
 
 export interface GetUserDto {
-    userId: number;
+    id: number;
     username: string;
     firstName: string;
     lastName: string;
@@ -13,7 +13,7 @@ export interface GetUserDto {
     roleId: number | null;
 }
 export const UserColumns = [
-    FormUtils.TableMapper("ID", "userId"),
+    FormUtils.TableMapper("ID", "id"),
     FormUtils.TableMapper("username", "username"),
     FormUtils.TableMapper("first name", "firstName"),
     FormUtils.TableMapper("last name", "lastName"),

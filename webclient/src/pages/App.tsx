@@ -20,8 +20,8 @@ import Reservation from "./app/Reservation";
 import FAQ from "./app/FAQ";
 import Statistic from "./app/Statistic";
 import Event from "./app/Event";
-
 import ActivityPlacePage from "./app/ActivityPlace";
+import Profile from "@/pages/app/Profile";
 /**
  * Webclient app entry point.
  * @returns 
@@ -35,6 +35,7 @@ const App: React.FC = () => {
           <Route path="user" element={<UserAppLayout />} />
           <Route path="contact" element={<Contact />} />
           <Route path="notification" element={<Notification />} />
+          <Route path="profile" element={<Profile />} />
           <Route path="organisation" element={<Organisation />} />
           <Route path="organisation/user/:id" element={<UserOrganisation />} />
           <Route path="escapegame/:id" element={<EscapeGame />} />

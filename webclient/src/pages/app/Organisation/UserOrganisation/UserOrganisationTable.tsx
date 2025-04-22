@@ -33,8 +33,8 @@ const UserOrganisationTable: React.FC<UserOrganisationTableProps> = ({GetUserDto
             <TableBody>
                    {
                        GetUserDto.map((user) => (
-                           <TableRow key={user.userId}>
-                               <TableCell>{user.userId}</TableCell>
+                           <TableRow key={user.id}>
+                               <TableCell>{user.id}</TableCell>
                                <TableCell>{user.username}</TableCell>
                                <TableCell>{user.firstName}</TableCell>
                                <TableCell>{user.lastName}</TableCell>

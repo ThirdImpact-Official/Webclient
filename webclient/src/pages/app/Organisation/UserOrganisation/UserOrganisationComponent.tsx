@@ -138,7 +138,7 @@ const UserOrganisationComponent = () => {
     const fetchUserOrganisation = async () => {
       try {
         
-        const responseUser = await organisationAction.GetUserOrganisation(Number.parseInt(id, 10));
+        const responseUser = await organisationAction.GetUserOrganisationlst();
         if (responseUser.Success) {
           setUsers(responseUser.Data as GetUserDto[]);
         }
@@ -160,7 +160,7 @@ const UserOrganisationComponent = () => {
   const colt: TabItem[] =[
       {
         label:"Table",
-        content:( 
+        content: users !=null ? ( 
           <>
               <Box className="flex gap-4 justify-start">
                 <ModalComponent
@@ -199,7 +199,7 @@ const UserOrganisationComponent = () => {
                 onUpdate={handleUserUpdate}
             />
             </>
-        )
+        ):<Skeleton width={210} height={118}></Skeleton>
       },
       {
         label:"User details",
