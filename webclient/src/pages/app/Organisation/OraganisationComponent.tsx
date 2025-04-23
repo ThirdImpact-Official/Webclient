@@ -117,6 +117,14 @@ const OrganisationComponent = () => {
                     props={selectedOrganisation.address} />
         </>
       ): <Skeleton></Skeleton>
+    },
+    {
+      label:"Admin Demand List",
+      content:<></>
+    },
+    {
+      label:"Admin Demand Selected",
+      content:<></>
     }
   ]
 

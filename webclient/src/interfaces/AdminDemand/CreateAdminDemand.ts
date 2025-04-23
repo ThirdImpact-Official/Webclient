@@ -1,4 +1,4 @@
-export interface CreateAdminDemand {
+export interface CreateAdminDemandDto {
     userid: number;
     title:string;
     content:string;
