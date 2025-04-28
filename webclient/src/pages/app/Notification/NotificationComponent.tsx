@@ -1,8 +1,8 @@
 import { useEffect,useRef,useState } from "react";
 import { NotificationAction } from "@/actions/NotificationAction";
 import { AnnonceService } from "@/actions/AnnonceAction";
-import { AnnonceColumns, GetAnnonceDto } from "@/interfaces/NotificationInterface/Annonce/getAnnonceDto";
-import { Box, Skeleton, Tabs } from "@mui/material";
+import { AnnonceColumns, GetAnnonceDto,AnnonceColumnsTab } from "@/interfaces/NotificationInterface/Annonce/getAnnonceDto";
+import { Box, Skeleton, Tabs, Snackbar, Alert, Card, CardContent, CardHeader, Typography } from '@mui/material';
 import GenericTabs, { TabItem } from "@/components/factory/GenericComponent/TabGénéric";
 import { NotificationColumns } from "@/interfaces/NotificationInterface/Notification/getNotificationDto";
 import { AddAnnonceDto } from "@/interfaces/NotificationInterface/Annonce/addAnnonceDto";
@@ -12,6 +12,9 @@ import Anoncetabs from "./Annonce/AnnonceTableau";
 import CreateAnnonce from './Annonce/CreateAnnonce';
 import UpdateAnnonce from './Annonce/UpdateAnnonce';
 import { idID } from "@mui/material/locale";
+import { Details } from "@mui/icons-material";
+import DetailsComponent from '@/components/factory/GenericComponent/DetailsComponent';
+
 /*
     Notification Component 
     ce composant Contient la liste des notifications 
@@ -42,6 +45,7 @@ const NotificationComponent = () => {
         try {
             const response= await annService.getAllAnnonces(page,5);
             if(response.Success) {
+                console.log("retrieve annonce",response.Data);
                 setAnnonce(response.Data as GetAnnonceDto []);
                 
             } 
@@ -62,12 +66,15 @@ const NotificationComponent = () => {
     }
     const handleCreatSubmit = async (data: AddAnnonceDto) => {
         if(data === null || data === undefined) {
+            
             setSnackbarMessage(" Unable to submit Successfully");
             setSnackbarOpen(true);
+            console.log(data);
             return;
         }
         else{
             const response= await annService.addAnnonce(data);
+            console.log(response);
             if(response.Success) {
                 setSnackbarMessage("");
                 setSnackbarOpen(true);
@@ -78,6 +85,9 @@ const NotificationComponent = () => {
             }
         }
     }
+    const handleCloseSnackbar = () => {
+     setSnackbarOpen(false);
+   }
     const handleonDetails = (data: GetAnnonceDto) =>{
         setSelectAnnonce(data);
 
@@ -94,7 +104,7 @@ const NotificationComponent = () => {
         else{
             const response= await annService.updateAnnonce(data);
             if(response.Success) {
-                setSnackbarMessage("");
+                setSnackbarMessage("sucessfully posted");
                 setSnackbarOpen(true);
             }
             else {
@@ -117,26 +127,58 @@ const NotificationComponent = () => {
             label: "Annonce",
             content: annonce != null ? (
             <>
-                <Anoncetabs data={annonce} columns={annoncecolumns} onDetails={setSelectAnnonce} onUpdate={setSelectAnnonce} />
+                <Card elevation={3}>
+                    <CardHeader
+                        title="Annonce"
+                        action={
+                            <>
+                            <Typography variant="h4">Annonce</Typography>
+                            </>
+                        }
+                     />
+                    <CardContent>
+                        <Anoncetabs 
+                            data={annonce}
+                            columns={AnnonceColumnsTab}
+                            onDetails={setSelectAnnonce}
+                            onUpdate={setSelectAnnonce} />
+                    </CardContent>
+                </Card>
             </>):<Skeleton></Skeleton>,
         },
         {
-            label: "Notification",
+            label: "Details",
             content: (
-            <></>),
+            <>
+                <Card elevation={3} >
+                     <CardContent>
+                        <DetailsComponent
+                            data={selectAnnonce} 
+                            columns={annoncecolumns} />
+                     </CardContent>
+                </Card>
+            </>),
         },
         {
             label: "Create Annonce",
             content:  (
             <>
-                <CreateAnnonce onSubmit={handleCreatSubmit} />
+                <Card>
+                    <CardContent> 
+                        <CreateAnnonce onSubmit={handleCreatSubmit} />
+                    </CardContent>
+                </Card>
             </>),
         },
         {
             label: "Update Annonce",
             content:selectAnnonce !=null ? ( 
             <>
-                <UpdateAnnonce onSubmit={handleUpdateSubmit} data={selectAnnonce} />
+                <Card>
+                    <CardContent>
+                        <UpdateAnnonce onSubmit={handleUpdateSubmit} data={selectAnnonce} />
+                    </CardContent>
+                </Card>
             </>) : <Skeleton></Skeleton>
         },
        
@@ -146,6 +188,14 @@ const NotificationComponent = () => {
             <Box>
                 <GenericTabs tabs={tabs} ref={tabsRef} ChangeTab={goToTab}   />
             </Box>
+            <Snackbar
+                       open={snackbarOpen}
+                       autoHideDuration={30}
+                       onClose={()=> handleCloseSnackbar}>
+                          <Alert onClose={handleCloseSnackbar} security="success">
+                              {snackbarMessage}
+                          </Alert>
+            </Snackbar>  
         </>
     )
 }

@@ -10,7 +10,7 @@ export class AnnonceService {
 
     constructor() {
         this.httpClient = new HttpClient();
-        this.httpClient.setBaseUrl('https://localhost:7159/notification/annonce'); // Remplacez par l'URL de votre API
+        this.httpClient.setBaseUrl('http://localhost:7159/notification/annonce'); // Remplacez par l'URL de votre API
     }
 
     // Méthodes pour les Annonces
@@ -29,14 +29,14 @@ export class AnnonceService {
 
     public async addAnnonce(annonce: AddAnnonceDto): Promise<ServiceResponse<GetAnnonceDto> | PaginationResponse<GetAnnonceDto>> {
         return await this.httpClient
-            .PostRequestType('')
+            .PostRequestType("")
             .setData(annonce)
             .execute<GetAnnonceDto>();
     }
 
     public async updateAnnonce(annonce: UpdateAnnonceDto): Promise<ServiceResponse<GetAnnonceDto> | PaginationResponse<GetAnnonceDto>> {
         return await this.httpClient
-            .PutRequestType('')
+            .PutRequestType("")
             .setData(annonce)
             .execute<GetAnnonceDto>();
     }

@@ -1,7 +1,8 @@
 import { GetPostForumDto } from "@/interfaces/PublicationInterface/Post/getPostForumDto"
-import { Box, Typography } from "@mui/material"
+import { Box, Typography,Container,Grid2 } from "@mui/material"
+
 import PostItem from "./PostItem"
-import { useState } from "react"
+import React, { useState } from "react"
 interface PostlistProps{
     data: GetPostForumDto[]
     OnDetails?: (org: GetPostForumDto) => void
@@ -20,14 +21,16 @@ const PostList: React.FC<{ data: GetPostForumDto[]; onDetails?: (post: GetPostFo
     };
 
     return (
-        <Box>
+        <Container>
+
             <Typography variant="h6">Réponses</Typography>
             <Box className="space-y-4">
                 {data.map((post) => (
-                    <PostItem key={post.PostId} dataitem={post} OnDetails={handlePostDetails} />
+                     
+                        <PostItem key={post.id} dataitem={post} OnDetails={handlePostDetails} />
                 ))}
             </Box>
-        </Box>
+        </Container>
     );
 };
 export default PostList;

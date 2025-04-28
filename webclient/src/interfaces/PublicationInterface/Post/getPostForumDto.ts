@@ -1,5 +1,5 @@
 export interface GetPostForumDto {
-    PostId: number;
+    id: number;
     content: string;
     userId: number;
     forumId: number | null;

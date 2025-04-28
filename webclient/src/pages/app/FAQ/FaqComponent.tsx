@@ -25,78 +25,78 @@ const FaqComponent = () => {
     //-------Api-------
     const ForAction= new ForumAction();
     const postAction= new PostAction();
-    //-------use a snackbar 
-    const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
-    const [snackbarMessage, setSnackbarMessage] = useState<string>("");
+    
+    /**
+     * Navigates to the specified tab index.
+     * Utilizes the tabsRef to change the current tab.
+     * @param index The index of the tab to navigate to.
+    */
 
-/**
- * Navigates to the specified tab index.
- * Utilizes the tabsRef to change the current tab.
- * @param index The index of the tab to navigate to.
- */
-
-    const goToTab = (index: number) => {
-        if (tabsRef.current) {
-          tabsRef.current.changeTab(index);
-        }
-
+   const goToTab = (index: number) => {
+     if (tabsRef.current) {
+       tabsRef.current.changeTab(index);
+      }
+      
     };
-//-----------Handlres---
-     const handlePageChange = async (event: React.ChangeEvent<unknown>, value: number) => {
-        try 
-        {
-            setPage(value);
-            const response = await ForAction.getAllForums(value, 5);
-            setServerData(Array.isArray(response.Data) ? response.Data : []);
-        } catch (error) 
-        {
-            console.error('Failed to load organisations:', error);
-        }
-      };
-
+    //-----------Handlres---
+    const handlePageChange = async (event: React.ChangeEvent<unknown>, value: number) => {
+      try 
+      {
+        setPage(value);
+        const response = await ForAction.getAllForums(value, 5);
+        setServerData(Array.isArray(response.Data) ? response.Data : []);
+      } catch (error) 
+      {
+        console.error('Failed to load organisations:', error);
+      }
+    };
+    
     /**
      * Handles the selection of a forum in the forum list.
      * Sets the selected forum in the state and displays a success message.
      * Then, it navigates to the second tab, where the selected forum is displayed.
      * @param org The selected forum.
-     */
-    const handeDetails=(org: GetForumDto)=> {
-      setForumData(org);
-      setSnackbarMessage("Forum Selected");
-      setSnackbarOpen(true);
-      goToTab(1);
+    */
+   const handeDetails=(org: GetForumDto)=> {
+     setForumData(org);
+     setSnackbarMessage("Forum Selected");
+     setSnackbarOpen(true);
+     goToTab(1);
     }
-
+    
     /**
      * Handles the submission of a new or updated forum.
      * If the submission is successful, it will display a success message.
      * If the submission fails, it will display an error message.
      * @param data The data to be submitted, either a new forum or an updated forum.
-     */
-    const isUpdateForumDto = (data: any): data is UpdateForumDto => {
-      return data && typeof data === "object" && "id" in data;
-  };
-
-
+    */
+   const isUpdateForumDto = (data: any): data is UpdateForumDto => {
+     return data && typeof data === "object" && "id" in data;
+    };
+    
+    
     const onSubmit = (data: AddForumDto | UpdateForumDto) =>
-    {
-      if(data === null || data === undefined) {
-        setSnackbarMessage(" Unable to submit Successfully");
-        setSnackbarOpen(true);
-        return;
-      }
-      if(isUpdateForumDto(data)){
-        console.log("Data submitted:", data);
-      }
-      else{
+      {
+        if(data === null || data === undefined) {
+          setSnackbarMessage(" Unable to submit Successfully");
+          setSnackbarOpen(true);
+          return;
+        }
+        if(isUpdateForumDto(data)){
           console.log("Data submitted:", data);
+        }
+        else{
+          console.log("Data submitted:", data);
+        }
       }
-    }
-    //------------Handlers-------
-    /**
-     * Closes the snackbar.
-     */
-    const handleCloseSnackbar = () => {
+      //------------Handlers-------
+      /**
+       * Closes the snackbar.
+      */
+     //-------use a snackbar 
+     const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+     const [snackbarMessage, setSnackbarMessage] = useState<string>("");
+     const handleCloseSnackbar = () => {
       setSnackbarOpen(false);
     }
     /*

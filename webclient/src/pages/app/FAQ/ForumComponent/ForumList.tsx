@@ -1,5 +1,5 @@
 import { GetForumDto } from "@/interfaces/PublicationInterface/Forum/getForumDto";
-import { Divider, Box, Typography, Button, Pagination, TableContainer, TableRow, TableCell,Paper, Table} from '@mui/material';
+import { Divider, Box, Typography, Button, Pagination, TableContainer, TableRow, TableCell,Paper, Table,TableBody} from '@mui/material';
 import { DataGrid, GridEventListener } from '@mui/x-data-grid';
 import FormatUtils from "@/classes/FormUtils";
 import ForumTabItem from "./ForumTabItem"; 
@@ -24,30 +24,30 @@ const ForumTabList:React.FC<ForumTabListProps>=({data,OnDetails})=> {
           
             <TableContainer >
                 <Table>
-                    {
-                        data.map((item)=>{
-                            return(
-                                <TableRow>
-                                    <TableCell>
-                                        <ForumTabItem key={item.id} 
-                                        dataitem={item} 
-                                        children={
-                                            <Box>
-                                                <Button onClick={() => handledetails(item)}>
-                                                    View
-                                                </Button>
-                                            </Box>
-                                        }/>
-                                    </TableCell> 
-                            </TableRow>
-                            )
-                        })
-                    }
+                    <TableBody>
+                        {
+                            data.map((item)=>{
+                                return(
+                                    <TableRow key={item.id.toString()}>
+                                        <TableCell  key={item.id.toString()}>
+                                            <ForumTabItem 
+                                            dataitem={item} 
+                                            children={
+                                                <Box>
+                                                    <Button onClick={() => handledetails(item)}>
+                                                        View
+                                                    </Button>
+                                                </Box>
+                                            }/>
+                                        </TableCell> 
+                                </TableRow>
+                                )
+                            })
+                        }
+                    </TableBody>
                 </Table>
             </TableContainer>
-            <Box>
-                <Pagination />
-            </Box>
+          
         </Box>
         </>
     );

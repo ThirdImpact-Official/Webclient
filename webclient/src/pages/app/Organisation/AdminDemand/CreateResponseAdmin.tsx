@@ -1,23 +1,29 @@
 import { useState ,FC } from "react";
 import { Box,Typography,TextField,Button } from "@mui/material";
 import { ResponseAdminDemandDto } from '../../../../interfaces/AdminDemand/ResponseAdminDemand';
+import { on } from "events";
 
 
 interface AddResponseAdminProps
 {
-    adminId: number;
+    data: ResponseAdminDemandDto;
+    onSubmit: (data: ResponseAdminDemandDto) => void
 }
 
-const AddResponseAdmin: FC<AddResponseAdminProps> = ({ adminId }) => {
+const AddResponseAdmin: FC<AddResponseAdminProps> = (props) => {
     const [responseDetails, setResponseDetails] = useState<ResponseAdminDemandDto>({
-        id: adminId,
-        motifRefus: "",
-        commentairesAdmin: "",
+        id: props.data.id,
+        motifRefus: props.data.motifRefus,
+        commentairesAdmin: props.data.commentairesAdmin,
     });
-
+    const handleSubmit = (event: React.FormEvent, data: ResponseAdminDemandDto) => {
+        event.preventDefault();
+        props.onSubmit(data);
+        // Your form submission logic here
+      };
     return (
         <form>
-            <Box className="text-center justify-center">
+            <Box className="text-center justify-center space-y-4">
                 <Box>
                     <Typography variant="h3">Réponse Admin</Typography>
                 </Box>
@@ -42,8 +48,12 @@ const AddResponseAdmin: FC<AddResponseAdminProps> = ({ adminId }) => {
                     />
                 </Box>
             </Box>
-            <Box>
-                <Button type="submit" variant="contained" color="primary">Submit</Button>
+            <Box className="flex items-center justify-center m-4">
+                <Button
+                    onClick={(event) => handleSubmit(event, responseDetails)} 
+                    type="submit"
+                    variant="contained" 
+                    color="primary">Submit</Button>
             </Box>
         </form>
     );

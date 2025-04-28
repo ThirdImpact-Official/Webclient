@@ -14,30 +14,36 @@ const CreateAdminResponse =() => {
     return(
         <>
             <form>
-                <Box className="text-center justify-center">
+                <Box className="text-center items-center justify-center space-y-4">
                     <Box>
                         <Typography 
+                        
                             variant="h3" 
                             color="">Réponse Admin</Typography>
                     </Box>
                     <Box>
                         <TextField 
+                            placeholder="Titre"
                             value={Createresponse.title} 
                             name="Titre"/>
                     </Box>
                     <Box>
                         <TextField  
+                            variant="outlined"
+                            placeholder="Content"
                             value={Createresponse.content} 
                             name="Content" />
                     </Box>
                     <Box>
                         <TextField 
+                            placeholder="Contact Number"
                             value={Createresponse.contactNumber} 
                             name="Contact Number" />
                     </Box>
                 </Box>
-                <Box>
-                    <Button>Submit</Button>
+                <Box className="flex items-center justify-center m-2 p-2">
+                    <Button variant="contained"
+                    >Submit</Button>
                 </Box>
             </form>
         </>

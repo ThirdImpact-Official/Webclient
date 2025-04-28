@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, MenuItem, Select, InputLabel, FormControl, Typography } from '@mui/material';
+import { TextField, Button, Box, MenuItem, Select, InputLabel, FormControl, Typography,Container } from '@mui/material';
 import { AddPostForumDto } from '@/interfaces/PublicationInterface/Post/addPostForumDto';
 
+
 interface AddPostFormProps {
+    forumId?: number;
+    postParentId?: number;
     onSubmit: (data: AddPostForumDto) => void;
 }
 
@@ -25,6 +28,7 @@ const AddPostForm: React.FC<AddPostFormProps> = ({ onSubmit }) => {
     };
 
     return (
+        <Container className='flex flex-col items-center justify-center text-center space-y-10'>
         <Box sx={{ maxWidth: 600, margin: 'auto' }}>
             <Typography variant="h5" gutterBottom>
                 Ajouter un post
@@ -35,7 +39,7 @@ const AddPostForm: React.FC<AddPostFormProps> = ({ onSubmit }) => {
                     label="Contenu du post"
                     fullWidth
                     multiline
-                    rows={4}
+                    rows={8}
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     required
@@ -48,7 +52,8 @@ const AddPostForm: React.FC<AddPostFormProps> = ({ onSubmit }) => {
                     Soumettre
                 </Button>
             </form>
-        </Box>
+        </Box> <Box sx={{ maxWidth: 600,}}></Box>
+        </Container>
     );
 };
 

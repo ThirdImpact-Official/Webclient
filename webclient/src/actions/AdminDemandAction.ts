@@ -10,7 +10,7 @@ export class AdminDemandAction{
 
     constructor() {
         this.HttpClient = new HttpClient();
-        this.HttpClient.setBaseUrl('http://localhost:7159/escape-game/demand');
+        this.HttpClient.setBaseUrl('http://localhost:7159/escape-game/demand/');
     }
     /**
      * 
@@ -19,7 +19,7 @@ export class AdminDemandAction{
      */
     public async GetDemandById(id: number): Promise<ServiceResponse<GetAdminDemandDto> | PaginationResponse<GetAdminDemandDto>> {
         return await this.HttpClient
-            .GetRequestType(`demand/${id}`)
+            .GetRequestType(`${id}`)
             .execute<GetAdminDemandDto>();
     }
     /** 
@@ -29,7 +29,7 @@ export class AdminDemandAction{
         @param pageSize
         @returns  
      */
-    public async GetAdminDemandPave(page:number, pageSize: number) : Promise<ServiceResponse<GetAdminDemandDto> | PaginationResponse<GetAdminDemandDto>> {
+    public async GetAdminDemandPage(page:number, pageSize: number) : Promise<ServiceResponse<GetAdminDemandDto> | PaginationResponse<GetAdminDemandDto>> {
         return this.HttpClient
             .GetRequestType("?page="+page+"&pageSize="+pageSize)
             .execute<GetAdminDemandDto>();
@@ -72,7 +72,8 @@ export class AdminDemandAction{
      */
     public async ValidDemand(demandresponse: ResponseAdminDemandDto): Promise<ServiceResponse<GetAdminDemandDto> | PaginationResponse<GetAdminDemandDto>> {
         return this.HttpClient
-            .PutRequestType("valided/").setData(demandresponse)
+            .PutRequestType("validated")
+            .setData(demandresponse)
             .execute<GetAdminDemandDto>();
     }
     /**
@@ -82,7 +83,8 @@ export class AdminDemandAction{
      */
     public async RefuseDemand(demandresponse: ResponseAdminDemandDto): Promise<ServiceResponse<GetAdminDemandDto> | PaginationResponse<GetAdminDemandDto>> {
         return this.HttpClient
-            .PutRequestType("refused").setData(demandresponse)
+            .PutRequestType("refused")
+            .setData(demandresponse)
             .execute<GetAdminDemandDto>();
     }
 

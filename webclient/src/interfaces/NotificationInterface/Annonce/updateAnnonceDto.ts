@@ -1,4 +1,4 @@
-export interface UpdateAnnonceDto extends UpdateDto {
+export interface UpdateAnnonceDto  {
     id: number;
     name: string;
     description: string;

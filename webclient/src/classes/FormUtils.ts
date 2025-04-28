@@ -95,6 +95,13 @@ import { GetPriceDto } from "@/interfaces/EscapeGameInterface/Price/getPriceDto"
   {
     return {label: labelName, accessor: accessorName };
   }
+  public static FormatDate(dateString: string | null | undefined):string
+  {
+    if (!dateString) return 'Date inconnue';
+
+    const date = new Date(dateString);
+    return isNaN(date.getTime()) ? 'Date inconnue' : new Intl.DateTimeFormat('fr-FR').format(date);
+  }
 }
 
 

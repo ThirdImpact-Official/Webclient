@@ -1,8 +1,9 @@
 import { GetPostForumDto } from "@/interfaces/PublicationInterface/Post/getPostForumDto"
 import { Box, Typography } from "@mui/material"
-import PostItem from "./PostItem"
+import PostItem from "./SubPostItem"
 import { useState } from "react"
-interface PostlistProps{
+import SubPostItem from "./SubPostItem"
+interface SubPostlistProps{
     data: GetPostForumDto[]
     OnDetails?: (org: GetPostForumDto) => void
 }
@@ -14,7 +15,7 @@ interface PostlistProps{
  * 
  * @returns Un composant React affichant une liste de posts
  */
-const PostList: React.FC<{ data: GetPostForumDto[]; onDetails?: (post: GetPostForumDto) => void }> = ({ data, onDetails }) => {
+const SubPostList: React.FC<{ data: GetPostForumDto[]; onDetails?: (post: GetPostForumDto) => void }> = ({ data, onDetails }) => {
     const handlePostDetails = (post: GetPostForumDto) => {
         onDetails?.(post);
     };
@@ -22,12 +23,12 @@ const PostList: React.FC<{ data: GetPostForumDto[]; onDetails?: (post: GetPostFo
     return (
         <Box>
             <Typography variant="h6">Réponses</Typography>
-            <Box className="space-y-4">
+            <Box className="space-y-4 space-x-4">
                 {data.map((post) => (
-                    <PostItem key={post.PostId} dataitem={post} OnDetails={handlePostDetails} />
+                    <SubPostItem key={post.content} dataitem={post} OnDetails={handlePostDetails} />
                 ))}
             </Box>
         </Box>
     );
 };
-export default PostList;
+export default SubPostList;

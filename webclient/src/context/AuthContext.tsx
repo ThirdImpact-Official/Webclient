@@ -1,12 +1,16 @@
 import React , { createContext, useContext, useState,useEffect, FC } from "react";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { ServiceResponse } from "@/interfaces/ServiceResponse";
-import { error } from "console";
+import { log } from "console";
+import { AuthResponse } from "@/interfaces/User/Authresponse";
+import { CreadentialAction } from '../actions/CreadentialAction';
+import Login from '../pages/auth/login/Login';
+
 
 
 interface LoginCredentials 
 {
-        username: string;
+        emailAdress: string;
         password: string;
 }
 
@@ -45,9 +49,13 @@ interface AuthProviderProps {
  * </AuthProvider>
  */
 export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-    const apiUrl = 'http://localhost:8080';
-
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(()=>{
+        const storedAuth =localStorage.getItem("isAuthenticated");
+        console.log("value ", storedAuth);
+        return storedAuth==="true";
+    });
+    const apiUrl = 'http://localhost:7159/escape-game';
+    const action=new CreadentialAction();
 
     /**
      * Logs in to the server with the given credentials.
@@ -59,10 +67,22 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
      */
     const login = async (credentials: LoginCredentials) => {
         try {
-            await axios.post(`${apiUrl}/login`, credentials, {
-                withCredentials: true,
-            });
-            setIsAuthenticated(true);
+            const respons  = await action.Login(credentials);
+            console.log(" data from login :");
+            console.log(respons.Success);
+            if(respons.Success)
+            {
+                console.log(respons.Data)
+                
+                persistentAutentication(true);
+                setIsAuthenticated(true);
+            }
+            else
+            {
+                persistentAutentication(false);
+                setIsAuthenticated(false);
+            }
+            
         } catch (error) {
             throw new Error(error.response.message);
         }
@@ -76,11 +96,13 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
      */
     const logout = async () => {
         try {
-           const response = await axios.post(`${apiUrl}/logout`, {}, { withCredentials: true });
-           if(!response.data.success)
+           const response = await action.Logout();
+           if(!response.Success)
            {
-                throw new error('Logout failed');
+                throw new Error('Logout failed');
            }
+           //remove authnetication
+           RemoveAuth();
            setIsAuthenticated(false);
         } catch (error) {
             throw new Error(error.response?.message || 'Logout failed');
@@ -95,25 +117,41 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
      */
     const checkAuth = async () => {
         try {
-            const response = await axios.get<ServiceResponse<string>>(`${apiUrl}/checkauth`, {
-                withCredentials: true,
-            });
- 
-            setIsAuthenticated(response.data.success || false);
+            const response = await action.Checkauth();
+            if(response.Success) {
+                console.log(response.Success);
+                if(response.Success != isAuthenticated)
+                {
+                    setIsAuthenticated(response.Success);
+                }
+                else
+                {
+                    setIsAuthenticated(true);
+                }
+            }
+            else {
+                setIsAuthenticated(false);
+                logout();
+            }
 
         } catch (error) {
             setIsAuthenticated(false);
-            throw new Error(error.response.message);
+            throw new Error(error.response?.Message);
         }
-    };
+    }
     useEffect(() => {
         axios.defaults.withCredentials = true;
     }, []);
-    
+    // vérifie a interval régulier que l'utilisateur est connecter 
     useEffect(()=> 
     {
+        const interval = setInterval(()=>{
             checkAuth();
-    });
+
+        },5*60*1000);
+
+        return () =>clearInterval(interval);
+    },[]);
 
     useEffect(() => {
         const interceptor = axios.interceptors.response.use(
@@ -133,6 +171,18 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
         login,
         logout,
     };
+
+    function persistentAutentication(valuetoStored:boolean){
+        localStorage.setItem("isAuthenticated",valuetoStored.toString());
+
+        setIsAuthenticated(valuetoStored);
+        console.log("from persistence methodes "+isAuthenticated);
+    }
+    function RemoveAuth()
+    {
+        localStorage.removeItem("isAuthenticated");
+        setIsAuthenticated(false);
+    }
 
     return (
         <AuthContext.Provider value={value}>
@@ -161,4 +211,4 @@ export const useAuth = (): AuthContextType =>{
         throw new Error('useAuth must be used within a AuthProvider');
     }
     return context;
-} 
+}

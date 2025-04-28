@@ -1,5 +1,5 @@
 import ModalComponent from "@/components/factory/GenericComponent/Modal";
-import { Box, Button, Skeleton,Typography,MenuItem,Select,FormControl } from "@mui/material";
+import { Box, Button, Skeleton, Typography, MenuItem, Select, FormControl, Paper, Container, Grid2, Card, CardContent, InputLabel } from '@mui/material';
 import { useEffect, useRef, useState } from "react";
 import UserOrganisationTable from "./UserOrganisationTable";
 import UserOrganisationDetails from "./UserOrganisationDetails";
@@ -13,71 +13,11 @@ import AddUserOrganisation from "./AddUserOrganisation";
 import GenericTabs, { TabItem } from "@/components/factory/GenericComponent/TabGénéric";
 import { Console } from "console";
 import { ServiceResponse } from "@/interfaces/ServiceResponse";
+import Item from '@/components/factory/GenericComponent/Item';
 
 
 
-const mockUsers: GetUserDto[] = [
-  {
-    userId: 1,
-    username: 'johnDoe',
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john.doe@example.com',
-    picture: 'https://example.com/john-doe.jpg',
-    emailVerified: true,
-    reportCount: 0,
-    roleId: 1
-  },
-  {
-    userId: 2,
-    username: 'janeDoe',
-    firstName: 'Jane',
-    lastName: 'Doe',
-    email: 'jane.doe@example.com',
-    picture: 'https://example.com/jane-doe.jpg',
-    emailVerified: false,
-    reportCount: 2,
-    roleId: 2
-  },
-  {
-    userId: 3,
-    username: 'bobSmith',
-    firstName: 'Bob',
-    lastName: 'Smith',
-    email: 'bob.smith@example.com',
-    picture: 'https://example.com/bob-smith.jpg',
-    emailVerified: true,
-    reportCount: 1,
-    roleId: 1
-  },
-  {
-    userId: 4,
-    username: 'aliceJohnson',
-    firstName: 'Alice',
-    lastName: 'Johnson',
-    email: 'alice.johnson@example.com',
-    picture: 'https://example.com/alice-johnson.jpg',
-    emailVerified: false,
-    reportCount: 0,
-    roleId: null
-  }
-];
-const selOrganisation = {
-  orgId: 1,
-  name: 'Test Organisation',
-  email: 'test@example.com',
-  phoneNumber: '1234567890',
-  description: '',
-  address: {
-    adressId: 0,
-    street: '123 Main St',
-    city: 'Anytown',
-    country: 'CA',
-    postalCode: '12345',
-    latitude: 0,
-    longitude: 0
-  }
-}
+
 const UserOrganisationComponent = () => {
   const { id } = useParams<{ id: string }>();
   const tabsRef = useRef<{ changeTab: (index: number) => void } | null>(null);
@@ -86,9 +26,9 @@ const UserOrganisationComponent = () => {
         tabsRef.current.changeTab(index);
       }
   };
-  const [selectedOrganisation, setSelectedOrganisation] = useState<GetOrganisationDto >();
-  const [users, setUsers] = useState<GetUserDto[]>(new Array<GetUserDto>());
-  const [selectedUser, setSelectedUser] = useState<GetUserDto | null>(mockUsers[0]);
+  const [selectedOrganisation, setSelectedOrganisation] = useState<GetOrganisationDto|null>(null);
+  const [users, setUsers] = useState<GetUserDto[] |null>(new Array<GetUserDto>());
+  const [selectedUser, setSelectedUser] = useState<GetUserDto | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleUserDetails = (user: GetUserDto) => {
@@ -161,64 +101,75 @@ const UserOrganisationComponent = () => {
       {
         label:"Table",
         content: users !=null ? ( 
-          <>
-              <Box className="flex gap-4 justify-start">
-                <ModalComponent
-                    children={
-                      <AddUserOrganisation 
-                          organisationId={selectedOrganisation?.orgId as number} />
-                    }
-                    ButtonTitle="Add User"
-                    Description="Add a user to an organisation"
-                    Title="Add User"/>
-              </Box>
-              <Box className="flex gap-4 justify-end">
-                <Typography variant="h5">Filtre</Typography>
-                <FormControl sx={{ m: 1 }} variant="standard">
-                  <Select>
-                    <MenuItem>A</MenuItem>
-                    <MenuItem>B</MenuItem>
-                  </Select>
-                </FormControl>
-                <FormControl sx={{ m: 1 }} variant="standard">
-                  <Select>
-                    <MenuItem>A</MenuItem>
-                    <MenuItem>B</MenuItem>
-                  </Select>
-                </FormControl>
-                <FormControl sx={{ m: 1 }} variant="standard">
-                  <Select>
-                    <MenuItem>A</MenuItem>
-                    <MenuItem>B</MenuItem>
-                  </Select>
-                </FormControl>
-                </Box>
-            <UserOrganisationTable
-                GetUserDto={users}
-                onDetails={handleUserDetails}
-                onUpdate={handleUserUpdate}
-            />
-            </>
+          <Card  sx={{ p: 3}}>
+            <CardContent>
+              <Grid2 container>
+                <Grid2  className="flex gap-4 justify-start p-4">
+                  <ModalComponent
+                      children={
+                        <AddUserOrganisation 
+                            organisationId={selectedOrganisation?.orgId as number} />
+                      }
+                      ButtonTitle="Add User"
+                      Description="Add a user to an organisation"
+                      Title="Add User"/>
+                </Grid2>
+                <Grid2  className="flex flex-end gap-4 float-end justify-end items-end">
+                  <Typography variant="h5">Filtre</Typography>
+                  <FormControl size="small" sx={{ minWidth: 123 }} variant="standard">
+                    <InputLabel>Activity</InputLabel>
+                    <Select>
+                      <MenuItem>All</MenuItem>
+                      <MenuItem value="active">Active</MenuItem>
+                      <MenuItem value="inactive">inActive</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid2>
+              <Box>
+                <UserOrganisationTable
+                    GetUserDto={users}
+                    onDetails={handleUserDetails}
+                    onUpdate={handleUserUpdate}
+                />
+              </Box>  
+              </Grid2>
+            </CardContent>
+            </Card>
         ):<Skeleton width={210} height={118}></Skeleton>
       },
       {
         label:"User details",
-        content:(
-          <>
-          <UserOrganisationDetails 
-              data={selectedUser} />
-          <Button 
-              onClick={handleGoBackToList}>Back to List</Button>
-        </>
+        content:( selectedUser !=null ?
+          <Card >
+            <CardContent>
+              <Grid2 className="">
+                <Grid2>
+                    <UserOrganisationDetails 
+                        data={selectedUser} />
+                    <Button 
+                        onClick={handleGoBackToList}>Back to List</Button>
+                </Grid2>
+            </Grid2>
+            </CardContent>
+          </Card>
+         :<Skeleton width={0} height={0} />
         )
       },
       {
         label:"Delete",
-        content:(
-          <>
-            <RemoveFromOrganisation organisationId={selectedOrganisation?.orgId} userId={selectedUser.userId} />
-              <Button onClick={handleGoBackToList}>Back to List</Button>
-          </>
+        content:( selectedUser !=null ?
+          <Card >
+            <CardContent>
+              <Grid2>
+                <Grid2>
+                  <RemoveFromOrganisation organisationId={selectedOrganisation?.orgId} userId={selectedUser.id} />
+                    <Button onClick={handleGoBackToList}>Back to List</Button>
+                </Grid2>
+            </Grid2>
+            </CardContent>
+          </Card>
+        :
+        <Skeleton width={0} height={0}/>
         )
       }
 
@@ -226,37 +177,43 @@ const UserOrganisationComponent = () => {
 
       
         return (
-          <Box display="flex" flex={4}>
-            <Box flex={1} className="bg-white rounded-md p-10 mx-4">
-              {isLoading ? (
-                
-                <Skeleton 
-                  width={210}
-                  height={118}/>
-              ): (
-                <OrganisationDetails 
-                    data={selectedOrganisation} />
-              )}
-            </Box>
-            <Box flexGrow={1}>
-            {
-              isLoading ? (
-                <Skeleton
-                width={210}
-                height={118} />
-              ): (
-            
-                <GenericTabs /// <reference path="" />
+          <Box className="container mx-auto py-3">
+          <div className="flex flex-col md:flex-row gap-4">
+        
+            {/* Left Column - Organisation Details */}
+            <div className="w-full md:w-1/3">
+              <Card elevation={3} sx={{ borderRadius: 2 }}>
+                <CardContent>
+                  {isLoading ? (
+                    <Skeleton width={210} height={118} />
+                  ) : (
+                    <OrganisationDetails data={selectedOrganisation} />
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+        
+            {/* Right Column - Tabs */}
+            <div className="w-full md:w-2/3">
+              <Card elevation={3} sx={{ borderRadius: 2 }}>
+                <CardContent>
+                  {isLoading ? (
+                    <Skeleton width={210} height={118} />
+                  ) : (
+                    <GenericTabs
                       ref={tabsRef}
                       tabs={colt}
                       defaultTab={0}
                       ChangeTab={goToTab}
                     />
-              )
-            }
-            </Box>
-          
-          </Box>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+        
+          </div>
+        </Box>
+        
         );
     
   

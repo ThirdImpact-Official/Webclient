@@ -19,7 +19,12 @@ export class PostAction {
             .GetRequestType(`/forum/${forumId}`+param)
             .execute<GetPostForumDto>();
     }
-
+    public async getPostsFromPostParentId(parentId: number, page: number, pageSize: number): Promise<ServiceResponse<GetPostForumDto> | PaginationResponse<GetPostForumDto>> {
+        const param: string =`?page=${page}&pageSize=${pageSize}`;
+        return await this.httpClient
+            .GetRequestType(`/postparent/${parentId}`+param)
+            .execute<GetPostForumDto>();
+    }
     public async getPostById(id: number): Promise<ServiceResponse<GetPostForumDto> | PaginationResponse<GetPostForumDto>> {
         return await this.httpClient
             .GetRequestType(`/${id}`)

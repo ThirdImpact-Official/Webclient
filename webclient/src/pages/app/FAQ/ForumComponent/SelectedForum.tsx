@@ -1,10 +1,12 @@
 import { GetForumDto } from "@/interfaces/PublicationInterface/Forum/getForumDto";
 import ForumTabItem from "./ForumTabItem";
-import { Box, Skeleton } from '@mui/material';
+import { Box, Grid2, Pagination, Skeleton } from '@mui/material';
 import PostList from "../PostComponent/PostList";
 import img from "@/assets/Image/miaou.jpg";
 import { useEffect } from "react";
-
+import ModalComponent from '@/components/factory/GenericComponent/Modal';
+import AddPostForm from '../PostComponent/CreatePost';
+import { AddPostForumDto } from "@/interfaces/PublicationInterface/Post/addPostForumDto";
 import React, { useState } from "react";
 import { PostAction } from "@/actions/PostAction";
 
@@ -31,8 +33,8 @@ interface SelectedForumProps{
 
 const SelectedForum:React.FC<SelectedForumProps> = ({selectedForum}) => {
     const [Forumdata,setForumdata] =useState<GetForumDto>(selectedForum); 
-    const [PostData,setPostData ]=useState<GetPostForumDto []|null>(null);
-    const [page,setPage]= useState(1);
+    const [PostData,setPostData ]=useState<GetPostForumDto [] | null>([]);
+    const [page,setPage]= useState<number>(1);
     //-----api Call-------
     const postAct= new PostAction();
     //-----------------------
@@ -43,11 +45,31 @@ const SelectedForum:React.FC<SelectedForumProps> = ({selectedForum}) => {
             </div>
         );
     }
-    const fetchPostFromForum = async () => {
+    const handleAddPostForm = async (data:AddPostForumDto) => {
         try {
-            const response= await postAct.getPostsByForumId(selectedForum.id,1,10);
+            const response= await postAct.createPostForForum(selectedForum.id,data);
             if(response.Success){
-                setPostData(response.Data as GetPostForumDto[]);
+                setPage(1);
+                fetchPostFromForum(page);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const handlePageChange = async (event: React.ChangeEvent<unknown>, value: number) => {
+        try {
+            setPage(value);
+            fetchPostFromForum(page);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    const fetchPostFromForum = async (value:number) => {
+        try {
+            const response= await postAct.getPostsByForumId(selectedForum.id,page,10);
+            if(response.Success){
+                console.log(response.Data);
+                setPostData(response.Data as GetPostForumDto []);
             }
             
 
@@ -57,7 +79,7 @@ const SelectedForum:React.FC<SelectedForumProps> = ({selectedForum}) => {
     }
     //----Useeffect----------
     useEffect(() => {
-        fetchPostFromForum();
+        fetchPostFromForum(page);
     },[setForumdata])
     //-----------------------
     return(
@@ -65,13 +87,32 @@ const SelectedForum:React.FC<SelectedForumProps> = ({selectedForum}) => {
     <Box>
        
         <Box>
+        <Box className="post-item-footer flex pe-2 pb-2 justify-end ">
+                    <ModalComponent 
+                            children={<>
+                                    <AddPostForm  
+                                        postParentId={Forumdata.id} 
+                                        onSubmit={handleAddPostForm} />
+                                    </>}
+                            Title="Add response"
+                            ButtonTitle="ajouter un post"
+                            Description="Huh" />
+            </Box>
             <ForumTabItem dataitem={Forumdata}/>
         </Box>
         <Box className="pt-4">
             {
                 PostData !=null ?
-                <PostList data={PostData }  />
-                :<Skeleton width={500} height={100}> </Skeleton>
+                <Grid2>
+                    <PostList   data={PostData}  />
+                    <Pagination 
+                        count={10} 
+                        page={page} 
+                        onChange={handlePageChange} />
+                </Grid2>
+                :<Skeleton  
+                    width={500} 
+                    height={100}> </Skeleton>
             }
         </Box>
     </Box>

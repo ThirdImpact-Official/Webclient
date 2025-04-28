@@ -1,3 +1,4 @@
+import FormUtils from "@/classes/FormUtils";
 import { Table, TableRow, TableCell, TableContainer, TableHead, TableBody, Button, Paper, Skeleton } from "@mui/material";
 
 interface GenerationTableProps<T> {
@@ -31,11 +32,20 @@ const GenericTable = <T,>({ data, columns, OnDetails, OnUpdate }: GenerationTabl
                 <TableBody>
                     {data.map((item, index) => (
                         <TableRow key={index}>
-                            {columns.map((col) => (
-                                <TableCell key={String(col.accessor)}>
-                                    {item[col.accessor] != null ? String(item[col.accessor]) : ''}
-                                </TableCell>
-                            ))}
+                            {columns.map((col) => {
+                                  const value = item[col.accessor];
+                                  const isDate = value instanceof Date || (!isNaN(Date.parse(value as string)) && typeof value === 'string');
+
+                                  return (
+                                    <TableCell key={String(col.accessor)}>
+                                        {isDate
+                                            ? FormUtils.FormatDate(value.toString())
+                                            : value != null
+                                                ? String(value)
+                                                : ''}
+                                    </TableCell>
+                                );
+                            })}
                             {OnDetails && (
                                 <TableCell>
                                     <Button variant="outlined" onClick={() => OnDetails(item)}>

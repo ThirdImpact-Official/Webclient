@@ -17,8 +17,8 @@ const UserOrganisationDetails: FC<UserOrganisationDetailsProps> = ({ data }) => 
                 </Typography>
                 <Box className="space-y-6">
                     <Box className="flex gap-2 justify-between">
-                        <Typography> ID </Typography>
-                        <Typography>{data.userId}</Typography>
+                        <Typography> Id </Typography>
+                        <Typography>{data.id}</Typography>
                     </Box>
                     <Box className="flex gap-2 justify-between">
                         <Typography>First Name:</Typography>

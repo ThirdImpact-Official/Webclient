@@ -1,6 +1,8 @@
 import { GetForumDto } from "@/interfaces/PublicationInterface/Forum/getForumDto";
-import { Divider,Typography,Card, CardHeader, CardContent,CardActions, Avatar} from '@mui/material';
-import FormatUtils from "@/classes/FormUtils";
+import { Divider,Typography,Card, CardHeader, CardContent,CardActions, Avatar, Box} from '@mui/material';
+import ModalComponent from '@/components/factory/GenericComponent/Modal';
+import AddPostForm from '../PostComponent/CreatePost';
+
 
 interface ForumTabItemProps {
     dataitem: GetForumDto 
@@ -13,6 +15,7 @@ const ForumTabItem: React.FC<ForumTabItemProps> = ({ dataitem,children}) => {
 
   return (
     <>
+   
         <Card className="grid grid-flow-row items-center m-2">
             <CardHeader className="flex justify-end float-end p-2"
                 avatar={

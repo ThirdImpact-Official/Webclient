@@ -1,7 +1,7 @@
-import { Box, Card, CardActions, CardContent, CardHeader, CardMedia, Divider, Tabs } from '@mui/material';
+import { Box, Card, CardActions, CardContent, CardHeader, CardMedia, Divider, Grid2, Tabs,} from '@mui/material';
 import Profile from '../Profile';
 import { GetUserDto } from '@/interfaces/User/GetUserDto';
-import { useState,FC, useEffect,useRef } from 'react';
+import { useState,FC, useEffect,useRef,useMemo } from 'react';
 import Notification from '../Notification';
 import { GetNotificationDto } from '@/interfaces/NotificationInterface/Notification/getNotificationDto';
 import Avatar from '@mui/material/Avatar';
@@ -17,7 +17,8 @@ import UserNotificationComponent from './ProfileComponent/UserNotificationCompon
 import { User } from 'lucide-react';
 import UpdateUserComponent from './ProfileComponent/UpdateUser';
 import UpdatePassword from './ProfileComponent/UpdatePassword';
-
+import GenericMenu from '@/components/common/GenericMenu';
+import { Settings } from '@mui/icons-material';
 export const FakeNotifications: GetNotificationDto[] = [
     {
       id: 1,
@@ -134,77 +135,121 @@ const tabs:TabItem[] = [
         content: <></>
     },
 ];
+   const menupost= useMemo(() => [
+        {
+            label: "Settings",
+            icon: <Settings />,
+            onClick: () => console.log("Modification"),
+            modalTitle: "Modify the post",
+            modalContent: (
+                <>
+                    <img src={""} alt="Illustration" style={{ maxWidth: "100%" }} />
+                    <p>Do you want to modify this post?</p>
+                </>
+            )
+        },
+        {
+            label: "Settings",
+            icon: <Settings />,
+            onClick: () => console.log("Modification"),
+            modalTitle: "Modify the post",
+            modalContent: (
+                <>
+                    <img src={""} alt="Illustration" style={{ maxWidth: "100%" }} />
+                    <p>Do you want to modify this post?</p>
+                </>
+            )
+        },
+        {
+            label: "Settings",
+            icon: <Settings />,
+            onClick: () => console.log("Modification"),
+            modalTitle: "Modify the post",
+            modalContent: (
+                <>
+                    <img src={""} alt="Illustration" style={{ maxWidth: "100%" }} />
+                    <p>Do you want to modify this post?</p>
+                </>
+            )
+        }
+    ], []);
 //---------------------------
 return (
     <>
-        <Box className='flex flex-grid justify-evenly gap-10'>
-            <Box className=' '>
-            {
-                user != null ?  (
-                 <>
+       <Box className="container mx-auto py-3">
+            <div className="flex flex-col columns-2 gap-2 md:flex-row">
+             
+                <section className="w-full md:w-1/3">
+                    {
+                        user != null ?  (
+                        <>
+                            <Grid2>
+                                <Card className="m-4 p-4 rounded-2xl shadow-lg bg-white">
+                                    <Box className="flex flex-col justify-end float-end ">
+                                        <GenericMenu items={menupost} />
+                                    </Box >
+                                    <CardContent className='flex flex-col items-center p-6 ms-10'>
+                                        <Avatar
+                                            sx={{ m: 1, bgcolor: 'secondary.main', width: 100, height: 100 }} 
+                                            alt={user.username}
+                                            src="/static/images/avatar/1.jpg"  />
+                                        <Typography component="h1" variant="h6">
+                                            {user.firstName} {user.lastName} 
+                                        </Typography>
+                                        <Typography component="h1" variant="h6">
+                                            {user.username}
+                                        </Typography>
+                                        </CardContent>
+                                    <CardContent className="text-start flex flex-col items-start p-4">
+                                        <Typography variant="subtitle1">
+                                            Information
+                                        </Typography>
+                                        <Divider className="" orientation="horizontal" /> 
+                                        <Typography component="h1" variant="h6">
+                                            <strong> Username :</strong>  {user.username}
+                                        </Typography>
+                                        <Typography component="h1" variant="h6">
+                                            <strong> Email :</strong> {user.email}
+                                        </Typography>
+                                        <Typography>
+                                            <strong> LastName :</strong> {user.lastName} 
+                                        </Typography>
+                                    </CardContent>
+                                    <CardActions className='flex justify-center'>
+                                        <ModalComponent
+                                            children={<UpdateUserComponent data={user} />}
+                                            ButtonTitle='Update Profile' 
+                                            Title='Update Profile' 
+                                            Description='Update Profile' />
+                                        <ModalComponent 
+                                                children={<UpdatePassword  />} 
+                                                ButtonTitle='Update Password' 
+                                                Title='Update Password' 
+                                                Description='Update Password' />
+                                    </CardActions>
+                                </Card>
 
-                    <Box className="flex flex-col items-end justify-end">
-                     
-                        
-                    </Box>
-                    
-                    <Card className="m-4 p-4 rounded-2xl shadow-lg bg-white">
-                        <CardHeader className="flex justify-end float-end p-2">
-
-                        </CardHeader >
-                        <CardContent className='flex flex-col items-center p-6'>
-                            <Avatar
-                                sx={{ m: 1, bgcolor: 'secondary.main', width: 100, height: 100 }} 
-                                alt={user.username}
-                                src="/static/images/avatar/1.jpg"  />
-                            <Typography component="h1" variant="h6">
-                                {user.firstName} {user.lastName} 
-                            </Typography>
-                            <Typography component="h1" variant="h6">
-                                {user.username}
-                            </Typography>
-                            </CardContent>
-                        <CardContent className="text-start flex flex-col items-start p-4">
-                            
-                             <Typography variant="subtitle1">
-                                Information
-                             </Typography>
-                            <Divider className="" orientation="horizontal" /> 
-                            <Typography component="h1" variant="h6">
-                                <strong> Username :</strong>  {user.username}
-                            </Typography>
-                            <Typography component="h1" variant="h6">
-                                <strong> Email :</strong> {user.email}
-                            </Typography>
-                            <Typography>
-                                <strong> LastName :</strong> {user.lastName} 
-                            </Typography>
+                            </Grid2>
+                        </>)
+                        : (<><Skeleton width={500} height={300}>
+                                <Typography variant="h3" color="initial">
+                                    Chargement
+                                </Typography>
+                            </Skeleton></>)
+                    }
+                </section>      
+                <Divider orientation = "horizontal" />
+                <Grid2 className=" text-center item-center w-full md:w-1/3">
+                </Grid2>
+                <Divider orientation = "horizontal" />
+                <Grid2 className=" text-center item-center w-full md:w-1/3">
+                    <Card className="justify-center pe-4">
+                        <CardContent>
+                            <GenericTabs tabs={tabs}ref={tabsRef} defaultTab={0} ChangeTab={goToTab}  />
                         </CardContent>
-                        <CardActions>
-                            <ModalComponent
-                                children={<UpdateUserComponent data={user} />}
-                                ButtonTitle='Update Profile' 
-                                Title='Update Profile' 
-                                Description='Update Profile' />
-                            <ModalComponent children={<UpdatePassword  />} ButtonTitle='Update Password' Title='Update Password' Description='Update Password' />
-                          
-
-                        </CardActions>
                     </Card>
-                 </>)
-                 : (<><Skeleton width={500} height={300}>
-                        <Typography variant="h3" color="initial">
-                            Chargement
-                        </Typography>
-                    </Skeleton></>)
-            }
-            </Box>      
-        <Divider />
-        <Box className="flex flex-grid text-center item-center">
-            <Box className="justify-center pe-4">
-                <GenericTabs tabs={tabs}ref={tabsRef} defaultTab={0} ChangeTab={goToTab}  />
-            </Box>
-        </Box>            
+                </Grid2>            
+            </div>
         </Box>
     </>
     )

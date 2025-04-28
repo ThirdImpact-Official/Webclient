@@ -67,7 +67,8 @@ export class HttpClient
     */
     private Sendrequest<T>( actionurl: string, requestType: RequestType, data?: T ): Promise<ServiceResponse<T> |PaginationResponse<T>>
     {
-        this.ResetState();
+
+        console.log(data);
         return new Promise<ServiceResponse<T>>((resolve)=>
             {
                 let methodes:string;

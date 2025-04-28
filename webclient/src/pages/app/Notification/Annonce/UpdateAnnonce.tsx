@@ -8,48 +8,65 @@ interface UpdateAnnonceProps
     onSubmit:(data:UpdateAnnonceDto) => void;
 }
 
-/*
-    Méthodes de mise a jour des annonces utilisateur 
-*/ 
-const UpdateAnnonce:FC<UpdateAnnonceProps> = ({data,onSubmit}) => {
+const UpdateAnnonce: FC<UpdateAnnonceProps> = ({ data, onSubmit }) => {
+  const [updateData, setUpdateData] = useState<UpdateAnnonceDto>({
+    id: data.id,
+    name: data.name,
+    description: data.description,
+  });
 
-    const [updateAnnonce, setUpdateAnnonce] = useState<UpdateAnnonceDto>({
-       id:data.id,
-       name:data.name,
-       description:data.description,
-    });
+  const handleUpdate = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    onSubmit(updateData);
+  };
 
-    return(
-    <>
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUpdateData((prevData) => ({
+      ...prevData,
+      [event.target.name]: event.target.value,
+    }));
+  };
+
+  return (
     <Box className="text-center">
-         
-        <Typography>Update an Annonce </Typography>
-        <form className="flex items-center justify-center mx-15 rounded-md space-y-2 ">
-            <Box>
-                <Box>
-                    <Box>
-                        <Typography>Name</Typography>
-                    </Box>
-                    <Box>
-                        <TextField type="text" value={updateAnnonce.name} onChange={(e) => setUpdateAnnonce({ ...updateAnnonce, name: e.target.value })} />
-                    </Box>
-                </Box>
-                <Box>
-                    <Box>
-                    <Typography>Description </Typography>
-                    </Box>
-                    <Box>
-                        <TextField type="text" value={updateAnnonce.description} onChange={(e)=> setUpdateAnnonce({ ...updateAnnonce, description: e.target.value })} />
-                    </Box>
-                </Box>
-                <Box>
-                    <Button  onClick={()=>onSubmit(updateAnnonce)}> Update </Button>
-                </Box>
-                
-            </Box>
-        </form>
+      <Typography className="p-4" variant="h4">
+        Update an Annonce
+      </Typography>
+      <form className="flex items-center justify-center mx-15 rounded-md space-y-2" onSubmit={handleUpdate}>
+        <Box className="space-y-2">
+          <Box>
+            <Typography variant="h6">Name</Typography>
+            <TextField
+              type="text"
+              name="name"
+              value={updateData.name}
+              onChange={handleChange}
+              placeholder="Name"
+            />
+          </Box>
+          <Box>
+            <Typography variant="h6">Description</Typography>
+            <TextField
+              type="text"
+              name="description"
+              value={updateData.description}
+              onChange={handleChange}
+              placeholder="Description"
+            />
+          </Box>
+          <Box>
+            <Button
+                onClick={(e)=>handleChange}
+                variant="contained" 
+                color="primary" 
+                type="submit">
+              Update
+            </Button>
+          </Box>
+        </Box>
+      </form>
     </Box>
-</>);
-}
+  );
+};
 
 export default UpdateAnnonce;

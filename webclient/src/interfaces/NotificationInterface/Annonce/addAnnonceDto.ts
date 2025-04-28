@@ -1,4 +1,4 @@
-export interface AddAnnonceDto extends AddDto {
+export interface AddAnnonceDto{
     name: string;
     description: string;
 }

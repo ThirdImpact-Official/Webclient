@@ -31,9 +31,9 @@ const Anoncetabs:FC<AnnonceTabsProps> = (props) => {
             return (
                 <>
                     <GenericTable data={props.data} 
-                    columns={props.columns} 
-                    OnDetails={handleDetails} 
-                    OnUpdate={handleUpdate}/>
+                        columns={props.columns} 
+                        OnDetails={handleDetails} 
+                        OnUpdate={handleUpdate}/>
                 </>
             )
     }

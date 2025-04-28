@@ -9,7 +9,7 @@ interface UpdateUserProps {
 }
 const UpdateUserComponent:FC<UpdateUserProps> = (props) => {
     const [updateUser,setUpdateUser]= useState<UpdateUserDto>({
-        id: props.data.userId,
+        id: props.data.id,
         username: props.data.username,
         email: props.data.email,
         firstName: props.data.firstName,
@@ -21,20 +21,34 @@ const UpdateUserComponent:FC<UpdateUserProps> = (props) => {
                 <Typography>update Profile</Typography>
              </section>
             <Grid2>
-                <TextField rows={1} name='name' id="outlined-basic" label="username" variant="outlined" />
+                <TextField 
+                    rows={1} 
+                    name='name' 
+                    id="outlined-basic" 
+                    label="username" 
+                    variant="outlined" />
             </Grid2>
             <Grid2> 
-                <TextField rows={1}  name='email' id="outlined-basic" label="email" variant="outlined" />
+                <TextField 
+                    rows={1}  
+                    name='email' 
+                    id="outlined-basic" 
+                    label="email" 
+                    variant="outlined" />
             </Grid2> 
             <Grid2> 
-                <TextField rows={1}   id="outlined-basic" label="firstname" variant="outlined" />
+                <TextField 
+                rows={1}   
+                id="outlined-basic"
+                label="firstname" 
+                variant="outlined" />
             </Grid2> 
             <Grid2> 
-                <TextField rows={1}  name='firstName' id="outlined-basic" label="lastname" variant="outlined" />
+                <TextField rows={1} 
+                 name='firstName' id="outlined-basic"
+                 label="lastname" variant="outlined" />
             </Grid2> 
-            <Grid2> 
-                <TextField rows={1}  name='lastName' id="outlined-basic" label="Outlined" variant="outlined" />
-            </Grid2> 
+          
         </Grid2>
     </>)
 

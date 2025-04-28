@@ -3,23 +3,33 @@ import React, { FC, useState } from "react";
 
   
 
-interface modalProps {
+interface ModalProps {
+    ButtonColor?: "primary" | "secondary" | "success" | "error" | "info" | "warning";
     ButtonTitle?: string;
     children: React.ReactNode;
     Title: string;
     Description: string;
+    Method?:() => void;
 }
 
 
 
-  const ModalComponent: FC<modalProps> = ({ children, ButtonTitle = "Open Modal", Title, Description }) => {
+  const ModalComponent: FC<ModalProps> = ({ children, Method, ButtonTitle = "Open Modal", Title, Description,ButtonColor }) => {
     const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
+    const handleOpen = () =>{
+      setOpen(true);
+      if(Method !== undefined)
+      {
+        Method();
+      }
+    } 
     const handleClose = () => setOpen(false);
   
     return (
       <>
-        <Button variant="contained" onClick={handleOpen}>
+        <Button variant="contained"
+                color={ButtonColor} 
+                onClick={handleOpen}>
           {ButtonTitle}
         </Button>
   
@@ -67,7 +77,9 @@ interface modalProps {
               )}
   
               <Box sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
-                <Button variant="contained" color="primary" onClick={handleClose}>
+                <Button variant="contained" 
+                        color={"primary" }
+                        onClick={handleClose}>
                   Fermer
                 </Button>
               </Box>

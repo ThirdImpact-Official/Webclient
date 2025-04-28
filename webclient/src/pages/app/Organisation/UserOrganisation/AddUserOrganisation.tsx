@@ -1,6 +1,6 @@
 import { useState, FC } from 'react';
-import { AddUserOrganisationDto } from '../../../interfaces/OrganisationInterface/UserOrganisation/addUserOrganisationDto';
-import { Box, TextField,Button } from '@mui/material';
+import { AddUserOrganisationDto } from '@/interfaces/OrganisationInterface/UserOrganisation/addUserOrganisationDto';
+import { Box, TextField, Button, Typography} from '@mui/material';
 import { OrganisationAction } from '@/actions/OrganisationActions';
 
 interface AddUserOrganisationProps{
@@ -20,21 +20,32 @@ const AddUserOrganisation: FC<AddUserOrganisationProps> = ({organisationId}) => 
     const responseApi= new OrganisationAction();
     const [email,setEmail] = useState<string>();
 
-    const handleApiCall=()=>{
+    const handleApiCall = async (event: React.FormEvent) => {
+        event.preventDefault();
         const userToAdd: AddUserOrganisationDto = {
-            Email: email,
-            OrganisationId: organisationId
+            email: email,
+            organisationId: organisationId,
+        };
+        try {
+            const response = await responseApi.addUserOrganisation(userToAdd);
+            if (response.Success) {
+                // Handle successful response
+                console.log(response.Data);
+                console.log("User added to organisation successfully");
+            }
+            console.log(response.Message);
+        } catch (error) {
+            console.error('Error adding user to organisation:', error);
         }
-        responseApi.addUserOrganisation(userToAdd);
     }
     const handleChange=(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
     return(
     <>
-        <Box>
-            <form>
-                <div>
-                    <div>Label</div>
-                    <div>
+        <Box className="justify-center text-center">
+            <form className="space-y-4">
+                <Box>
+                    <Typography>Email</Typography>
+                    <Box>
                         <TextField
                             id=""
                             label="Email"
@@ -42,10 +53,12 @@ const AddUserOrganisation: FC<AddUserOrganisationProps> = ({organisationId}) => 
                             onChange={handleChange}
                         
                         />
-                    </div>
-                </div>
-                <div>
-                    <Button  onClick={handleApiCall}> Ajouter  l'organisation</Button>
+                    </Box>
+                </Box>
+                <div className='items-center'>
+                    <Button
+                        variant='contained'  
+                        onClick={(e) => handleApiCall(e)}> Ajouter  l'organisation</Button>
                 </div>
             </form>
 
