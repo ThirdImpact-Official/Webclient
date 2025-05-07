@@ -17,13 +17,13 @@ export class PostAction {
         const param: string =`?page=${page}&pageSize=${pageSize}`;
         return await this.httpClient
             .GetRequestType(`/forum/${forumId}`+param)
-            .execute<GetPostForumDto>();
+            .executePagination<GetPostForumDto>();
     }
     public async getPostsFromPostParentId(parentId: number, page: number, pageSize: number): Promise<ServiceResponse<GetPostForumDto> | PaginationResponse<GetPostForumDto>> {
         const param: string =`?page=${page}&pageSize=${pageSize}`;
         return await this.httpClient
             .GetRequestType(`/postparent/${parentId}`+param)
-            .execute<GetPostForumDto>();
+            .executePagination<GetPostForumDto>();
     }
     public async getPostById(id: number): Promise<ServiceResponse<GetPostForumDto> | PaginationResponse<GetPostForumDto>> {
         return await this.httpClient

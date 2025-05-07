@@ -4,6 +4,10 @@ import App from "@/pages/App"
 import { BrowserRouter } from 'react-router-dom'
 import { AuthContext, AuthProvider, useAuth } from './context/AuthContext'
 import { Typography } from '@mui/material'
+import { ToastedContext, ToastedProvider } from './context/ContextHook/ToastedContext'
+import ModalComponent from './components/factory/GenericComponent/Modal'
+import { ModalProvider } from './context/ContextHook/ModalContext'
+import { LoadingProvider } from './context/ContextHook/LoadingContext'
 
 
 function authConstant() {
@@ -12,9 +16,18 @@ function authConstant() {
 }
 
 createRoot(document.getElementById('root')!).render(
+    //BrowserRouter
+    //ToastedProvider for notification
+    //authProvider for authentication
     <BrowserRouter>
-        <AuthProvider>
-            <App />
-        </AuthProvider>
+        <ModalProvider>
+            <LoadingProvider>
+                <ToastedProvider>
+                    <AuthProvider>
+                        <App />
+                    </AuthProvider>
+                </ToastedProvider>
+            </LoadingProvider>
+        </ModalProvider>
     </BrowserRouter>
 )

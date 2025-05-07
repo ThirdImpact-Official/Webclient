@@ -2,7 +2,7 @@ import { useEffect,useRef,useState } from "react";
 import { NotificationAction } from "@/actions/NotificationAction";
 import { AnnonceService } from "@/actions/AnnonceAction";
 import { AnnonceColumns, GetAnnonceDto,AnnonceColumnsTab } from "@/interfaces/NotificationInterface/Annonce/getAnnonceDto";
-import { Box, Skeleton, Tabs, Snackbar, Alert, Card, CardContent, CardHeader, Typography } from '@mui/material';
+import { Box, Skeleton, Tabs, Snackbar, Alert, Card, CardContent, CardHeader, Typography, FormControl,Button, CardActions,Pagination } from '@mui/material';
 import GenericTabs, { TabItem } from "@/components/factory/GenericComponent/TabGénéric";
 import { NotificationColumns } from "@/interfaces/NotificationInterface/Notification/getNotificationDto";
 import { AddAnnonceDto } from "@/interfaces/NotificationInterface/Annonce/addAnnonceDto";
@@ -14,6 +14,7 @@ import UpdateAnnonce from './Annonce/UpdateAnnonce';
 import { idID } from "@mui/material/locale";
 import { Details } from "@mui/icons-material";
 import DetailsComponent from '@/components/factory/GenericComponent/DetailsComponent';
+import { RefreshCwIcon } from "lucide-react";
 
 /*
     Notification Component 
@@ -53,6 +54,9 @@ const NotificationComponent = () => {
             console.error(error);
         }
     }
+    const handleChangePage = async (event: React.ChangeEvent<unknown>, value: number) => {
+        setPage(value);
+    }
     const fetchNotification = async () => {
             try {
                 const response= await notifiService.getAllNotifications(page,5);
@@ -90,10 +94,11 @@ const NotificationComponent = () => {
    }
     const handleonDetails = (data: GetAnnonceDto) =>{
         setSelectAnnonce(data);
-
+        goToTab(1);
     }
     const handleUpdate = (data: GetAnnonceDto) => {
         setSelectAnnonce(data);
+        goToTab(3);
     }
     const handleUpdateSubmit = async (data: UpdateAnnonceDto ) => {
         if(data === null || data === undefined) {
@@ -116,7 +121,6 @@ const NotificationComponent = () => {
     //------------UseEffect--------
     useEffect   (() => {
         fetchAnnonce();
-        fetchNotification();
     }, [page]);
     //------------Columns----------
     const annoncecolumns =AnnonceColumns;
@@ -129,10 +133,22 @@ const NotificationComponent = () => {
             <>
                 <Card elevation={3}>
                     <CardHeader
-                        title="Annonce"
+                        title={
+                            <>
+                                <Typography variant="h4">Annonce</Typography>
+                            </>
+                        }
                         action={
                             <>
-                            <Typography variant="h4">Annonce</Typography>
+                          
+                            <FormControl>
+                                <Button
+                                    onClick={() => fetchAnnonce()}
+                                    variant="contained"
+                                    color="warning">Referesh  
+                                       <RefreshCwIcon className="ps-1" /> 
+                                    </Button>
+                            </FormControl>
                             </>
                         }
                      />
@@ -140,9 +156,17 @@ const NotificationComponent = () => {
                         <Anoncetabs 
                             data={annonce}
                             columns={AnnonceColumnsTab}
-                            onDetails={setSelectAnnonce}
-                            onUpdate={setSelectAnnonce} />
+                            onDetails={handleonDetails}
+                            onUpdate={handleUpdate} />
                     </CardContent>
+                    <CardActions>
+                         <Pagination
+                                page={page}
+                                className="float-end"
+                                onChange={handleChangePage}
+                                count={10}
+                                />
+                    </CardActions>
                 </Card>
             </>):<Skeleton></Skeleton>,
         },

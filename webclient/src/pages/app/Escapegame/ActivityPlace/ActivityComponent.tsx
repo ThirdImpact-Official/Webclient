@@ -1,4 +1,4 @@
-import { Box, Snackbar,Alert, Grid2} from '@mui/material';
+import { Box, Snackbar, Alert, Grid2, FormControl, Button, Typography, Card, CardContent, Skeleton } from '@mui/material';
 import Item from "@/components/factory/GenericComponent/Item";
 import { useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
@@ -114,64 +114,100 @@ const ActivityPlaceComponent = () => {
       console.error('Error fetching escape game:', error);
     }
   }
-
   useEffect(() => {
-    if (id) {
+    if(id){
       fetchEscapegameById();
-      fetchActivityByEscapeGameId();
     }
   },[id])
+  useEffect(() => {
+    if (id) {
+      fetchActivityByEscapeGameId();
+    }
+  },[id,page])
 
   //Tableau d'ellement a charger 
   const tabItems = [
     {
       label: "List",
       content: (
-        <ActivityPlaceTable 
-          data={activityPlaces}
-          columns={ActivityPlaceColumns}
-          onDetails={handleDetailsClick}
-          onUpdate={handleUpdateClick}
-        /> 
+        <>
+          <Card>
+            <CardContent>
+              <FormControl className='flex flex-row float-end justify-end items-end p-2'>
+                    <Button
+                      variant='contained'
+                      color='warning'
+                      onClick={fetchActivityByEscapeGameId}>Refresh</Button>
+              </FormControl>
+              <ActivityPlaceTable 
+                  data={activityPlaces}
+                  columns={ActivityPlaceColumns}
+                  onDetails={handleDetailsClick}
+                  onUpdate={handleUpdateClick}
+                /> 
+            </CardContent>
+          </Card>
+        </>
       ),
     },
     {
       label: "Details",
       content: (
-       <ActivityDetails 
-          data={selectedPlace}
-          columns={ActivityPlaceColumns} 
-          OnUpdate={handleUpdateClick}  />
+        <Card>
+          <CardContent>
+          <ActivityDetails 
+             data={selectedPlace}
+             columns={ActivityPlaceColumns} 
+             OnUpdate={handleUpdateClick}  />
+          </CardContent>
+        </Card>
       ),
     },
     {
       label: "Create",
       content: (
-        <CreateActivityPlace escapeGameId={Number(id)} onSubmit={()=>handleSubmit} />
+        <Card>
+          <CardContent>
+            <CreateActivityPlace escapeGameId={Number(id)} onSubmit={()=>handleSubmit} />
+          </CardContent>
+        </Card>
       )
     },
     {
       label: "Update",
       content: (
-        <UpdateActivityPlace data={selectedPlace} onSubmit={handleSubmit} />
+        <Card>
+          <CardContent>
+            <UpdateActivityPlace data={selectedPlace} onSubmit={handleSubmit} />
+          </CardContent>
+        </Card>
       ),
     },
   ];
 
   return (
-    <Grid2 container spacing={2}>
-      <Item>
-      <p>Escapegame :{id}</p>
-        <EscapeGameDetails data={escapeGame} /> 
-      </Item>
-      <Item>
-        <GenericTabs
-          ref={tabsRef}
-          tabs={tabItems}
-          ChangeTab={handleTabChange}
-          defaultTab={0}
-        />
-      </Item>
+    <Grid2 container spacing={0}>
+        <Card className='w-full md:w-1/3'>
+          <CardContent>
+            {
+              escapeGame ? (<EscapeGameDetails data={escapeGame} />) :
+              <Skeleton variant="rectangular" width={210} height={118} />
+            }
+          </CardContent>
+        </Card >
+        <Card >
+        </Card>
+        <Card className='w-full md:w-2/3'>
+          <CardContent>
+            <GenericTabs
+              ref={tabsRef}
+              tabs={tabItems}
+              ChangeTab={handleTabChange}
+              defaultTab={0}
+            />
+          </CardContent>
+        </Card>
+    
         <Snackbar
         open={isSnackbarOpen}
         autoHideDuration={6000}

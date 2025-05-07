@@ -1,9 +1,13 @@
 import { AddAdressDto } from "@/interfaces/OrganisationInterface/Adress/addAdressDto";
 import { AddOrganisationDto } from "@/interfaces/OrganisationInterface/Organisation/addOrganisationDto";
 import { Button, Grid2, Input, TextareaAutosize, TextField,Box, Typography, Divider } from "@mui/material";
-
+import {OrganisationAction} from "@/actions/OrganisationActions";
 import React, {  useState } from "react";
 import Item from '@/components/factory/GenericComponent/Item';
+import { ErrorType } from '../../../enums/RequestType';
+import { useAuth } from '../../../context/AuthContext';
+import { useModal } from '../../../context/ContextHook/ModalContext';
+import { useLoading } from "@/context/ContextHook/LoadingContext";
 
 
 
@@ -14,7 +18,7 @@ const AddNewOrganisation = () => {
         phoneNumber: "",
         description: "",
         address: null,
-        formFile: null,
+        logo: null,
     });
     const [addressData, setAddressData] = useState<AddAdressDto>({
         street: "",
@@ -25,35 +29,63 @@ const AddNewOrganisation = () => {
         longitude: 0,
     });
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const action= new OrganisationAction();
+    const modal= useModal();
+    const load=useLoading();
 
+    //manage the organisation changes
     const handleOrganisationChange = (key: keyof AddOrganisationDto, value: string) => {
         setOrganisationData((prevData) => ({
             ...prevData,
             [key]: value,
         }));
     };
-
+    //manage the aDREScHANGE
     const handleAddressChange = (key: keyof AddAdressDto, value: unknown) => {
         setAddressData((prevData) => ({
             ...prevData,
             [key]: value,
         }));
     };
-
+    //manage the File Submit 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFile = event.target.files?.[0];
         setSelectedFile(selectedFile ?? null);
     };
-
-    const handleSubmit = (event: React.FormEvent) => {
+    //Manage Submit
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         organisationData.address = addressData;
         organisationData.formFile = selectedFile;
+        let response;
+        try {
+            load.showLoading = true;
+            load.isLoading = true;
+
+            response= await action.AddanOrganisation(organisationData);
+            if (response.Success) {
+                modal.handleOpen();
+                modal.setTitle("Success");
+                modal.setDescription(response.Message);
+            }
+            else
+            {
+                modal.handleOpen();
+                modal.setTitle("Error");
+                modal.setDescription(response.Message);
+            }
+        }
+        catch (e) {
+            modal.setTitle("Error");
+            modal.setDescription(e instanceof Error ? e.message : 'An error occurred');
+        }
+        finally {
+            load.isLoading = false;
+        }
     };
 
     return (
         <Box>
-            
             <form className=" text-center" onSubmit={handleSubmit}>
                 <Grid2 container spacing={4} className="pt-10 my-4 mx-10 ">
                         <Grid2 className="p-4 bg-white" size={6}>
@@ -95,8 +127,6 @@ const AddNewOrganisation = () => {
                                     <Box>
                                         <TextField
                                             placeholder="insert description"
-                                            minRows={3}
-                                        
                                             value={organisationData.description}
                                             fullWidth
                                             multiline
@@ -121,6 +151,15 @@ const AddNewOrganisation = () => {
                                             onChange={(e) => handleAddressChange("postalCode", e.target.value)}
                                             />
 
+                                    </Box>
+                                    <Box>
+                                        <TextField
+                                            label="Street"
+                                            placeholder="Street"
+                                            type="text"
+                                            value={addressData.street}
+                                            onChange={(e) => handleAddressChange("street", e.target.value)}
+                                        />
                                     </Box>
                                     <Box>
                                         <TextField

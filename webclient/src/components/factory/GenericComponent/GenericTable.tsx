@@ -1,63 +1,113 @@
+import { FC } from "react";
+import {
+    Table,
+    TableRow,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableBody,
+    Button,
+    Paper,
+    Skeleton,
+    Typography,
+    Box,
+    Stack,
+} from "@mui/material";
 import FormUtils from "@/classes/FormUtils";
-import { Table, TableRow, TableCell, TableContainer, TableHead, TableBody, Button, Paper, Skeleton } from "@mui/material";
 
 interface GenerationTableProps<T> {
     data: T[];
     columns: { label: string; accessor: keyof T }[];
-    OnDetails?: (org: T) => void;
-    OnUpdate?: (org: T) => void;
+    OnDetails?: (item: T) => void;
+    OnUpdate?: (item: T) => void;
 }
 
-const GenericTable = <T,>({ data, columns, OnDetails, OnUpdate }: GenerationTableProps<T>) => {
-    // Affiche un Skeleton en mode chargement ou si aucune donnée n'est renvoyée.
-    if (data.length === 0)
+const GenericTable = <T,>({
+    data,
+    columns,
+    OnDetails,
+    OnUpdate
+}: GenerationTableProps<T>) => {
+    if (!data || data.length === 0) {
         return (
-            <>
+            <Box sx={{ p: 3 }}>
                 <Skeleton variant="rectangular" height={200} />
-            </>
+                <Typography variant="body2" sx={{ mt: 2, color: "text.secondary" }}>
+                    No results found.
+                </Typography>
+            </Box>
         );
+    }
 
     return (
-        <TableContainer component={Paper}>
-            <Table>
+        <TableContainer 
+            component={Paper} 
+            className="hover:shadow-2xl transition-all"
+            sx={{ borderRadius: 2, overflow: "auto" }}>
+            <Table aria-label="customized table">
                 <TableHead>
                     <TableRow>
                         {columns.map((col) => (
-                            <TableCell key={String(col.accessor)}>{col.label}</TableCell>
+                            <TableCell key={String(col.accessor)}>
+                                <Typography variant="subtitle2" fontWeight="bold">
+                                    {col.label}
+                                </Typography>
+                            </TableCell>
                         ))}
-                        {OnDetails && <TableCell>Details</TableCell>}
-                        {OnUpdate && <TableCell>Update</TableCell>}
+                        {(OnDetails || OnUpdate) && (
+                            <TableCell align="center">
+                                <Typography variant="subtitle2" fontWeight="bold">
+                                    Actions
+                                </Typography>
+                            </TableCell>
+                        )}
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {data.map((item, index) => (
-                        <TableRow key={index}>
+                        <TableRow key={index} hover>
                             {columns.map((col) => {
-                                  const value = item[col.accessor];
-                                  const isDate = value instanceof Date || (!isNaN(Date.parse(value as string)) && typeof value === 'string');
+                                const value = item[col.accessor];
+                                const isDate =
+                                    value instanceof Date ||
+                                    (typeof value === "string" && !isNaN(Date.parse(value)));
 
-                                  return (
+                                return (
                                     <TableCell key={String(col.accessor)}>
                                         {isDate
-                                            ? FormUtils.FormatDate(value.toString())
+                                            ? FormUtils.FormatDate(value?.toString() ?? "")
                                             : value != null
-                                                ? String(value)
-                                                : ''}
+                                            ? String(value)
+                                            : ""}
                                     </TableCell>
                                 );
                             })}
-                            {OnDetails && (
+                            {(OnDetails || OnUpdate) && (
                                 <TableCell>
-                                    <Button variant="outlined" onClick={() => OnDetails(item)}>
-                                        Details
-                                    </Button>
-                                </TableCell>
-                            )}
-                            {OnUpdate && (
-                                <TableCell>
-                                    <Button variant="contained" color="primary" onClick={() => OnUpdate(item)}>
-                                        Update
-                                    </Button>
+                                    <Stack direction="row" spacing={1} justifyContent="center">
+                                        <Box sx={{ display: "flex", gap: 1 }}>
+                                            {OnDetails && (
+                                                <Button
+                                                    size="small"
+                                                    variant="outlined"
+                                                    onClick={() => OnDetails(item)}
+                                                >
+                                                    Details
+                                                </Button>
+                                            )}
+                                            {OnUpdate && (
+                                                <Button
+                                                    size="small"
+                                                    variant="outlined"
+                                                    color="primary"
+                                                    onClick={() => OnUpdate(item)}
+                                                >
+                                                    Update
+                                                </Button>
+                                            )}
+                                        </Box>
+
+                                    </Stack>
                                 </TableCell>
                             )}
                         </TableRow>

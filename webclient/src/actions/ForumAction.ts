@@ -18,7 +18,7 @@ export class ForumAction {
         const param: string =`?page=${page}&pageSize=${pageSize}`;
         return await this.httpClient
             .GetRequestType(param)
-            .execute<GetForumDto>();
+            .executePagination<GetForumDto>();
     }
 
     public async getForumById(id: number): Promise<ServiceResponse<GetForumDto> | PaginationResponse<GetForumDto>> {

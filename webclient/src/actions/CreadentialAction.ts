@@ -119,10 +119,10 @@ export class CreadentialAction
          *          be false.
          * @throws {Error} If the request to verify the email fails.
          */
-    public async verifyEmail (token: string): Promise<ServiceResponse<GetUserDto> | PaginationResponse<GetUserDto>> {
+    public async verifyEmail (token: string,email:string): Promise<ServiceResponse<GetUserDto> | PaginationResponse<GetUserDto>> {
         try {
             const response = await this._httpClient
-                .PostRequestType("account/verifyemail/"+token)
+                .PostRequestType("account/emailverification?token="+token+"&email="+email)
                 .execute<GetUserDto>();            
             if (response.Success) {
                 return response;

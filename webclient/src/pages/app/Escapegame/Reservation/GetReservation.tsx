@@ -1,6 +1,6 @@
 import { Box, Button, Divider} from "@mui/material"
 import DetailsComponent from '@/components/factory/GenericComponent/DetailsComponent';
-import { GetSessionReservedDto } from '../../../interfaces/EscapeGameInterface/Reservation/getSessionReservedDto';
+import { GetSessionReservedDto } from '@/interfaces/EscapeGameInterface/Reservation/getSessionReservedDto';
 import { FC, useState } from "react";
 import { DetailsProps } from "@/interfaces/common/detailsProps";
 
@@ -31,19 +31,7 @@ const GetReservationDetails: FC<DetailsProps<GetSessionReservedDto>> = ({
         columns={cols}
       />
     </Box>
-    <Box className="items-center flex flex-rows justify-evenly ">
-                       
-        <Button color="success" 
-                onClick={()=>console.log(reservationDetails)}>Reservation</Button>
-        <Divider orientation="vertical" 
-                  flexItem />
-        <Button color="primary" 
-                onClick={()=>console.log("update")} >Update</Button>
-        <Divider orientation="vertical" 
-                  flexItem />
-        <Button onClick={()=>console.log("delete")} color="error">Delete</Button>
-                   
-    </Box>
+  
   </>
   );
 

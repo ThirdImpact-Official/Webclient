@@ -67,20 +67,19 @@ const SubPostItem: React.FC<PostItemProps> = ({ dataitem, OnDetails }) => {
 
     return (
         <>
-        
-        <Card className="">
+        <Card className="m-4 bg-white shadow-lg rounded-lg hover:shadow-2xl transition-all">
             <CardHeader
                 avatar={
-                    <Avatar>
+                    <Avatar className="bg-blue-500 text-white">
                         R
                     </Avatar>
                 }
                 action={
                     <Container>
-                        <Box className="flex justify-end">
-                        
+                        <Box className="flex justify-between items-center">
                             <Typography 
-                                className="pt-2 pr-4" 
+                             
+                                className="text-gray-500"
                                 variant="subtitle2">
                                 {new Date(item.creationDate).toLocaleDateString()}
                             </Typography>
@@ -90,9 +89,11 @@ const SubPostItem: React.FC<PostItemProps> = ({ dataitem, OnDetails }) => {
                 }
             />
             <Divider />
-            <CardContent className="flex justify-start ps-4 pb-4">
+            <CardContent className="px-4 pb-4">
                 <Box className="post-item-content flex justify-start ps-4 pb-4">
-                    <Typography>{item.content}</Typography>
+                    <Typography
+                        className="text-gray-700"
+                    >{item.content}</Typography>
                 
                 </Box>
             </CardContent>

@@ -65,11 +65,11 @@ export class HttpClient
     * @param {T} data - The data to be sent with the request.
     * @returns {Promise<ServiceResponse<T>>} A promise that resolves with a ServiceResponse object.
     */
-    private Sendrequest<T>( actionurl: string, requestType: RequestType, data?: T ): Promise<ServiceResponse<T> |PaginationResponse<T>>
+    private Sendrequest<T>( actionurl: string, requestType: RequestType, data?: T ): Promise<ServiceResponse<T>>
     {
 
         console.log(data);
-        return new Promise<ServiceResponse<T>>((resolve)=>
+        return new Promise<ServiceResponse<T> >((resolve)=>
             {
                 let methodes:string;
                 switch (requestType) {
@@ -99,12 +99,16 @@ export class HttpClient
                         method: methodes,
                         data: data})
                 .then((axiosResponse) => {
-                        resolve({
-                            Data: axiosResponse.data.data, 
-                            Success: axiosResponse.data.success, 
-                            Message: axiosResponse.data.message, 
-                            ErrorType: axiosResponse.data.errorType});    
-                })
+                    const res = axiosResponse.data;
+                        const standard: ServiceResponse<T> = {
+                            Data: res.data,
+                            Success: res.success,
+                            Message: res.message,
+                            ErrorType: res.errorType
+                        };
+                        resolve(standard);
+                    }
+                )
                 .catch((error) => {
                         resolve({
                             Data: null,
@@ -112,9 +116,68 @@ export class HttpClient
                             Message: error.message,
                             ErrorType: ErrorType.Bad});
                 })
+            });        
+    }
+    private SendPageRequest<T>( actionurl: string, requestType: RequestType, data?: T ): Promise<PaginationResponse<T>>
+    {
+        return new Promise<PaginationResponse<T>>((resolve)=>
+            {
+                let methodes:string;
+                switch (requestType) {
+                    case RequestType.GET:
+                        methodes = "get";
+                        break;
+                    case RequestType.POST:
+                        methodes = "post";
+                        break;
+                    case RequestType.PUT:
+                        methodes = "put";
+                        break;
+                    case RequestType.DELETE:
+                        methodes = "delete";
+                        break;
+                    default:
+                        methodes = "get";
+                        break;
+                }
+                this.Axios
+                .request({
+                        headers: {
+                            'Content-Type':'application/json'
+                            ,'Access-Control-Allow-Origin': '*'
+                        },
+                        url: actionurl, 
+                        method: methodes,
+                        data: data})
+                .then((axiosResponse) => {
+                    const res = axiosResponse.data;
+
+                        console.log("res", res);
+                        const paginated: PaginationResponse<T> = {
+                            Data: res.data,
+                            Success: res.success,
+                            Message: res.message,
+                            ErrorType: res.errorType,
+                            Page: res.page,
+                            PageSize: res.pageSize,
+                            TotalPage: res.totalPage
+                        };
+                     
+                        resolve(paginated);
+                  
+                })
+                .catch((error) => {
+                        resolve({
+                            Data: null,
+                            Success: false,
+                            Page: 0,
+                            PageSize: 0,
+                            TotalPage: 0,
+                            Message: error.message,
+                            ErrorType: error.errorType});
+                })
             
-            });
-    
+        });
     }
       /**
      * Définit le nom du cookie contenant le JWT
@@ -261,7 +324,7 @@ export class HttpClient
  * @throws Will return an error response if the base URL is not set or if the request fails.
  */
 
-    public async execute<T>(): Promise<ServiceResponse<T> | PaginationResponse<T>>
+    public async execute<T>(): Promise<ServiceResponse<T>>
     {
         const currentState= {
             baseUrl: this.baseUrl,
@@ -280,7 +343,7 @@ export class HttpClient
         }
 
         try {
-            let response: ServiceResponse<T> | PaginationResponse<T>;
+            let response: ServiceResponse<T> ;
             const fullUrl = `${this.baseUrl}${this.url}`;
             if(!this.hasJwtCookie)
             {
@@ -304,8 +367,9 @@ export class HttpClient
                     response = await this.Sendrequest(fullUrl, this.requestType, this.Data as T);
                 }
             }
-
+            
             return response as ServiceResponse<T>;
+            
         } catch (error) {
             return {
                 Data: null,
@@ -321,5 +385,70 @@ export class HttpClient
            this.Data = currentState.Data;
         }
     }
- 
+    public async executePagination<T>(): Promise<PaginationResponse<T>>
+    {
+        const currentState= {
+            baseUrl: this.baseUrl,
+            url: this.url,
+            requestType: this.requestType,
+            Data: this.Data,
+        }
+
+        if (!this.baseUrl) {
+            return {
+                Data: null,
+                Success: false,
+                Message: 'Base URL not set',
+                TotalPage: 0,
+                Page: 0,
+                PageSize: 0,
+                ErrorType: ErrorType.Null,
+            };
+        }
+
+        try {
+            let response:PaginationResponse<T>;
+            const fullUrl = `${this.baseUrl}${this.url}`;
+            if(!this.hasJwtCookie)
+            {
+                throw new Error('JWT cookie not found');
+            }
+            if(this.requestType == RequestType.GET)
+            {
+                 response = await this.SendPageRequest(fullUrl, this.requestType);
+                 console.log("Full url :"+fullUrl);
+            }
+            else
+            {
+                if(this.Data == null)
+                {
+                   
+                    response = await this.SendPageRequest(fullUrl, this.requestType);
+                }
+                else
+                {
+                    
+                    response = await this.SendPageRequest(fullUrl, this.requestType, this.Data as T);
+                }
+            }
+            
+                return response as PaginationResponse<T>;
+        } catch (error) {
+            return {
+                Data: null,
+                Success: false,
+                Message: error.message,
+                TotalPage: 0,
+                Page: 0,
+                PageSize: 0,
+                ErrorType: ErrorType.Bad,
+            };
+        }finally
+        {
+           this.baseUrl = currentState.baseUrl;
+           this.url = currentState.url;
+           this.requestType = currentState.requestType;
+           this.Data = currentState.Data;
+        }
+    }
 }   

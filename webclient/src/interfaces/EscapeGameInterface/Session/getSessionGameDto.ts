@@ -7,7 +7,7 @@ export interface GetSessionGameDto {
     price: number;
     isReserved: boolean;
     placeAvailable: number;
-    pLaceMaximum: number;
+    placeMaximum: number;
 }
 
 // Définition correcte des colonnes
@@ -18,5 +18,5 @@ export const Sessioncolumns: Array<{ label: string; accessor: keyof GetSessionGa
     FormUtils.TableMapper("Price", "price"),
     FormUtils.TableMapper("Is Reserved", "isReserved"),
     FormUtils.TableMapper("Places Available", "placeAvailable"),
-    FormUtils.TableMapper("Max Places", "pLaceMaximum"),
+    FormUtils.TableMapper("Max Places", "placeMaximum"),
 ];

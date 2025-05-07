@@ -1,5 +1,7 @@
 import { OrganisationAction } from "@/actions/OrganisationActions";
 import ModalComponent from "@/components/factory/GenericComponent/Modal";
+import { useLoading } from "@/context/ContextHook/LoadingContext";
+import { useModal } from "@/context/ContextHook/ModalContext";
 import { UpdateUserOrganisationDto } from "@/interfaces/OrganisationInterface/UserOrganisation/updateUserOrganisationDto";
 import { Box, Typography,Button, Divider } from "@mui/material";
 import { FC } from "react";
@@ -12,6 +14,11 @@ interface RemoveFromOrganisationProps{
 }
 
 const RemoveFromOrganisation: FC<RemoveFromOrganisationProps> = ({ organisationId, userId }) => {
+    //---State----------------
+    //---Context--------------
+    const Modal=useModal();
+    const Loading=useLoading();
+
     const handleRemoveUser = async () => {
         const organisationAction = new OrganisationAction();
         const updateUserOrganisationDto: UpdateUserOrganisationDto = {
@@ -19,7 +26,17 @@ const RemoveFromOrganisation: FC<RemoveFromOrganisationProps> = ({ organisationI
             OrganisationId: organisationId
         };
 
-        await organisationAction.RemoveUserOrganisationDto(updateUserOrganisationDto);
+        const response =  await organisationAction.RemoveUserOrganisationDto(updateUserOrganisationDto);
+        if (response.Success) {
+            Modal.handleOpen();
+            Modal.setDescription(response.Message);
+            Modal.setTitle("Success");
+        }
+        else {
+            Modal.handleOpen();
+            Modal.setDescription(response.Message);
+            Modal.setTitle("Error");
+        }
     };
 
     return (
@@ -31,10 +48,16 @@ const RemoveFromOrganisation: FC<RemoveFromOrganisationProps> = ({ organisationI
                 </Typography>
             </Box>
             <Divider />
-            <Box>
+            <Box className="flex items-center justify-center" sx={{ mt: 4, mb: 2 }}>
                 
                <ModalComponent
-                    children={<Button color="error" onClick={handleRemoveUser}>Confirmer</Button>}
+                    children={
+                        <Box className="flex items-center justify-center text-center">
+                            <Button
+                                variant="contained" 
+                                color="error" 
+                                onClick={handleRemoveUser}>Confirmer</Button>
+                        </Box>}
                     Title={"Suppression de L'utilisateur"} 
                     Description={"vous ne pourrez pas revenir en arrière "}
                     ButtonTitle={"supprimer"} />

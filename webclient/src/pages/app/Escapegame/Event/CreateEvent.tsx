@@ -3,6 +3,7 @@ import { useState,FC } from "react";
 import { AddEventDto } from "@/interfaces/EscapeGameInterface/Event/addEventDto";
 
 interface CreateEventProps {
+    escapeGameId: number;
     onSubmit: (event: AddEventDto) => void;
 }
 
@@ -25,9 +26,9 @@ interface CreateEventProps {
  * @returns {React.ReactElement} The component that provides the create form interface.
  */
 
-const CreateEvent :FC<CreateEventProps> = ({onSubmit}) => {
+const CreateEvent :FC<CreateEventProps> = ({onSubmit, escapeGameId}) => {
     const [eventFormData, setEventFormData] = useState<AddEventDto | null>({
-        escapegameId: 0,
+        escapegameId: escapeGameId,
         eventTitle: "",
         eventDescription: "",
         StartDate: new Date(),
@@ -55,6 +56,7 @@ const CreateEvent :FC<CreateEventProps> = ({onSubmit}) => {
      * @param {React.FormEvent<HTMLFormElement>} event - The form submission event.
      */
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
         onSubmit(eventFormData);
     }
     /**

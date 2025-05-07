@@ -13,7 +13,7 @@ import Organisation from "./app/Organisation";
 import Notification from "./app/Notification";
 import UserOrganisation from "./app/UserOrganisation";
 import EscapeGame from "./app/Escapgame";
-import VerifyEmail from "./app/VerifyEmail";
+import VerifyEmail from "./auth/VerifyEmail";
 import NotFound from "./app/NotFound";
 import Session from "./app/Session";
 import Reservation from "./app/Reservation";
@@ -23,6 +23,7 @@ import Event from "./app/Event";
 import ActivityPlacePage from "./app/ActivityPlace";
 import Profile from "@/pages/app/Profile";
 import { useAuth } from "@/context/AuthContext";
+import ResetPassWordComponent from "./auth/ResetPassWordMail";
 
 /**
  * Webclient app entry point.
@@ -53,36 +54,29 @@ const App: React.FC = () => {
               <Route path="organisation/user/:id" element={<UserOrganisation />} />
               <Route path="escapegame/:id" element={<EscapeGame />} />
               <Route path="escapegame/:id/session" element={<Session />} />
-              <Route path="escapegame/:id/session/:id/reservation" element={<Reservation/>} />
+              <Route path="escapegame/:esgId/session/:id/reservation" element={<Reservation/>} />
               <Route path="escapegame/:id/event" element={<Event />} />
               <Route path="escapegame/:id/activity" element={<ActivityPlacePage />} />
               <Route path="faq" element={<FAQ />} />
+              <Route path="VerifyEmail" element={<VerifyEmail />} />
               <Route path="statistic" element={<Statistic />} />
-              <Route path="*" element={<Navigate to="/" replace/>}/>
+           
             </Route>
 
             <Route element={<AuthLayout />}>
               <Route path="login" element={<Login />} />
+              <Route path="verify" element={<VerifyEmail />} />
+              <Route path="reset" element={<ResetPassWordComponent />}/>
+              <Route path="*" element={<Navigate to="/login" replace/>}/>
             </Route>
 
             <Route element={<Layout />}>
-              <Route path="/home" element={<Home />} />
-              <Route path="/verify" element={<VerifyEmail />} />
+              <Route path="home" element={<Home />} />
               <Route path="*" element={<Navigate to="/home" replace/>}/>
             </Route>
           </>
         
-          <>
-            <Route element={<AuthLayout />}>
-              <Route path="login" element={<Login />} />
-            </Route>
-
-            <Route element={<Layout />}>
-              <Route path="/home" element={<Home />} />
-              <Route path="/verify" element={<VerifyEmail />} />
-              
-            </Route>
-          </>
+         
       
         <Route path="*" element={<NotFound />} />
      

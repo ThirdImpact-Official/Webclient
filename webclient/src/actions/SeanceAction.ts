@@ -17,32 +17,55 @@ export class SeanceService {
     }
 
     // Méthodes pour les Séances
+    /**
+     * 
+     * @param id 
+     * @returns 
+     */
     public async getSeanceById(id: number): Promise<ServiceResponse<GetEscapeGameSeanceDto> | PaginationResponse<GetEscapeGameSeanceDto>> {
         return await this.httpClient
             .GetRequestType(`/${id}`)
             .execute<GetEscapeGameSeanceDto>();
     }
-
+    /**
+     * 
+     * @param escapeGameId 
+     * @returns 
+     */
     public async getSeanceByEscapeGameId(escapeGameId: number): Promise<ServiceResponse<GetEscapeGameSeanceDto[]> | PaginationResponse<GetEscapeGameSeanceDto[]>> {
         return await this.httpClient
             .GetRequestType(`/escapeGame/${escapeGameId}`)
-            .execute<GetEscapeGameSeanceDto[]>();
+            .executePagination<GetEscapeGameSeanceDto[]>();
     }
-
+    /**
+     * 
+     * @param seance 
+     * @returns 
+     */
     public async createSeance(seance: AddEscapeGameSeanceDto): Promise<ServiceResponse<GetEscapeGameSeanceDto> | PaginationResponse<GetEscapeGameSeanceDto>> {
         return await this.httpClient
             .PostRequestType('')
             .setData(seance)
             .execute<GetEscapeGameSeanceDto>();
     }
-
+    /**
+     * 
+     * @param seance    
+     * @returns
+     *  
+     */
     public async updateSeance(seance: UpdateEscapeGameSeanceDto): Promise<ServiceResponse<GetEscapeGameSeanceDto> | PaginationResponse<GetEscapeGameSeanceDto>> {
         return await this.httpClient
             .PutRequestType('')
             .setData(seance)
             .execute<GetEscapeGameSeanceDto>();
     }
-
+    /** 
+     * 
+     * 
+     * @param id
+     * @returns
+     */
     public async deleteSeance(id: number): Promise<ServiceResponse<GetEscapeGameSeanceDto> | PaginationResponse<GetEscapeGameSeanceDto>> {
         return await this.httpClient
             .DeleteRequestType(`/${id}`)
@@ -50,19 +73,31 @@ export class SeanceService {
     }
 
     // Méthodes pour les Jours de la Semaine
+    /**
+     * 
+     * @returns 
+     */
     public async getDayOfTheWeek(): Promise<ServiceResponse<GetDayOftheWeekDto[]> | PaginationResponse<GetDayOftheWeekDto[]>> {
         return await this.httpClient
             .GetRequestType('/dayoftheweek')
             .execute<GetDayOftheWeekDto[]>();
     }
-
+    /**
+     * 
+     * @param day 
+     * @returns 
+     */
     public async createDayOfTheWeek(day: AddDayOfTheWeekDto): Promise<ServiceResponse<GetDayOftheWeekDto> | PaginationResponse<GetDayOftheWeekDto>> {
         return await this.httpClient
             .PostRequestType('/dayoftheweek')
             .setData(day)
             .execute<GetDayOftheWeekDto>();
     }
-
+    /**
+     * 
+     * @param day 
+     * @returns
+     */
     public async updateDayOfTheWeek(day: UpdateDayOfTheWeekDto): Promise<ServiceResponse<GetDayOftheWeekDto> | PaginationResponse<GetDayOftheWeekDto>> {
         return await this.httpClient
             .PutRequestType('/dayoftheweek')

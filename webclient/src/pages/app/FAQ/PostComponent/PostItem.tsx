@@ -103,7 +103,7 @@ const PostItem: React.FC<PostItemProps> = ({ dataitem, OnDetails }) => {
     ],[] );
 
     return (
-        <Card>
+        <Card className="m-4 bg-white shadow-lg rounded-lg hover:shadow-2xl transition-all">
             <CardHeader
                 avatar={
                     <>
@@ -116,7 +116,7 @@ const PostItem: React.FC<PostItemProps> = ({ dataitem, OnDetails }) => {
                     <Box className=" flex justify-end">
                         
                         <Typography 
-                                className="pt-2 pr-4" 
+                                className="text-gray-500" 
                                 variant="subtitle2">{ new Date(item.creationDate).toLocaleDateString()}
                         </Typography>
                         <GenericMenu items={menupost}  
@@ -126,9 +126,11 @@ const PostItem: React.FC<PostItemProps> = ({ dataitem, OnDetails }) => {
             </CardHeader>
             <Divider/>
             <CardContent 
-                className="flex justify-start ps-4 pb-4">
-                <Box className="post-item-content flex justify-start ps-4 pb-4">
-                    <Typography>{item.content}</Typography>
+                className="px-4 pb-4">
+                <Box className="post-item-content">
+                    <Typography
+                        variant="body2"
+                        >{item.content}</Typography>
                 </Box>
             </CardContent> 
             <CardActions className="post-item-footer flex space-x-4 m-2 pb-2 justify-end">

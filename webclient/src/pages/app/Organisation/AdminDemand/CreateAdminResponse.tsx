@@ -1,5 +1,5 @@
 import { CreateAdminDemandDto } from "@/interfaces/AdminDemand/CreateAdminDemand";
-import { Box,Button,TextField,Typography } from "@mui/material";
+import { Box,Button,FormControl,TextField,Typography } from "@mui/material";
 import { useState } from "react";
 
 
@@ -13,7 +13,7 @@ const CreateAdminResponse =() => {
     
     return(
         <>
-            <form>
+            <FormControl>
                 <Box className="text-center items-center justify-center space-y-4">
                     <Box>
                         <Typography 
@@ -45,7 +45,7 @@ const CreateAdminResponse =() => {
                     <Button variant="contained"
                     >Submit</Button>
                 </Box>
-            </form>
+            </FormControl>
         </>
     );
 }

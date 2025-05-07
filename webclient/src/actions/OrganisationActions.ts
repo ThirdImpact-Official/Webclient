@@ -34,25 +34,8 @@ export class OrganisationAction {
      * @throws {Error} If the request to retrieve the organisation fails.
      */
     public async GetOrganisationById(id: number): Promise<ServiceResponse<GetOrganisationDto>|PaginationResponse<GetOrganisationDto>> {
-        try 
-        {
-            const response = await this._httpClient.GetRequestType("/" + id).execute<GetOrganisationDto>();
-            
-            if(response.Success)
-            {
-                return response;
-            }
-            throw new Error(response.Message);
-        }
-        catch(error)
-        {
-            return {
-                Data: null,
-                Success: false,
-                Message: error instanceof Error ? error.message : 'An error occurred',
-                ErrorType: ErrorType.Bad,
-            }
-        }
+        return await this._httpClient.GetRequestType("/" + id)
+            .execute<GetOrganisationDto>();
     }
 
     /**
@@ -63,32 +46,10 @@ export class OrganisationAction {
      *          be false.
      * @throws {Error} If the request to retrieve all organisations fails.
      */
-
     public async GetAllOrganisation(page:number ,pageSize: number): Promise<ServiceResponse<GetOrganisationDto> | PaginationResponse<GetOrganisationDto>> {
-        try {
             const param: string =`?page=${page}&pageSize=${pageSize}`;
-            const response:ServiceResponse<GetOrganisationDto> | PaginationResponse<GetOrganisationDto> = await this._httpClient.GetRequestType(param).execute<GetOrganisationDto>();
-
-            if(response.Success)
-            {
-                return response;
-            }
-            else
-            {
-                throw new Error(response.Message);
-            }
-            throw new Error(response.Message);
-        } catch (error) {
-            return {
-                Data: null,
-                Success: false,
-                Page: 0,
-                PageSize: 0,
-                TotalPage: 0,
-                Message: error instanceof Error ? error.message : 'An error occurred',
-                ErrorType: ErrorType.Bad,
-            }
-        }
+            return await this._httpClient.GetRequestType(param)
+                .executePagination<GetOrganisationDto>();
     }
 
     /**
@@ -101,22 +62,9 @@ export class OrganisationAction {
      * @throws {Error} If the request to add the organisation fails.
      */
     public async addOrganisation(organisation: GetOrganisationDto): Promise<ServiceResponse<GetOrganisationDto>|PaginationResponse<GetOrganisationDto>> {
-        try {
-            const response = await this._httpClient.PostRequestType("")
+        return await this._httpClient.PostRequestType("")
                 .setData(organisation)
                 .execute<GetOrganisationDto>();
-            if (response.Success) {
-                return response;
-            }
-            throw new Error(response.Message);
-        } catch (error) {
-            return {
-                Data: null,
-                Success: false,
-                Message: error instanceof Error ? error.message : 'An error occurred',
-                ErrorType: ErrorType.Bad,
-            };
-        }
     }
 
     /**
@@ -129,22 +77,9 @@ export class OrganisationAction {
      * @throws {Error} If the request to update the organisation fails.
      */
     public async updateOrganization(organization: GetOrganisationDto): Promise<ServiceResponse<GetOrganisationDto>|PaginationResponse<GetOrganisationDto>> {
-        try {
-            const response = await this._httpClient.PutRequestType("")
-                                                    .setData(organization)
-                                                    .execute<GetOrganisationDto>();
-            if (response.Success) {
-                return response;
-            }
-            throw new Error(response.Message);
-        } catch (error) {
-            return {
-                Data: null,
-                Success: false,
-                Message: error instanceof Error ? error.message : 'An error occurred',
-                ErrorType: ErrorType.Bad,
-            };
-        }
+        return await this._httpClient.PutRequestType("")
+            .setData(organization)
+            .execute<GetOrganisationDto>();     
     }
 
     /**
@@ -157,22 +92,8 @@ export class OrganisationAction {
      * @throws {Error} If the request to delete the organisation fails.
      */
     public async DeleteOrganisation(id: number): Promise<ServiceResponse<GetOrganisationDto>|PaginationResponse<GetOrganisationDto>> {
-        try {
-            const response =  await this._httpClient.DeleteRequestType("/" + id)
-                                                    .execute<GetOrganisationDto>();
-            if (response.Success) {
-                return response;
-            }
-            throw new Error(response.Message);
-        } catch (error) {
-            return {
-                Data: null,
-                Success: false,
-                Message: error instanceof Error ? error.message : 'An error occurred',
-                ErrorType: ErrorType.Bad,
-            };
-        }
-       
+        return  await this._httpClient.DeleteRequestType("/" + id)
+                                .execute<GetOrganisationDto>(); 
     }
     /**
      * Adds a new organisation.
@@ -184,21 +105,10 @@ export class OrganisationAction {
      * @throws {Error} If the request to add the organisation fails.
      */
     public async AddanOrganisation(organisation: AddOrganisationDto): Promise<ServiceResponse<GetOrganisationDto>|PaginationResponse<GetOrganisationDto>> {
-        try {
-            const response= await this._httpClient.PostRequestType("")
-                                                .setData(organisation)
-                                                .execute<GetOrganisationDto>();
-            if (response.Success) {
-                return response;
-            }
-        } catch (error) {
-            return {
-                Data: null,
-                Success: false,
-                Message: error instanceof Error ? error.message : 'An error occurred',
-                ErrorType: ErrorType.Bad,
-            }
-        }
+        
+            return await this._httpClient.PostRequestType("")
+                                    .setData(organisation)
+                                    .execute<GetOrganisationDto>();
     }
     /**
      * Adds a user to an organisation.
@@ -208,25 +118,11 @@ export class OrganisationAction {
      */
 
     public async addUserOrganisation(userOrganisation: AddUserOrganisationDto): Promise<ServiceResponse<GetOrganisationDto> | PaginationResponse<GetOrganisationDto>> {
-        try {
-            const response = await this._httpClient
-                .setData(userOrganisation)
-                .PostRequestType("/user")
-                .execute<GetOrganisationDto>();
-                
-            if (response.Success) {
-                return response;
-            }
-            
-            throw new Error(response.Message);
-        } catch (error) {
-            return {
-                Data: null,
-                Success: false,
-                Message: error instanceof Error ? error.message : 'An error occurred',
-                ErrorType: ErrorType.Bad,
-            };
-        }
+        
+           return await this._httpClient
+                    .setData(userOrganisation)
+                    .PostRequestType("/user")
+                    .execute<GetOrganisationDto>();
     }
 
     /**
@@ -237,23 +133,11 @@ export class OrganisationAction {
      */
 
     public async RemoveUserOrganisationDto(userOrganisation: UpdateUserOrganisationDto): Promise<ServiceResponse<GetOrganisationDto>|PaginationResponse<GetOrganisationDto>> {
-        try {
-            
-            const response:ServiceResponse<GetOrganisationDto>|PaginationResponse<GetOrganisationDto> = await this._httpClient.DeleteRequestType("/user")
-                                            .setData<UpdateUserOrganisationDto>(userOrganisation)
-                                            .execute<GetOrganisationDto>();
-            if ((response).Success) {
-                return response;
-            }
-            throw new Error(response.Message);
-        } catch (error) {
-            return {
-                Data: null,
-                Success: false,
-                Message: error instanceof Error ? error.message : 'An error occurred',
-                ErrorType: ErrorType.Bad,
-            }
-        }
+      
+        return await this._httpClient.DeleteRequestType("/user")
+                            .setData<UpdateUserOrganisationDto>(userOrganisation)
+                            .execute<GetOrganisationDto>();
+
     }
 
     /**
@@ -263,63 +147,24 @@ export class OrganisationAction {
      * @throws {Error} If the request to update the address fails.
      */
     public async updateAddress(updateData: UpdateAdressDto): Promise<ServiceResponse<GetOrganisationDto> | PaginationResponse<GetOrganisationDto>> {
-        try {
-            const response = await this._httpClient
+     
+            return  await this._httpClient
                 .setData<UpdateAdressDto>(updateData)
                 .PutRequestType("/address")
                 .execute<GetOrganisationDto>();
                 
-            if (response.Success) {
-                return response;
-            }
-            throw new Error(response.Message);
-        } catch (error) {
-            return {
-                Data: null,
-                Success: false,
-                Message: error instanceof Error ? error.message : 'An error occurred',
-                ErrorType: ErrorType.Bad,
-            };
-        }
+   
     }
     public async GetUserOrganisation(id: number): Promise<ServiceResponse<GetUserDto> | PaginationResponse<GetUserDto>> {
-        try 
-        {
-            const response = await this._httpClient.GetRequestType("/user/" + id).execute<GetUserDto>();   
+   
+        return await this._httpClient
+            .GetRequestType("/user/" + id).execute<GetUserDto>();   
 
-            if(response.Success)
-            {
-                return response;
-            }
-        }
-        catch(error)
-        {
-            return {
-                Data: null,
-                Success: false,
-                Message: error instanceof Error ? error.message : 'An error occurred',
-                ErrorType: ErrorType.Bad,
-            }
-        }
     }
     public async GetUserOrganisationlst(): Promise<ServiceResponse<GetUserDto> | PaginationResponse<GetUserDto>> {
-        try 
-        {
-            const response = await this._httpClient.GetRequestType("/user").execute<GetUserDto>();   
+      
+        return await this._httpClient.GetRequestType("/user")
+            .executePagination<GetUserDto>();   
 
-            if(response.Success)
-            {
-                return response;
-            }
-        }
-        catch(error)
-        {
-            return {
-                Data: null,
-                Success: false,
-                Message: error instanceof Error ? error.message : 'An error occurred',
-                ErrorType: ErrorType.Bad,
-            }
-        }
     }
 }

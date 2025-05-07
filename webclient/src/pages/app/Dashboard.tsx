@@ -7,21 +7,25 @@ import { useNavigate} from 'react-router-dom';
  * @returns {React.ReactElement} A div containing the dashboard content.
  */
 
-const Dashboard: React.FC = ()=> {
-    const authCOntext=useAuth();
-    const navigate = useNavigate();
-    const [isAuth, setIsAuth] = useState(authCOntext.isAuthenticated);
-    useEffect(()=>{
-        if (!isAuth){
-            navigate("/login");
-        }
-    })
-    return(
-        <div className="w-full h-full flex items-center justify-center">
-            <p>
-                Dashboard
-            </p>
-        </div>);
-}
+const Dashboard = () => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+    }
+  }, [isAuthenticated, navigate]);
+
+  if (isAuthenticated) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <p>Dashboard</p>
+      </div>
+    );
+  }
+
+  return null;
+};
 
 export default Dashboard;

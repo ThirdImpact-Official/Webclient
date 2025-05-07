@@ -3,10 +3,9 @@ export interface AddEscapeGameDto  {
     esgCreator: string;
     esgTitle: string;
     esgContent: string;
-    esgImgResources: string;
+    esgImgResources: File | Blob;
     esgWebsite: string;
     esgPhoneNumber: string;
-    esg_IsDeleting: boolean;
     esg_IsForChildren: boolean;
     esg_Price_Id: number;
     esg_DILE_Id: number;

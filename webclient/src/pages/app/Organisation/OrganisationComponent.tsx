@@ -7,13 +7,20 @@ import {
   Container,
   Divider,
   Button,
+  FormControl,
+  CardHeader,
+  CardContent,
+  Card, 
+  Typography,
+  CardActionArea,
+  CardActions,
 } from '@mui/material';
-import AddNewOrganisation from './AddOrganisation';
+import { Refresh } from '@mui/icons-material';
 
+import AddNewOrganisation from './AddOrganisation';
 import AddressDetail from './AddressComposant/AdressDetail';
 import OrganisationDetails from './OrganisationDetails';
 import OrganisationTable from './OrganisationTable';
-
 import { OrganisationAction } from '@/actions/OrganisationActions';
 import { PaginationResponse, ServiceResponse } from '@/interfaces/ServiceResponse';
 import { GetOrganisationDto } from '@/interfaces/OrganisationInterface/Organisation/getOrganisationDto';
@@ -25,6 +32,8 @@ import { AdminDemandAction } from '@/actions/AdminDemandAction';
 import AdminDemandTable from './AdminDemand/AdminDemandTable';
 import { data } from 'react-router-dom';
 import AdminDetails from './AdminDemand/AdminDemandDetail';
+import Organisation from '../Organisation';
+
 
 const OrganisationComponent = () => {
   // Etat pour la liste des organisations et la page courante
@@ -55,7 +64,17 @@ const OrganisationComponent = () => {
         console.error('Failed to load organisations:', error);
     }
   };
-
+  const handleAdminPageChange = async (event: React.ChangeEvent<unknown>, value: number) => {
+    try 
+    {
+        setAdminPage(value);
+        const response: ServiceResponse<GetAdminDemandDto> | PaginationResponse<GetAdminDemandDto> = await adminDemandAction.GetAdminDemandPage(value, 5);
+        setAllAdminDemand(Array.isArray(response.Data) ? response.Data : []);
+    } catch (error) 
+    {
+        console.error('Failed to load organisations:', error);
+    }
+  }
   // Callbacks pour mettre à jour l'état et changer la vue
   const handleOrganisationDetail = (organisation: GetOrganisationDto) => {
     setSelectedOrganisation(organisation);
@@ -95,43 +114,73 @@ const OrganisationComponent = () => {
 
     }
   }
+  //---------------refresh handler
+  const handleRefreshOrganisation = () => {
+      setPage(1);
+  }
+  const handlerefreshAdminDemand = () => {
+    setAdminPage(1);
+  }
+
   useEffect(() => {
-    fetchAdminDemand();
     fetchOrganisations();
   }, [page]);
+  useEffect(() => {
+    fetchAdminDemand();
+  }, [adminpage]);
+  
   const tab: TabItem[] =[
     {
       label: "Add  Organisation",
       content: <>
-          <Container className='p-2'>
-              <Paper className='shadow-lg' elevation={3} sx={{ p: 3, borderRadius: 2 ,}}>
+          <Card className='p-2'>
+              <CardContent>
                   <AddNewOrganisation />  
-              </Paper>
-          </Container>
+              </CardContent>
+          </Card>
       </>
     },
     {
       label: "Table",
       content: organisations != null ?(
       <>          
-        <Container className='p-2'>
-          <Paper elevation={3} sx={{ p: 3, borderRadius: 2 ,}}>
-            <OrganisationTable
-                Organisation={organisations}
-                OnDetails={handleOrganisationDetail}
-                OnUpdate={handleOrganisationUpdate}
-                onAddress={handleAddressDetail}
+        <Card>
+            <CardHeader
+              title={
+                  <>
+                      <Typography variant="h4">Organisation</Typography>
+                  </>
+              }
+              action={
+                  <>
+                  <FormControl>
+                      <Button
+                          onClick={handleRefreshOrganisation}
+                          variant="contained"
+                          color="warning">Referesh  
+                              <Refresh className="ps-1" /> 
+                          </Button>
+                  </FormControl>
+                  </>
+              }
+            />
+          <CardContent>
+          <OrganisationTable
+              Organisation={organisations}
+              OnDetails={handleOrganisationDetail}
+              OnUpdate={handleOrganisationUpdate}
+              onAddress={handleAddressDetail}
+              />
+          </CardContent>
+          <CardActions>
+            <Pagination
+                page={page}
+                className="float-end"
+                onChange={handlePageChange}
+                count={10}
                 />
-            <Box sx={{ display:"flex",justifyContent:'flex-end',mt:"2"}}>
-              <Pagination
-                  page={page}
-                  className="float-end"
-                  onChange={handlePageChange}
-                  count={10}
-                  />
-            </Box>
-          </Paper>
-        </Container>
+          </CardActions>
+        </Card>
     </>):<Skeleton></Skeleton>
     },
     {
@@ -139,58 +188,77 @@ const OrganisationComponent = () => {
       content:(
         <>
     
-          <Container className='p-2'>
-            <Paper elevation={3} sx={{ p: 3, borderRadius: 2 ,}}>
+          <Card className='p-2'>
+            <CardContent>
               <OrganisationDetails 
                   data={selectedOrganisation} />
-            </Paper>
-          </Container>
+            </CardContent>
+          </Card>
        
         </>
       )
-                
     },
     {
       label: "Update",
       content: 
-        <Container className='p-2'>
-          <Paper elevation={3} sx={{ p: 3, borderRadius: 2 ,}}>
+        <Card elevation={3} className='p-2'>
+          <CardContent>
             <UpdateOrganisationForm
                 data={selectedOrganisation}
                 handleCallBackResponse={()=> console.log("")} />
-          </Paper>
-        </Container>
+          </CardContent>
+        </Card>
     },
     {
       label:"Admin Demand Table",
       content:<>
-        <Container className='p-2'>
-          <Paper elevation={3} sx={{ p: 3, borderRadius: 2 ,}}> 
-
+        <Card elevation={3} className='p-2'>
+        <CardHeader
+          title={
+              <>
+                  <Typography variant="h4">Demande Administrateur</Typography>
+              </>
+          }
+          action={
+              <>
+            
+              <FormControl>
+                  <Button
+                      variant="contained"
+                      onClick={handlerefreshAdminDemand}
+                      color="warning">Referesh  
+                          <Refresh className="ps-1" /> 
+                      </Button>
+              </FormControl>
+              </>
+          }
+        />
+          <CardContent> 
             <AdminDemandTable data={allAdminDemand}
                               onDetails={handledemandDetail}/>
+          </CardContent>
+          <CardActions>
             <Box sx={{ display:"flex",justifyContent:'flex-end',mt:"2"}}>
               <Pagination
                   page={adminpage}
                   className="float-end"
-                  onChange={fetchAdminDemand}
+                  onChange={handleAdminPageChange}
                   count={10}
                   />
             </Box>
-          </Paper>
-        </Container>
+          </CardActions>
+        </Card>
       </>
     },
     {
       label:"Admin Demand Details",
       content:<>
-       <Container className='p-2'>
-          <Paper elevation={3} sx={{ p: 3, borderRadius: 2 ,}}> 
+       <Card elevation={3} className='p-2'>
+          <CardContent> 
             <AdminDetails data={adminDemand}/> 
-          </Paper>
-        </Container></>
-    }
-  ]
+          </CardContent>
+        </Card></>
+    }]
 
   const goToTab = (index: number) => {
     if (tabsRef.current) {
@@ -199,11 +267,7 @@ const OrganisationComponent = () => {
   };
   return (
     <Box className="flex items-center justify-center">
-       
-
         <GenericTabs ref={tabsRef} tabs={tab} defaultTab={0} ChangeTab={goToTab} ariaLabel="generic tabs"/>
-
-      
     </Box>
   );
 };

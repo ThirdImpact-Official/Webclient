@@ -1,55 +1,50 @@
 import { GetUserDto } from "@/interfaces/User/GetUserDto";
-import { Box, Divider, Typography } from "@mui/material";
+import { Avatar, Box, Typography, Stack, Divider, Paper,Grid2 } from "@mui/material";
 
 import { FC } from "react";
 
-interface UserOrganisationDetailsProps
-{ 
+interface UserOrganisationDetailsProps {
     data: GetUserDto;
 }
 
 const UserOrganisationDetails: FC<UserOrganisationDetailsProps> = ({ data }) => {
     return (
-        <Box className="flex items-center  w-3/6 h-full">
-            <Box className="space-y-4 px-4">
-                <Typography variant="h5" align="center">
-                    User Organisation
-                </Typography>
-                <Box className="space-y-6">
-                    <Box className="flex gap-2 justify-between">
-                        <Typography> Id </Typography>
-                        <Typography>{data.id}</Typography>
-                    </Box>
-                    <Box className="flex gap-2 justify-between">
-                        <Typography>First Name:</Typography>
-                        <Typography>{data.firstName}</Typography>
-                    </Box>
-                    <Box className="flex gap-2 justify-between">
-                        <Typography>Last Name:</Typography>
-                        <Typography>{data.lastName}</Typography>
-                    </Box>
-                    <Box className="flex gap-2 justify-between">
-                        <Typography>Email:</Typography>
-                        <Typography>{data.email}</Typography>
-                    </Box>
-                    <Box className="flex gap-2 justify-between">
-                        <Typography>Email Verified:</Typography>
-                        <Typography>{String(data.emailVerified)}</Typography>
-                    </Box>
+        <Grid2  sx={{ p: 4, borderRadius: 0, maxWidth: 900, mx: 'auto' }}>
+            <Stack spacing={3} alignItems="center">
+                <Typography variant="h5">User Organisation</Typography>
+                <Avatar
+                    sx={{ width: 160, height: 160, fontSize: 48 }}
+                    src={data.picture}
+                >
+                    {data.firstName.charAt(0)}
+                </Avatar>
+            </Stack>
 
-                    <Box className="flex gap-2 justify-between">
-                        <Typography>Report Count:</Typography>
-                        <Typography>{data.reportCount}</Typography>
-                    </Box>
-                    <Box className="flex gap-2 justify-between">
-                        <Typography>Username:</Typography>
-                        <Typography>{data.username}</Typography>
-                    </Box>
-                    <Divider />
-                </Box>
-            </Box>
-        </Box>
+            <Grid2 container spacing={2} mt={4}>
+                {[
+                    { label: "Id", value: data.id },
+                    { label: "First Name", value: data.firstName },
+                    { label: "Last Name", value: data.lastName },
+                    { label: "Email", value: data.email },
+                    { label: "Email Verified", value: String(data.emailVerified) },
+                    { label: "Report Count", value: data.reportCount },
+                    { label: "Username", value: data.username },
+                ].map(({ label, value }) => (
+                    <Grid2 size={6}
+                        sx={{ sm: "6",
+                             alignItems: "center",}}
+                     key={label}>
+                        <Box display="flex" justifyContent="space-between">
+                            <Typography variant="h6" color="text.secondary">{label}</Typography>
+                            <Typography variant="body1">{value}</Typography>
+                        </Box>
+                    </Grid2>
+                ))}
+            </Grid2>
+
+            <Divider sx={{ mt: 4 }} />
+        </Grid2>
     );
-}
+};
 
 export default UserOrganisationDetails;

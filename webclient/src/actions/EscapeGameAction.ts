@@ -31,7 +31,7 @@ export class EscapeGameAction {
         const params=`?page=${page}&pageSize=${pageSize}`;
         return await this.httpClient
             .GetRequestType("escapegame/organisation/"+orgId+`${params}`)
-            .execute<GetEscapeGameDto>();
+            .executePagination<GetEscapeGameDto>();
     }
 
     public async getEscapeGameById(id: number): Promise<ServiceResponse<GetEscapeGameDto> | PaginationResponse<GetEscapeGameDto>> {
@@ -64,7 +64,7 @@ export class EscapeGameAction {
     public async getAllActivityTypes(): Promise<ServiceResponse<GetActivityPlaceTypeDto[]> | PaginationResponse<GetActivityPlaceTypeDto[]>> {
         return await this.httpClient
             .GetRequestType('escapegame/activityplace/type')
-            .execute<GetActivityPlaceTypeDto[]>();
+            .executePagination<GetActivityPlaceTypeDto[]>();
     }
 
     public async getActivityPlaces(page: number, pageSize: number, activityTypeId: number): Promise<ServiceResponse<GetActivityPlaceDto> |PaginationResponse<GetActivityPlaceDto>> {
@@ -78,7 +78,7 @@ export class EscapeGameAction {
                                                       : `?page=${page}&pageSize=${pageSize}&activityTypeId=${activityTypeId}`;
         return await this.httpClient
             .GetRequestType('escapegame/activityplace/escapegame/'+id+param)
-            .execute<GetActivityPlaceDto>();
+            .executePagination<GetActivityPlaceDto>();
     }
     public async getActivityPlaceById(id: number): Promise<ServiceResponse<GetActivityPlaceDto> | PaginationResponse<GetActivityPlaceDto>> {
         return await this.httpClient
@@ -111,32 +111,32 @@ export class EscapeGameAction {
         const param: string =`?page=${page}&pageSize=${pageSize}`;
         return await this.httpClient
             .GetRequestType(`escapegame/event/escapegame/${id}`+param)
-            .execute<GetEventDto>();
+            .executePagination<GetEventDto>();
     }
 
     public async getEventById(id: number): Promise<ServiceResponse<GetEventDto> | PaginationResponse<GetEventDto>> {
         return await this.httpClient
-            .GetRequestType(`escapegame//event/${id}`)
+            .GetRequestType(`escapegame/event/${id}`)
             .execute<GetEventDto>();
     }
 
     public async createEvent(event: AddEventDto): Promise<ServiceResponse<GetEventDto> | PaginationResponse<GetEventDto>> {
         return await this.httpClient
-            .PostRequestType('escapegame//event')
+            .PostRequestType('escapegame/event')
             .setData(event)
             .execute<GetEventDto>();
     }
 
     public async updateEvent(event: UpdateEventDto): Promise<ServiceResponse<GetEventDto> | PaginationResponse<GetEventDto>> {
         return await this.httpClient
-            .PutRequestType('escapegame//event')
+            .PutRequestType('escapegame/event')
             .setData(event)
             .execute<GetEventDto>();
     }
 
     public async deleteEvent(id: number): Promise<ServiceResponse<GetEventDto> | PaginationResponse<GetEventDto>> {
         return await this.httpClient
-            .DeleteRequestType(`escapegame//event/${id}`)
+            .DeleteRequestType(`escapegame/event/${id}`)
             .execute<GetEventDto>();
     }
 }

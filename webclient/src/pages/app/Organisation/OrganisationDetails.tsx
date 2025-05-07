@@ -1,6 +1,9 @@
 import { GetOrganisationDto } from '@/interfaces/OrganisationInterface/Organisation/getOrganisationDto';
-import { Box, Button, Divider, Typography, } from '@mui/material';
-import { FC } from 'react';
+import { DensityMedium } from '@mui/icons-material';
+import { Box, Button, Card, Divider, Typography, CardContent, CardHeader, Menu, MenuItem, Stack } from '@mui/material';
+import { FC,useEffect,useState } from 'react';
+import EscapeGame from '../Escapgame';
+import RenderDetail from '@/components/factory/GenericComponent/RenderDetails';
 
 
 interface OrganisationDetailsProps
@@ -11,47 +14,65 @@ const OrganisationDetails: FC<OrganisationDetailsProps> = ({ data }) => {
     if (!data) {
         return null;
     }
-
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+      setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
     return (
-        <Box className="flex items-center justify-center  mx-15 rounded-md ">
-            <Box className="bg-white mx-15 space-y-6 px-10">
-                <Box>
-                    <Typography className="flex-1 text-center p-4" variant="h4">Details</Typography>
-                </Box>
-                <Box className="flex items-center gap-4">
-                    <Typography variant="h5" className="text-start">ID:</Typography>
-                    <Typography variant="body1" className="mx-2 text-center">{data.orgId}</Typography>
-                </Box>
-                <Box className="flex gap-4 justify-between">
-                    <Typography variant="h5" className="text-start">Name:</Typography>
-                    <Typography variant="body1" className="text-center">{data.name}</Typography>
-                </Box>
-                <Box className="flex gap-4 justify-between">
-                    <Typography variant="h5" className="text-start">Logo:</Typography>
-                    <img src={data.logo} className="h-10 w-10" alt="Logo" />
-                </Box>
-                <Box className="flex gap-4 justify-between">
-                    <Typography variant="h5">Email:</Typography>
-                    <Typography variant="body1" className="text-center">{data.email}</Typography>
-                </Box>
-                <Box>
-                    <Typography variant="h5">Description:</Typography>
-                    <Typography variant="body1">{data.description}</Typography>
-                </Box>
-                <Box className="flex gap-4 justify-between">
-                    <Typography variant="h5">Phone Number:</Typography>
-                    <Typography variant="body1" className="mx-2 text-center">{data.phoneNumber}</Typography>
-                </Box>
-                <Box className="flex gap-4 justify-between">
-                    <Typography variant="h5">Adress:</Typography>
-                    <Typography variant="body1" className="mx-2 text-center">{data.address}</Typography>
-                </Box>
-                <Divider className="mt-4 p-4" orientation="horizontal" flexItem />
-                <Box className="flex items-center justify-center m-4 p-2">
-                    <Button sx={{ mr: 2 }} variant="contained" color="error">Delete</Button>
-                </Box>
-            </Box>
-        </Box>
+        <Card className="m-4 bg-white shadow-lg rounded-lg hover:shadow-2xl transition-all">
+            <CardHeader 
+                title={
+                    <Typography variant="h4">{data.name}</Typography>} 
+                action={<>
+                    <Button
+                        id="basic-button"
+                        aria-controls={open ? 'basic-menu' : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? 'true' : undefined}
+                        onClick={handleClick}
+                  >
+                    <DensityMedium />
+                  </Button>
+                  <Menu
+                    id="basic-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    MenuListProps={{
+                      'aria-labelledby': 'basic-button',
+                    }}
+                  >
+                    <MenuItem onClick={handleClose}>EscapeGame</MenuItem>
+                    <MenuItem onClick={handleClose}>De Activate</MenuItem>
+                 
+                  </Menu>
+                </>
+                }        />
+            <CardContent>
+                <Box component={"img"} src={data.logo} alt={data.name} sx={{width: "100%", height: "100%", borderRadius: "10px"}}/>
+                <Stack direction={"column"} className='mt-4 pt-4' spacing={2}>
+                {[
+                    { label: 'Name', value: data.name },
+                    { label: 'Email', value: data.email },
+                    { label: 'Description', value: data.website },
+                    { label: 'Description', value: data.description },
+                    { label: 'Address', value: data.address },
+                    { label: 'Phone', value: data.phoneNumber },
+                    { label: 'Email', value: data.email },
+                    ].map((item, index) => (
+                    <RenderDetail
+                        key={index}
+                        label={item.label}
+                        value={item.value}
+                    />
+                    ))}
+                    </Stack>
+            </CardContent>
+        </Card>
     );
 }
 export default OrganisationDetails;

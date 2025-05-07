@@ -3,6 +3,6 @@ export interface UpdateSessionGameDto {
     escapeGameId: number;
     date: Date;
     price: number;
-    placeavailable: number;
-    pLacemaximum: number;
+    placeAvailable: number;
+    placeMaximum: number;
 }

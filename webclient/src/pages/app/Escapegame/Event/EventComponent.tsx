@@ -1,4 +1,4 @@
-import { Box, Typography,Snackbar,Alert, Tabs, Tab,Grid2, Skeleton } from '@mui/material';
+import { Box, Typography, Snackbar, Alert, Tabs, Tab, Grid2, Skeleton, Modal,FormControl,Button } from '@mui/material';
 import GenericTabs from "@/components/factory/GenericComponent/TabGénéric";
 import { useEffect, useRef,useState } from 'react';
 import { TabItem } from '@/components/factory/GenericComponent/TabGénéric';
@@ -16,6 +16,9 @@ import EscapeGameDetails from '../EscapegameDetails';
 import { mock } from 'node:test';
 import Item from '@/components/factory/GenericComponent/Item';
 import { EscapeGameAction } from '@/actions/EscapeGameAction';
+import { useLoading } from '@/context/ContextHook/LoadingContext';
+import { useModal } from '@/context/ContextHook/ModalContext';
+import ModalComponent from '@/components/factory/GenericComponent/Modal';
 //mock data
 
 /**
@@ -35,6 +38,10 @@ const EventComponentTab = () => {
     //---escapegame--
     const [escapegame,setEscapeGame]=useState<GetEscapeGameDto>();
     const escapeAction= new EscapeGameAction();
+    //Context 
+    const loading=useLoading();
+    const Modal=useModal();
+
     //SnackBar
     const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
     const [snackbarMessage, setSnackbarMessage] = useState<string>("");
@@ -61,13 +68,50 @@ const EventComponentTab = () => {
     /**
      * Handles the form submission for adding or updating an event.
      *
-     * @param {AddEventDto | UpdateEventDto} event - The event data to be submitted.
+     * @param {AddEventDto | UpdateEventDto} eventData - The event data to be submitted.
      * This can either be data for adding a new event or updating an existing event.
      */
-    const handleFormSubmit = (event: AddEventDto | UpdateEventDto) => {
-        // Handle form submission here
-        console.log('Form submitted:', event);
+    const handleFormSubmit = async (eventData: AddEventDto) => {
+            loading.showLoading;
+            loading.isLoading = true;
+        try {
+            Modal.handleOpen();
+            Modal.setDescription("waiting for response");
+            const response = await escapeAction.createEvent(eventData);
+            if (response.Success) {
+                Modal.setDescription(response.Message);
+                Modal.setTitle("Success");
+            } else {
+                Modal.handleOpen();
+                Modal.setDescription(response.Message);
+                Modal.setTitle("Error");
+            }
+        } catch (error) {
+            Modal.handleOpen();
+            Modal.setDescription(error instanceof Error ? error.message : 'An error occurred we were not ablet to create the event');
+            Modal.setTitle("Error");
+        }
     };
+    const handleUpdateSubmit = async (eventData: UpdateEventDto) => {
+        try {
+            const response = await escapeAction.updateEvent(eventData);
+
+            if (response.Success) {
+                Modal.handleOpen();
+                Modal.setDescription(response.Message);
+                Modal.description = response.Message;
+                Modal.setTitle("Success");
+            } else {
+                Modal.handleOpen();
+                Modal.setDescription(response.Message);
+                Modal.setTitle("Error");
+            }
+        } catch (error) {
+            Modal.handleOpen();
+            Modal.setDescription(error instanceof Error ? error.message : 'An error occurred');
+            Modal.setTitle("Error");
+        }
+    }
     /**
      * Closes the snackbar.
      */
@@ -77,27 +121,6 @@ const EventComponentTab = () => {
 
     // event list Columns
     const eventColumns = EventTypeColumns;
-
-    const tabs: TabItem[] = [
-        {
-            label: "Event Table",
-            content: <EventTab data={eventList} OnDetail={handLeDetails} OnUpdate={handleUpdate} />,
-        },
-        {
-            label: "Details",
-            content:selectedEvent ? ( 
-                <EventDetails data={selectedEvent} columns={eventColumns} onUpdate={handleUpdate} />
-            ) :<Skeleton variant="rectangular" height={200} width={500}></Skeleton>
-        },
-        {
-            label: "Create",
-            content: <CreateEvent onSubmit={handleFormSubmit} />,
-        },
-        {
-            label: "Update",
-            content: <UpdateEvent onSubmit={handleFormSubmit} data={selectedEvent} />,
-        },
-    ];
 
     // récupération des information d'un escapeGame 
     const fetchEscapeGame = async ()  => {
@@ -130,6 +153,41 @@ const EventComponentTab = () => {
             fetchEventList();
         }   
     },[id]);
+    const tabs: TabItem[] = [
+        {
+            label: "Event Table",
+            content:(
+                <>
+                <FormControl className='flex flex-row space-x-10 float-end justify-end items-end'>
+                    <Button
+                    variant='contained'
+                    color='warning'
+                    onClick={fetchEventList}>Refresh</Button>
+                </FormControl>
+                <EventTab data={eventList} OnDetail={handLeDetails} OnUpdate={handleUpdate} />,
+            </>
+            ) 
+        },
+        {
+            label: "Details",
+            content:selectedEvent ? ( 
+                <EventDetails data={selectedEvent} columns={eventColumns} onUpdate={handleUpdate} />
+            ) :<Skeleton variant="rectangular" height={200} width={500}></Skeleton>
+        },
+        {
+            label: "Create",
+            content: <CreateEvent 
+                        escapeGameId={Number.parseInt(id)}
+                        onSubmit={handleFormSubmit} />,
+        },
+        {
+            label: "Update",
+            content: <UpdateEvent 
+                        onSubmit={handleUpdateSubmit} 
+                        data={selectedEvent} />,
+        },
+    ];
+
     return (
         <Grid2 container spacing={2} className=" items-center justify-evenly">
             <Box className="flex flex-row gap-4">

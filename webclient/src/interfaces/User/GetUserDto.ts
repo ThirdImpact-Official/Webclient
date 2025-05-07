@@ -8,9 +8,11 @@ export interface GetUserDto {
     lastName: string;
     email: string;
     picture: string;
+    phoneNumber: string;
     emailVerified: boolean;
     reportCount: number;
     roleId: number | null;
+    lastLogin: string;
 }
 export const UserColumns = [
     FormUtils.TableMapper("ID", "id"),

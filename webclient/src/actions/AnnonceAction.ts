@@ -18,7 +18,7 @@ export class AnnonceService {
         const param: string =`?page=${page}&pageSize=${pageSize}`;
         return await this.httpClient
             .GetRequestType(param)
-            .execute<GetAnnonceDto>();
+            .executePagination<GetAnnonceDto>();
     }
 
     public async getAnnonceById(id: number): Promise<ServiceResponse<GetAnnonceDto> | PaginationResponse<GetAnnonceDto>> {

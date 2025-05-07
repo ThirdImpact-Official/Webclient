@@ -1,5 +1,5 @@
 import { useState ,FC } from "react";
-import { Box,Typography,TextField,Button } from "@mui/material";
+import { Box,Typography,TextField,Button, FormControl } from "@mui/material";
 import { ResponseAdminDemandDto } from '../../../../interfaces/AdminDemand/ResponseAdminDemand';
 import { on } from "events";
 
@@ -22,7 +22,7 @@ const AddResponseAdmin: FC<AddResponseAdminProps> = (props) => {
         // Your form submission logic here
       };
     return (
-        <form>
+        <FormControl>
             <Box className="text-center justify-center space-y-4">
                 <Box>
                     <Typography variant="h3">Réponse Admin</Typography>
@@ -55,7 +55,7 @@ const AddResponseAdmin: FC<AddResponseAdminProps> = (props) => {
                     variant="contained" 
                     color="primary">Submit</Button>
             </Box>
-        </form>
+        </FormControl>
     );
 }
 

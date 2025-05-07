@@ -3,7 +3,7 @@ import { GetForumDto } from "@/interfaces/PublicationInterface/Forum/getForumDto
 import { AddForumDto } from "@/interfaces/PublicationInterface/Forum/addForumDto";
 import {UpdateForumDto} from "@/interfaces/PublicationInterface/Forum/updateForumDto";
 import { Forum } from "@mui/icons-material";
-import { Box ,Snackbar,CircularProgress,Alert, Typography, FormControl, Select, MenuItem, Grid2, Skeleton,Pagination } from "@mui/material";
+import { Box ,Snackbar,CircularProgress,Alert, Typography, FormControl, Select, MenuItem, Grid2, Skeleton,Pagination,Button } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import ForumTabList from "./ForumComponent/ForumList";
 import SelectedForum from "./ForumComponent/SelectedForum";
@@ -161,6 +161,12 @@ const FaqComponent = () => {
                     <MenuItem>A</MenuItem>
                     <MenuItem>B</MenuItem>
                   </Select>
+                </FormControl>
+                <FormControl className='flex flex-row space-x-10 float-end justify-end items-end'>
+                  <Button
+                    variant='contained'
+                    color='warning'
+                    onClick={fetchForums}>Refresh</Button>
                 </FormControl>
                 </Box>
                 {

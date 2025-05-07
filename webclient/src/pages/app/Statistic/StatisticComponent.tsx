@@ -1,7 +1,9 @@
 
+import LineChartState from "@/components/factory/GenericComponent/StatisticModule";
 import GenericTabs, { TabItem } from "@/components/factory/GenericComponent/TabGénéric";
 import { Box } from "@mui/material"
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { data } from 'react-router-dom';
 
 
 const statisticComponent = () => {
@@ -11,10 +13,21 @@ const statisticComponent = () => {
           tabsRef.current.changeTab(index);
         }
     };
+    const [data,setData]= useState<number[]>([]);
+    const generaterandomdata = () => {
+        const Data= Array.from({ length: 10 },()=> Math.floor(Math.random() * 100));
+        setData(Data);
+    }
     const tabs: TabItem[]=[
         {
             label:"tab1",
-            content:<></>
+            content:<>
+                <LineChartState 
+                    data={data}
+                    title={"title"}
+                    labels={[]}
+                 />
+            </>
         },
         {
             

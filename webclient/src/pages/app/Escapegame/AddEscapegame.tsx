@@ -2,23 +2,25 @@ import Item from "@/components/factory/GenericComponent/Item";
 import { PriceLevel, DifficultyLevel } from "@/enums/PriceLevel";
 import { AddEscapeGameDto } from "@/interfaces/EscapeGameInterface/EscapeGame/addEscapeGameDto";
 import { Grid2, Typography, TextField, Input, InputLabel, Checkbox, Select, MenuItem, Button , Box, SelectChangeEvent } from "@mui/material";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, FC, useState } from "react";
 
-const AddEscapeGameForm = () => {
+interface AddEscapeGameFormProps {
+  onSubmit: (data: AddEscapeGameDto) => void;
+}
+const AddEscapeGameForm :FC<AddEscapeGameFormProps> = (props) => {
   const [escapeGameData, setEscapeGameData] = useState<AddEscapeGameDto>({
     esgNom: "",
-    esgCreator: '',
-    esgTitle: '',
-    esgContent: '',
-    esgImgResources: '',
-    esgWebsite: '',
-    esgPhoneNumber: '',
-    esg_IsDeleting: false,
+    esgCreator: "",
+    esgTitle: "",
+    esgContent: "",
+    esgImgResources: null,
+    esgWebsite: "",
+    esgPhoneNumber: "",
     esg_IsForChildren: false,
     esg_Price_Id: 1,
     esg_DILE_Id: 1,
   });
-
+  const [isCheck,setISCheck] = useState<boolean>(false);
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEscapeGameData((previousData) => ({
       ...previousData,
@@ -31,7 +33,7 @@ const AddEscapeGameForm = () => {
     if (file) {
       setEscapeGameData((previousData) => ({
         ...previousData,
-        image: file.name,
+        esgImgResources: file,
       }));
     }
   };
@@ -39,20 +41,22 @@ const AddEscapeGameForm = () => {
   const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEscapeGameData((previousData) => ({
       ...previousData,
-      isForChildren: event.target.checked,
+      esg_IsForChildren: event.target.checked, 
     }));
+   
   };
 
   const handleSelectChange = (event: SelectChangeEvent<number>) => {
-    setEscapeGameData((previousData) => ({
-      ...previousData,
-      [event.target.name]: event.target.value,
+    const { name, value } = event.target;
+    setEscapeGameData((prev) => ({
+      ...prev,
+      [name]: Number(value),
     }));
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-  
+    props.onSubmit(escapeGameData);
   };
 
   return (
@@ -66,10 +70,9 @@ const AddEscapeGameForm = () => {
               </Typography>
             </Box>
             <Box className="space-y-4" >
-                
                   <Box  >
                     <TextField
-                      name="name"
+                      name="esgNom"
                       label="Name"
                       fullWidth
                       placeholder="Name"
@@ -79,7 +82,17 @@ const AddEscapeGameForm = () => {
                   </Box>
                   <Box >
                     <TextField
-                      name="content"
+                      name="esgTitle"
+                      label="Title"
+                      fullWidth
+                      placeholder="Title"
+                      value={escapeGameData.esgTitle}
+                      onChange={handleInputChange}
+                    />
+                  </Box>
+                  <Box >
+                    <TextField
+                      name="esgContent"
                       label="Content"
                       fullWidth
                       placeholder="Content"
@@ -89,7 +102,7 @@ const AddEscapeGameForm = () => {
                   </Box>
                   <Box>
                     <TextField
-                      name="creator"
+                      name="esgCreator"
                       label="Creator"
                       fullWidth
                       placeholder="Creator"
@@ -99,7 +112,7 @@ const AddEscapeGameForm = () => {
                   </Box>
                   <Box>
                     <TextField
-                      name="website"
+                      name="esgWebsite"
                       label="Website"
                       fullWidth
                       placeholder="Website"
@@ -109,7 +122,7 @@ const AddEscapeGameForm = () => {
                   </Box>
                   <Box>
                     <TextField
-                      name="phoneNumber"
+                      name="esgPhoneNumber"
                       label="Phone Number"
                       fullWidth
                       placeholder="Phone Number"
@@ -119,6 +132,7 @@ const AddEscapeGameForm = () => {
                   </Box>
                   <Box>
                     <TextField 
+                      name="esgImgResources"
                       fullWidth
                       type="file"
                       onChange={handleFileChange}
@@ -129,8 +143,9 @@ const AddEscapeGameForm = () => {
                   <Box>
                     <InputLabel>Is For Children</InputLabel>
                     <Checkbox
-                      name="isForChildren"
-                      checked={escapeGameData. esg_IsForChildren}
+                      name="esg_IsForChildren"
+
+                      checked={isCheck}
                       onChange={handleCheckboxChange}
                     />
                   </Box>
@@ -138,7 +153,7 @@ const AddEscapeGameForm = () => {
                     <Box>
                       <InputLabel>Price</InputLabel>
                       <Select
-                        name="priceId"
+                        name="esg_Price_Id"
                         value={escapeGameData.esg_Price_Id}
                         onChange={handleSelectChange}
                       >
@@ -158,7 +173,7 @@ const AddEscapeGameForm = () => {
                     <Box>
                       <InputLabel>Difficulty</InputLabel>
                       <Select
-                        name="difficultyLevelId"
+                        name="esg_DILE_Id"
                         value={escapeGameData.esg_DILE_Id}
                         onChange={handleSelectChange}
                       >

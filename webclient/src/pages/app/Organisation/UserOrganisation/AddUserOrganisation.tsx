@@ -2,6 +2,8 @@ import { useState, FC } from 'react';
 import { AddUserOrganisationDto } from '@/interfaces/OrganisationInterface/UserOrganisation/addUserOrganisationDto';
 import { Box, TextField, Button, Typography} from '@mui/material';
 import { OrganisationAction } from '@/actions/OrganisationActions';
+import { useModal } from '@/context/ContextHook/ModalContext';
+import { useLoading } from '@/context/ContextHook/LoadingContext';
 
 interface AddUserOrganisationProps{
     organisationId:number; 
@@ -19,6 +21,9 @@ interface AddUserOrganisationProps{
 const AddUserOrganisation: FC<AddUserOrganisationProps> = ({organisationId}) => {
     const responseApi= new OrganisationAction();
     const [email,setEmail] = useState<string>();
+    //Const 
+    const Modal = useModal();
+    const Loading=useLoading();
 
     const handleApiCall = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -30,11 +35,20 @@ const AddUserOrganisation: FC<AddUserOrganisationProps> = ({organisationId}) => 
             const response = await responseApi.addUserOrganisation(userToAdd);
             if (response.Success) {
                 // Handle successful response
-                console.log(response.Data);
-                console.log("User added to organisation successfully");
+                Modal.handleOpen();
+                Modal.setDescription(response.Message);
+                Modal.setTitle("Success");
+            }
+            else {
+                Modal.handleOpen();
+                Modal.setDescription(response.Message);
+                Modal.setTitle("Error");
             }
             console.log(response.Message);
         } catch (error) {
+            Modal.handleOpen();
+            Modal.setDescription(error.Message);
+            Modal.setTitle("Error");
             console.error('Error adding user to organisation:', error);
         }
     }

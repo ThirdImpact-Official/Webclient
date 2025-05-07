@@ -4,6 +4,7 @@ export enum ErrorType
     Bad=2,
     Null=3
 }
+
 export enum RequestType
 {
     GET=1,

@@ -1,5 +1,6 @@
 import { LoginDto } from "@/interfaces/Credentials/loginDto";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, TextField, Typography,InputAdornment,IconButton } from "@mui/material";
+import { Visibility,VisibilityOff } from "@mui/icons-material";
 import { CreadentialAction } from "@/actions/CreadentialAction";
 import React, { useEffect, useState } from "react";
 import { LoginCredentials } from "@/interfaces/login/loginCredentials";
@@ -17,11 +18,23 @@ const Login:React.FC = () => {
         emailAdress: "",
         password: "",
     });
+    const [showPassword, setShowPassword] = useState(false);
+
     const CredAction= new CreadentialAction();
     const authContext= useAuth();
     const NavTo=useNavigate();
     const [isAuthenticated,setIsAuthenticated]=useState(authContext.isAuthenticated);
 //------------------Handlers-----------
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    };
+
+    const handleMouseUpPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    };
+
     const handleOnChange = (key: keyof LoginCredentials, value: string) => {
         setFormData((prevData) => ({
             ...prevData,
@@ -104,14 +117,34 @@ const Login:React.FC = () => {
                             <TextField  name="email" 
                                         value={formData.emailAdress} 
                                         onChange={(e) => handleOnChange("emailAdress", e.target.value)} 
-                                        label="Name" />
+                                        label="email" />
                         </Box>
                         <Box>
                             <Typography>Password</Typography>
-                            <TextField  name="Password" 
+                            <TextField  name="Password"
+                                        type={ showPassword ? "text" : "password" }
+                                        InputProps={{
+                                            endAdornment:(
+                                              <InputAdornment position="end">
+                                                    <IconButton
+                                                        aria-label={
+                                                            showPassword ? 'hide the password' : 'display the password'
+                                                        }
+                                                        onClick={handleClickShowPassword}
+                                                        onMouseDown={handleMouseDownPassword}
+                                                        onMouseUp={handleMouseUpPassword}
+                                                        edge="end"
+                                                        >
+                                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                    </IconButton>
+                                              </InputAdornment>
+                                                    )
+
+                                        }}
+                                        
                                         value={formData.password} 
                                         onChange={(e) => handleOnChange("password", e.target.value)}
-                                        label="Email" />
+                                        label="password" />
                         </Box>
                         <Box >
                             <Button 

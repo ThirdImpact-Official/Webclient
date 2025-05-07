@@ -1,5 +1,5 @@
 import FormUtils from "@/classes/FormUtils";
-import {  Grid2, Typography,Box } from "@mui/material";
+import {  Stack, Typography,Box } from "@mui/material";
 
 import { FC } from "react";
 import Item from "./Item";
@@ -59,20 +59,14 @@ const RenderDetail: FC<RenderProps> = ({ label, value }) => {
     };
 
     return (
-        <Grid2 container spacing={2} >
-            <Box className="flex gap-4 justify-between text">
-                <Box >
-                    <Typography variant="h6" sx={{ textAlign: "start", color: "black" }}>
-                        {label}:
-                    </Typography>
-                </Box>
-                <Box sx={{ textAlign: "start", color: "black" }} >
-                    <Typography variant="body1">
-                        {formatValue(value)}
-                    </Typography>
-                </Box>
-            </Box>
-        </Grid2>
+        <Stack direction="row" spacing={2} justifyContent="space-between" alignItems="flex-start" sx={{ width: '100%' }}>
+        <Typography variant="subtitle1" fontWeight={600} color="text.secondary">
+            {label}:
+        </Typography>
+        <Typography variant="body1" color="text.primary" sx={{ whiteSpace: 'pre-wrap', textAlign: 'right' }}>
+            {formatValue(value)}
+        </Typography>
+    </Stack>
     );
 };
 

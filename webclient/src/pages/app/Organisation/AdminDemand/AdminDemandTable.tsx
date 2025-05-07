@@ -19,10 +19,6 @@ const AdminDemandTable:FC<AdminDemandTableProps> = (props) => {
     }
     return (
         <>
-            <Box className="flex justify-center items-center">
-                <Typography variant="h4" className="m-2 p-2">
-                     Demande Administrateur</Typography>
-            </Box>
             <GenericTable 
                 data={props.data} 
                 OnDetails={handleDetails}

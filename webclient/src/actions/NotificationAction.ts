@@ -18,7 +18,7 @@ export class NotificationAction {
         const param: string =`?page=${page}&pageSize=${pageSize}`;
         return await this.httpClient
             .GetRequestType(param)
-            .execute<GetNotificationDto>();
+            .executePagination<GetNotificationDto>();
     }
 
     public async getNotificationById(id: number): Promise<ServiceResponse<GetNotificationDto> | PaginationResponse<GetNotificationDto>> {

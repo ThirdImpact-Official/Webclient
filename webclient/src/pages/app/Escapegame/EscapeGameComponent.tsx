@@ -1,12 +1,14 @@
 import { GetEscapeGameDto } from '@/interfaces/EscapeGameInterface/EscapeGame/getEscapeGameDto';
-import {  Box,Grid2,Typography,Select,FormControl,MenuItem, Skeleton} from '@mui/material';
+import {  
+  Box,Grid2,Typography,Select,FormControl,MenuItem,
+  Divider,Skeleton,Button, CardHeader,Card, CardContent, CardActions,Pagination} from '@mui/material';
 import { useState, useRef, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, data } from 'react-router-dom';
 import EscapeGameOrganisationTable from './EscapeGameOrganisationTable';
 import UpdateEscapeGameForm from './UpdateEscapeGame';
 import EscapeGameDetails from './EscapegameDetails';
 import GenericTabs, { TabItem } from '@/components/factory/GenericComponent/TabGénéric';
-import AddEscapeGameDto from './AddEscapegame';
+import AddEscapeGameForm from './AddEscapegame';
 import Item from '@/components/factory/GenericComponent/Item';
 import Organisation from '../Organisation';
 import OrganisationDetails from '../Organisation/OrganisationDetails';
@@ -14,7 +16,12 @@ import { GetOrganisationDto } from '@/interfaces/OrganisationInterface/Organisat
 import { mock } from 'node:test';
 import { EscapeGameAction } from '@/actions/EscapeGameAction';
 import { OrganisationAction } from '@/actions/OrganisationActions';
-
+import { UpdateEscapeGameDto } from '@/interfaces/EscapeGameInterface/EscapeGame/updateEscapeGameDto';
+import { AddEscapeGameDto } from '@/interfaces/EscapeGameInterface/EscapeGame/addEscapeGameDto';
+import { useModal } from '@/context/ContextHook/ModalContext';
+import { useLoading } from '@/context/ContextHook/LoadingContext';
+import { Refresh } from '@mui/icons-material';
+import { PaginationResponse } from '@/interfaces/ServiceResponse';
 
 const EscapeGameComponent = () => {
   //const { id } = useParams();
@@ -24,63 +31,148 @@ const EscapeGameComponent = () => {
   const EscapeAction = new EscapeGameAction();
   const OrgaAction = new OrganisationAction();
   //getter Setter  ---------------
-  const [page,setPage] = useState(1);
+  const [page,setPage] = useState<number|null>(1);
   const [pageSize,setPageSize] = useState(5); 
-  const [escapeGames, setEscapeGames] = useState<GetEscapeGameDto[]>(null);
+  const [pageCount,setPageCount] = useState<number | null>(null);
+  const [escapeGames, setEscapeGames] = useState<GetEscapeGameDto[]>();
   const [selectedEscapeGame, setSelectedEscapeGame] = useState<GetEscapeGameDto>(null);
   const [organisationData,setOrganisationData] =useState<GetOrganisationDto>(null);
+  //-Context----------------------
+  const Modal=useModal();
+  const Loading=useLoading();
   //-------------------Methodes de handle pour les update et create
     const handleDetails = (escapeGame: GetEscapeGameDto) => {
     setSelectedEscapeGame(escapeGame);
     goToTab(1);
   };
 
+  /**
+   * Handles the update of an escape game.
+   * Sets the selectedEscapeGame with the given escape game and navigates to the update tab.
+   * @param escapeGame The escape game to update.
+   */
   const handleUpdate = (escapeGame: GetEscapeGameDto) => {
     setSelectedEscapeGame(escapeGame);
     goToTab(3);
   };
 
+/**
+ * Navigates to the specified tab index.
+ * Utilizes the tabsRef to change the current tab.
+ * @param index The index of the tab to navigate to.
+ */
   const goToTab = (index: number) => {
     if (tabsRef.current !== null) {
       tabsRef.current.changeTab(index);
     }
-  };
-  
-  //-------------Function------------
+ };
 
+  /**
+   * Handles the change of the page.
+   * Sets the page state to the given value.
+   * @param event The change event from the pagination component.
+   * @param value The new page number.
+   */
+  const handleChangePage =(event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
+  const handleRefresh =(event: React.ChangeEvent<unknown>) => {
+    setPage(1);
+  }
+  //-------------Function------------
   const fetchEscapeGames = async () => {
         try {
-          const response = await EscapeAction.getAllEscapeGamesFromOrganisation(Number.parseInt(id),page,pageSize);
-    
-          if (response.Success) {
-            setEscapeGames(response.Data as GetEscapeGameDto[]);
-            console.log(response.Data);
+          console.log("Page Of eScapegame",page);
+          const response   = await EscapeAction.getAllEscapeGamesFromOrganisation(Number.parseInt(id),page,pageSize) as PaginationResponse<GetEscapeGameDto>;
+          console.log(response);
+          console.log("Page Count",response.TotalPage);
+          setPageCount(response.TotalPage);
+          if (response.Success && response.Data && response.Data.length > 0) {
+            console.log("Data retrieved successfully:", response.Data);
+      
+            // Set state separately from logging
+            setEscapeGames(response.Data);
+            
+            // If there's data available, set the selected escape game
             setSelectedEscapeGame(response.Data[0]);
-            console.log(response.Data[0]);
+            
+            // Log state update (will show previous state due to closure)
+            console.log("State should update to:",escapeGames);
+          } else {
+            console.log("Response successful but no data found or empty array");
+            setEscapeGames([]);
+            setSelectedEscapeGame(null);
           }
         }
         catch (error) {
           console.log(error);
         }
-      };
-  
+  };
   const fetchOrganisation= async () => {
         try {
+          let orgId=Number.parseInt(id);
+          
+          if(isNaN(orgId)) {
+            throw new Error("id is not a number");
+          }
+
           const response = await OrgaAction.GetOrganisationById(Number.parseInt(id));
           if (response.Success) {
             console.log(response.Data);
-            setOrganisationData(response.Data as GetOrganisationDto);
+            
+              setOrganisationData(response.Data as GetOrganisationDto);
+            
           }
           
         } catch (error) {
           console.error(error);
         }
-      }
-  //-------------Useeffect------------
+  }
+  const handleFormSubmit = async (eventData: AddEscapeGameDto) => {
+    let response;
+    try {
+        response = await EscapeAction.createEscapeGame(eventData);
+
+        if (response.Success) {
+            Modal.handleOpen();
+            Modal.setDescription(response.Message);
+            Modal.setTitle("Success");
+        } else {
+            Modal.handleOpen();
+            Modal.setDescription(response.Message);
+            Modal.setTitle("Error");
+        }
+    } catch (error) {
+        Modal.handleOpen();
+        Modal.setDescription(response.Message);
+        Modal.setTitle("Error");
+    }
+  }
+const handleUpdateSubmit = async (eventData: UpdateEscapeGameDto) => {
+    try {
+        const response = await EscapeAction.updateEscapeGame(eventData);
+        if (response.Success) {
+            Modal.handleOpen();
+            Modal.setDescription(response.Message);
+            Modal.setTitle("Success");
+        } else {
+            Modal.handleOpen();
+            Modal.setDescription(response.Message);
+            Modal.setTitle("Error");
+        }
+    } catch (error) {
+        Modal.handleOpen();
+        Modal.setDescription(error instanceof Error ? error.message : 'An error occurred');
+        Modal.setTitle("Error");
+    }
+  }
+  //-------------UseEffect------------
+  useEffect(() => {
+      fetchEscapeGames();
+  },[page,id])
 
   useEffect(() => {
     if(id != null){
-      fetchEscapeGames();
       fetchOrganisation();
     }
   },[id]);
@@ -90,7 +182,9 @@ const EscapeGameComponent = () => {
       label: 'List',
       content: (
       <>
-        <Box className="flex gap-4 p-4 justify-end">
+        <Card elevation={3}>
+          <CardHeader action={
+            <>
                 <Typography variant="h5">Filtre</Typography>
                 <FormControl sx={{ m: 1 }} variant="standard">
                   <Select>
@@ -110,16 +204,34 @@ const EscapeGameComponent = () => {
                     <MenuItem>B</MenuItem>
                   </Select>
                 </FormControl>
-        </Box>
+                <FormControl variant='standard' sx={{ m: 1 }} className='flex flex-row space-x-10 float-end justify-end items-end'>
+                    <Button
+                      variant='contained'
+                      color='warning'
+                      onClick={handleRefresh}>Refresh
+                      <Refresh></Refresh>
+                      </Button>
+                </FormControl>
+            </>} />
+          <CardContent>
         {
           escapeGames != null ?
           <EscapeGameOrganisationTable
-                data={escapeGames}
-                OnDetails={handleDetails}
-                OnUpdate={handleUpdate}
-          />: <Skeleton></Skeleton>
-
+              data={escapeGames}
+              OnDetails={handleDetails}
+              OnUpdate={handleUpdate}
+              />: <Skeleton></Skeleton>
         }
+        </CardContent>
+        <CardActions>
+           <Pagination
+                page={page}
+                className="float-end"
+                onChange={handleChangePage}
+                count={pageCount}
+                />
+        </CardActions>
+      </Card>
       </>
       ),
     },
@@ -127,30 +239,42 @@ const EscapeGameComponent = () => {
       label: 'Details',
       content: (
         <>
-        {
-         
-          selectedEscapeGame != null ?
-            <EscapeGameDetails
-                  data={selectedEscapeGame}
-                  onUpdateButton={handleUpdate}
-                  displayButton={true}
-            />
-            : <Skeleton></Skeleton>
-
-        }
+        <Card elevation={3}>
+          <CardContent>
+          {
+            selectedEscapeGame != null ?
+              <EscapeGameDetails
+                    data={selectedEscapeGame}
+                    onUpdateButton={handleUpdate}
+                    displayButton={true}
+              />
+              :<Skeleton></Skeleton>
+          }
+          </CardContent>
+        </Card>
         </>
       ),
     },
     {
       label: 'Create',
-      content: <AddEscapeGameDto />,
+      content: (
+        <Card elevation={3}>
+          <CardContent>
+            <AddEscapeGameForm
+                onSubmit={handleFormSubmit} />,
+          </CardContent>
+        </Card>)
     },
     {
       label: 'Update',
       content: (
-        <UpdateEscapeGameForm 
-                data={selectedEscapeGame} 
-                onSubmit={() => {}} />
+        <Card elevation={3}> 
+          <CardContent>
+            <UpdateEscapeGameForm 
+                    data={selectedEscapeGame} 
+                    onSubmit={handleUpdateSubmit} />
+          </CardContent>
+          </Card>
       ),
     },
   ];
