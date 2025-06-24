@@ -150,4 +150,16 @@ export class CreadentialAction
             
         }
     }
+       public async IsAdmin(): Promise<ServiceResponse<boolean>>
+      {
+        const response = await this._httpClient
+            .GetRequestType("account/admin/check")
+            .execute<boolean>();
+        return response;
+      }
+       public async IsSuperAdmin(): Promise<ServiceResponse<boolean>>
+      {
+        const response = await this._httpClient.GetRequestType("account/superadmin/check").execute<boolean>();
+        return response;
+      }
 }

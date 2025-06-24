@@ -14,6 +14,11 @@ const statistic = () => {
         const navigate = useNavigate();
         const [isAuth, setIsAuth] = useState(authCOntext.isAuthenticated);
         const [isLoaded, setIsLoaded] = useState(false);
+       useEffect(()=>{
+           if (!isAuth){
+               navigate("/login");
+           }
+       },[]);
     return(
         
         <StatisticComponent />

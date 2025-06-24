@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 //pages.
 import Login from "@/pages/auth/login/Login";
+import Logout from './app/Logout';
 import UserAppLayout from "@/pages/app/AppLayout";
 import Home from "./vitrine/Home";
 import  Contact from "./app/Contact";
@@ -51,7 +52,7 @@ const App: React.FC = () => {
               <Route path="notification" element={<Notification />} />
               <Route path="profile" element={<Profile />} />
               <Route path="organisation" element={<Organisation />} />
-              <Route path="organisation/user/:id" element={<UserOrganisation />} />
+              <Route path="organisation/user" element={<UserOrganisation />} />
               <Route path="escapegame/:id" element={<EscapeGame />} />
               <Route path="escapegame/:id/session" element={<Session />} />
               <Route path="escapegame/:esgId/session/:id/reservation" element={<Reservation/>} />
@@ -60,7 +61,7 @@ const App: React.FC = () => {
               <Route path="faq" element={<FAQ />} />
               <Route path="VerifyEmail" element={<VerifyEmail />} />
               <Route path="statistic" element={<Statistic />} />
-           
+              <Route path="logout" element={<Logout />}/>
             </Route>
 
             <Route element={<AuthLayout />}>

@@ -15,7 +15,8 @@ import { idID } from "@mui/material/locale";
 import { Details } from "@mui/icons-material";
 import DetailsComponent from '@/components/factory/GenericComponent/DetailsComponent';
 import { RefreshCwIcon } from "lucide-react";
-
+import { FormDataHelper } from "@/classes/FormDataHelper";
+import AnnonceDetails from "./Annonce/Annoncedetails";
 /*
     Notification Component 
     ce composant Contient la liste des notifications 
@@ -73,11 +74,14 @@ const NotificationComponent = () => {
             
             setSnackbarMessage(" Unable to submit Successfully");
             setSnackbarOpen(true);
-            console.log(data);
+            
             return;
         }
         else{
-            const response= await annService.addAnnonce(data);
+            console.log("data",data);
+            const formdata= FormDataHelper.toFormData(data);
+            console.log("formData",formdata);
+            const response= await annService.addAnnonce(formdata);
             console.log(response);
             if(response.Success) {
                 setSnackbarMessage("");
@@ -176,9 +180,7 @@ const NotificationComponent = () => {
             <>
                 <Card elevation={3} >
                      <CardContent>
-                        <DetailsComponent
-                            data={selectAnnonce} 
-                            columns={annoncecolumns} />
+                       <AnnonceDetails data={selectAnnonce} columns={annoncecolumns} onUpdate={handleUpdate} /> 
                      </CardContent>
                 </Card>
             </>),

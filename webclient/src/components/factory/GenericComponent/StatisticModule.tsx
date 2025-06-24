@@ -1,49 +1,55 @@
 import { FC, useState, useEffect } from "react";
 import { StackedLineChart } from "@mui/icons-material";
 import { Card, CardActions, CardContent, CardHeader } from "@mui/material";
-import{ ChartContainer,
-        lineElementClasses,
-        markElementClasses,
-        LinePlot,
-        MarkPlot,
-        LineChart } from "@mui/x-charts";
+import {
+    ChartContainer,
+    lineElementClasses,
+    markElementClasses,
+    LinePlot,
+    MarkPlot,
+    LineChart
+} from "@mui/x-charts";
 interface LineChartProps {
     title: string;
     data: number[];
     labels: string[];
 }
-const  LineChartState:FC<LineChartProps> =(props)=> {
+const LineChartState: FC<LineChartProps> = (props) => {
 
-    const [value,setValue] = useState<number[]>(props.data);
-    
-    return(<>
+    const [value, setValue] = useState<number[]>(props.data);
+
+    return (<>
         <Card>
-            <CardHeader title={props.title}  />
+            <CardHeader title={props.title} />
             <CardContent>
-               <ChartContainer 
-                    series={
-                        [
-                            {
-                                type: "line",
-                                label: 'Data',
-                                data: value,
-                            },
-                        ]
-                    }
+                <ChartContainer
                     width={600}
                     height={400}
+                    series={[
+                        {
+                            type: "line",
+                            label: "Data",
+                            data: value,
+                        },
+                    ]}
+                    xAxis={[
+                        {
+                            scaleType: "point", // point = string-based labels
+                            data: props.labels,
+                        },
+                    ]}
                     sx={{
                         [`& .${lineElementClasses.root}`]: {
-                          stroke: '#8884d8',
-                          strokeWidth: 2,
+                            stroke: "#8884d8",
+                            strokeWidth: 2,
                         },
                         [`& .${markElementClasses.root}`]: {
-                          stroke: '#8884d8',
-                          r: 4, // Modify the circle radius
-                          fill: '#fff',
-                          strokeWidth: 2,
+                            stroke: "#8884d8",
+                            r: 4,
+                            fill: "#fff",
+                            strokeWidth: 2,
                         },
-                      }}
+                    }}
                 >
                     <LinePlot />
                     <MarkPlot />

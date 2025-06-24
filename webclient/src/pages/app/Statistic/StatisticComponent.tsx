@@ -3,9 +3,9 @@ import LineChartState from "@/components/factory/GenericComponent/StatisticModul
 import GenericTabs, { TabItem } from "@/components/factory/GenericComponent/TabGénéric";
 import { Box } from "@mui/material"
 import { useRef, useState } from "react";
-import { data } from 'react-router-dom';
-
-
+import { Typography } from "@mui/material";
+import { UnitofAction } from "@/actions/UnitofAction";
+import { StatisticDataDto } from "@/actions/statisticAction";
 const statisticComponent = () => {
     const tabsRef = useRef<{ changeTab: (index: number) => void } | null>(null);
     const goToTab = (index: number) => {
@@ -18,6 +18,10 @@ const statisticComponent = () => {
         const Data= Array.from({ length: 10 },()=> Math.floor(Math.random() * 100));
         setData(Data);
     }
+
+    const action = new UnitofAction();
+    const [getdata,setdata]= useState<StatisticDataDto | null>(null)
+    
     const tabs: TabItem[]=[
         {
             label:"tab1",
@@ -31,18 +35,26 @@ const statisticComponent = () => {
         },
         {
             
-            label:"tab1",
-            content:<></>
+            label:"Escapegame",
+            content:<> </>
+        },
+        {
+            
+            label:"organisation",
+            content:<>
+               <LineChartState 
+                    data={data}
+                    title={"title"}
+                    labels={[]}
+                 />
+            </>
         },
         {
             
             label:"tab1",
-            content:<></>
-        },
-        {
-            
-            label:"tab1",
-            content:<></>
+            content:<>
+                <Typography>More to comme </Typography>
+            </>
         }
 
     ]

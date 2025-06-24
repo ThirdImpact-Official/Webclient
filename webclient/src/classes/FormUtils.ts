@@ -102,6 +102,19 @@ import { GetPriceDto } from "@/interfaces/EscapeGameInterface/Price/getPriceDto"
     const date = new Date(dateString);
     return isNaN(date.getTime()) ? 'Date inconnue' : new Intl.DateTimeFormat('fr-FR').format(date);
   }
+  public static buildFormData(data: Record<string, any>): FormData {
+    const formData = new FormData();
+    Object.keys(data).forEach(key => {
+        const value = data[key];
+        if (Array.isArray(value)) {
+            value.forEach((v, i) => formData.append(`${key}[${i}]`, v));
+        } else {
+            formData.append(key, value);
+        }
+    });
+    return formData;
+}
+
 }
 
 

@@ -1,7 +1,7 @@
-import { Box, Snackbar, Alert, Grid2, FormControl, Button, Typography, Card, CardContent, Skeleton } from '@mui/material';
+import { Box, Snackbar, Alert, Grid2, FormControl, Button, Typography, Card, CardContent, Skeleton, CardActions,Pagination } from '@mui/material';
 import Item from "@/components/factory/GenericComponent/Item";
 import { useParams } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState} from 'react';
 import { GetActivityPlaceDto, ActivityPlaceColumns } from '@/interfaces/EscapeGameInterface/ActivityPlace/getActivityPlaceDto';
 import GenericTabs from '@/components/factory/GenericComponent/TabGénéric';
 import DetailsComponent from '@/components/factory/GenericComponent/DetailsComponent';
@@ -14,6 +14,8 @@ import { UpdateActivityPlaceDto } from '@/interfaces/EscapeGameInterface/Activit
 import { GetEscapeGameDto } from '@/interfaces/EscapeGameInterface/EscapeGame/getEscapeGameDto';
 import EscapeGameDetails from '../EscapegameDetails';
 import { EscapeGameAction } from '@/actions/EscapeGameAction';
+import { UnitofAction } from '@/actions/UnitofAction';
+import { PaginationResponse } from '@/interfaces/ServiceResponse';
 
 export const mockActivityPlaces: GetActivityPlaceDto[] = [
   {
@@ -59,7 +61,7 @@ const ActivityPlaceComponent = () => {
   const { id } = useParams();
   const tabsRef = useRef<{ changeTab: (index: number) => void } | null>(null);
   //-----
-  const EscapeAction= new EscapeGameAction();
+  const Action= new UnitofAction();
   //-----Variable
   const [page,setPage]=useState(1);
   const [activityPlaces, setActivityPlaces] = useState<GetActivityPlaceDto[]>(mockActivityPlaces);
@@ -67,7 +69,7 @@ const ActivityPlaceComponent = () => {
   const [selectedPlace, setSelectedPlace] = useState<GetActivityPlaceDto | null>(activityPlaces[0]);
   const [isSnackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [snackbarText, setSnackbarText] = useState<string>("");
-
+  const [totalpage,settotalPage]= useState<number>(0); 
   const handleTabChange = (tabIndex: number) => {
     if (tabsRef.current) {
       tabsRef.current.changeTab(tabIndex);
@@ -85,15 +87,37 @@ const ActivityPlaceComponent = () => {
     setSelectedPlace(place);
     handleTabChange(3);
   };
-  const handleSubmit=(item: AddActivityPlaceDto | UpdateActivityPlaceDto)=> {
-    console.log(item);
+  const handleSubmit= async (item: AddActivityPlaceDto | UpdateActivityPlaceDto)=> {
+
+    try{
+      const formdata=new FormData();
+      formdata.append("name",item.name);
+      formdata.append("escapegameId",item.escapegameId.toString());
+      formdata.append("activityTypeId",item.activityTypeId.toString());
+      formdata.append("description",item.description);
+      
+      formdata.append("imgressources",item.imgressources);
+      const response = await Action.escapeGameAction.createActivityPlace(formdata);
+
+      if(response.Success)
+      {
+        console.log(response.Data);
+      }
+
+    }
+    catch(error)
+    {
+      console.error('Error creating the activity place:', error);
+    }
   }
-  
+   const handleChangePage =(event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
   //Call Api ---Méthodes 
   const fetchEscapegameById = async () =>
   {
     try {
-      const response = await EscapeAction.getEscapeGameById(Number.parseInt(id));
+      const response = await Action.escapeGameAction.getEscapeGameById(Number.parseInt(id));
       if (response.Success) {
         setEscapegame(response.Data as GetEscapeGameDto);
       }
@@ -105,9 +129,11 @@ const ActivityPlaceComponent = () => {
 
   const fetchActivityByEscapeGameId = async () => {
     try {
-      const response = await EscapeAction.getActivityPlacesByEscapeGame(Number.parseInt(id),page,5);
+
+      const response = await Action.escapeGameAction.getActivityPlacesByEscapeGame(Number.parseInt(id),page,5) as PaginationResponse<GetActivityPlaceDto>;
       if (response.Success) {
         setActivityPlaces(response.Data as GetActivityPlaceDto[]);
+        settotalPage(response.TotalPage);
       }
     } 
     catch (error) {
@@ -146,6 +172,11 @@ const ActivityPlaceComponent = () => {
                   onUpdate={handleUpdateClick}
                 /> 
             </CardContent>
+            <CardActions className='text-center items-center justify-center'>
+              <Box sx={{flex:1}}>
+                <Pagination count={totalpage} page={page} onChange={handleChangePage} />
+              </Box>
+              </CardActions>
           </Card>
         </>
       ),
@@ -187,7 +218,7 @@ const ActivityPlaceComponent = () => {
 
   return (
     <Grid2 container spacing={0}>
-        <Card className='w-full md:w-1/3'>
+        <Card className='w-1/3 md:w-1/3'>
           <CardContent>
             {
               escapeGame ? (<EscapeGameDetails data={escapeGame} />) :
@@ -197,7 +228,7 @@ const ActivityPlaceComponent = () => {
         </Card >
         <Card >
         </Card>
-        <Card className='w-full md:w-2/3'>
+        <Card className='w-2/3 md:w-2/3'>
           <CardContent>
             <GenericTabs
               ref={tabsRef}

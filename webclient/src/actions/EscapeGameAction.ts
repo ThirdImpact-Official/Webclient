@@ -40,7 +40,7 @@ export class EscapeGameAction {
             .execute<GetEscapeGameDto>();
     }
 
-    public async createEscapeGame(escapeGame: AddEscapeGameDto): Promise<ServiceResponse<GetEscapeGameDto> | PaginationResponse<GetEscapeGameDto>> {
+    public async createEscapeGame(escapeGame: FormData): Promise<ServiceResponse<GetEscapeGameDto> | PaginationResponse<GetEscapeGameDto>> {
         return await this.httpClient
             .PostRequestType("escapegame")
             .setData(escapeGame)
@@ -86,7 +86,7 @@ export class EscapeGameAction {
             .execute<GetActivityPlaceDto>();
     }
 
-    public async createActivityPlace(activityPlace: AddActivityPlaceDto): Promise<ServiceResponse<GetActivityPlaceDto> | PaginationResponse<GetActivityPlaceDto>> {
+    public async createActivityPlace(activityPlace: FormData): Promise<ServiceResponse<GetActivityPlaceDto> | PaginationResponse<GetActivityPlaceDto>> {
         return await this.httpClient
             .PostRequestType('escapegame/activityplace')
             .setData(activityPlace)

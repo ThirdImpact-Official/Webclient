@@ -10,7 +10,7 @@ const NotFound = () => {
         if (!isAuth){
             navigate("/login");
         }
-    })
+    },[isAuth])
     return (
         <Box className="flex items-center justify-center bg-slate-400 m-10 p-20 border-collapse border border-black/10 b-rounded-4 border-r-8 shadow-sm">
             <Box className="flex flex-col items-center m-10 p-20 justify-center">

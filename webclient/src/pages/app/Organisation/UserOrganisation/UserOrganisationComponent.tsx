@@ -20,7 +20,7 @@ import { Refresh } from "@mui/icons-material";
 
 
 const UserOrganisationComponent = () => {
-  const { id } = useParams<{ id: string }>();
+
   const tabsRef = useRef<{ changeTab: (index: number) => void } | null>(null);
   const goToTab = (index: number) => {
       if (tabsRef.current) {
@@ -52,7 +52,7 @@ const UserOrganisationComponent = () => {
   const fetchOrganisation = async () => {
     setIsLoading(true);
     try {
-      const responseOrganisation = await organisationAction.GetOrganisationById(Number.parseInt(id, 10));
+      const responseOrganisation = await organisationAction.GetOrganisationByIdForCurrentUser();
       
       if (responseOrganisation.Success) {
         //assigniation du serviceresponse de l'organisation
@@ -90,15 +90,15 @@ const UserOrganisationComponent = () => {
   }
   //-----useEffect---------------------
   useEffect(() => {
-    if (id) {
+ 
       fetchOrganisation();
-    }
-  }, [id]);
+   
+  }, [setSelectedOrganisation]);
 
   useEffect(() => {
-    if(id) {
+   
       fetchUserOrganisation()
-    }
+    
   },[page]);
 
   //----select ORgan

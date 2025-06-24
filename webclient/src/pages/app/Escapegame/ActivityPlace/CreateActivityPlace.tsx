@@ -15,6 +15,7 @@ class test{
     
 }
 /**
+ * 
  * React component to create a new activity place for an escape game.
  * This component is rendered as a form with input fields for the activity place's
  * name, address, and image resources.
@@ -26,11 +27,10 @@ class test{
  */
 const CreateActivityPlace: React.FC<CreateActivityPlaceProps> = ({ escapeGameId, onSubmit }) => {
     const [formData, setFormData] = useState<AddActivityPlaceDto>({
-        acpEsgId: escapeGameId,
-        activityId: 0,
+        escapegameId: escapeGameId,
+        activityTypeId: 0,
         name: "",
         description: "",
-        address:'',
         imgressources: '',
     });
 
@@ -88,16 +88,7 @@ const CreateActivityPlace: React.FC<CreateActivityPlaceProps> = ({ escapeGameId,
                                 variant="outlined"
                             />
                         </Box>
-                        <Box>
-                            <TextField
-                                label="Address"
-                                name="address"
-                                fullWidth
-                                value={formData.address}
-                                onChange={handleChange}
-                                variant="outlined"
-                            />
-                        </Box>
+                      
                         <Box>
                             <Typography>Image</Typography>
                             <TextField

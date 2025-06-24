@@ -27,7 +27,7 @@ export class AnnonceService {
             .execute<GetAnnonceDto>();
     }
 
-    public async addAnnonce(annonce: AddAnnonceDto): Promise<ServiceResponse<GetAnnonceDto> | PaginationResponse<GetAnnonceDto>> {
+    public async addAnnonce(annonce: FormData): Promise<ServiceResponse<GetAnnonceDto> | PaginationResponse<GetAnnonceDto>> {
         return await this.httpClient
             .PostRequestType("")
             .setData(annonce)

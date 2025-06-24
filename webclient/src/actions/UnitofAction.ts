@@ -10,6 +10,8 @@ import { PostAction } from './PostAction';
 import { ForumAction } from './ForumAction';
 import { SessionAction } from './SessionAction';
 import { OrganisationAction } from './OrganisationActions';
+import { StatisticAction } from './statisticAction';
+
 
 export class UnitofAction
 {
@@ -25,7 +27,7 @@ export class UnitofAction
     private readonly ForumAction = new ForumAction();
     private readonly SessionAction = new SessionAction();
     private readonly OrganisationAction = new OrganisationAction();
-
+    private readonly StatisticAction = new StatisticAction();
 
     public get adminDemandAction() { return this.AdminDemandAction; }
     public get annonceAction() { return this.AnnonceAction; }
@@ -39,4 +41,5 @@ export class UnitofAction
     public get forumAction() { return this.ForumAction; }
     public get sessionAction() { return this.SessionAction; }
     public get organisationAction() { return this.OrganisationAction; }
+    public get statisticAction() { return this.StatisticAction; }
 }

@@ -5,7 +5,9 @@ import { log } from "console";
 import { AuthResponse } from "@/interfaces/User/Authresponse";
 import { CreadentialAction } from '../actions/CreadentialAction';
 import Login from '../pages/auth/login/Login';
-
+import { GetUserDto } from "@/interfaces/User/GetUserDto";
+import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
 
 
 interface LoginCredentials 
@@ -18,6 +20,8 @@ interface AuthContextType {
     login:(credentials: LoginCredentials)=> Promise<void> ;
     logout:()=> Promise<void>,
     isAuthenticated: boolean;
+    user: GetUserDto;
+
 };
 
 export const AuthContext= createContext<AuthContextType | undefined>(undefined);
@@ -56,7 +60,8 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     });
     const apiUrl = 'http://localhost:7159/escape-game';
     const action=new CreadentialAction();
-
+    const [user, setUser] = useState<GetUserDto | null>(null);
+    const useNavigated= useNavigate();
     /**
      * Logs in to the server with the given credentials.
      *
@@ -73,7 +78,9 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
             if(respons.Success)
             {
                 console.log(respons.Data)
-                
+                const data=respons.Data as AuthResponse;
+                const decoded=jwtDecode<GetUserDto>(data.token);
+                setUser(decoded);
                 persistentAutentication(true);
                 setIsAuthenticated(true);
             }
@@ -132,6 +139,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
             else {
                 setIsAuthenticated(false);
                 logout();
+                useNavigated('/login');
             }
 
         } catch (error) {
@@ -170,6 +178,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
         isAuthenticated,
         login,
         logout,
+        user
     };
 
     function persistentAutentication(valuetoStored:boolean){

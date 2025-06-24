@@ -1,69 +1,90 @@
-import RenderDetail from "./RenderDetails";
-import { Box, Typography, styled, Card, CardContent, CardHeader, Stack, Divider } from '@mui/material';
+import { Box, Typography, Card, CardContent, Stack, Divider, Grid } from '@mui/material';
 
-interface DetailsProps<T> {
-    data: T;
-    columns: { label: string; accessor: keyof T }[];
+interface ColumnConfig<T> {
+  label: string;
+  accessor: keyof T;
+  type?: 'text' | 'image' | 'images';
+  imageProps?: {
+    width?: number | string;
+    height?: number | string;
+  };
 }
 
-// Styled components
-const StyledCard = styled(Card)(({ theme }) => ({
-    borderRadius: theme.spacing(2),
-    transition: 'all 0.3s ease',
-    overflow: 'hidden',
-    '&:hover': {
-        boxShadow: theme.shadows[6],
-        transform: 'translateY(-4px)',
-    },
-}));
+interface DetailsProps<T> {
+  data: T;
+  columns: ColumnConfig<T>[];
+}
 
-const StyledHeader = styled(CardHeader)(({ theme }) => ({
-    backgroundColor: theme.palette.primary.dark,
-    color: theme.palette.secondary.contrastText,
-    padding: theme.spacing(3),
-    textAlign: 'center',
-}));
-
-const StyledContent = styled(CardContent)(({ theme }) => ({
-    padding: theme.spacing(3),
-}));
-
-// Component
 const DetailsComponent = <T,>({ data, columns }: DetailsProps<T>) => {
-    if (!data) {
-        return (
-            <Box display="flex" justifyContent="center" alignItems="center" minHeight={200}>
-                <Typography variant="h5" color="text.secondary">
-                    Aucune donnée disponible
-                </Typography>
-            </Box>
-        );
+  if (!data) {
+    return (
+      <Box textAlign="center" p={4}>
+        <Typography color="text.secondary">Aucune donnée disponible</Typography>
+      </Box>
+    );
+  }
+
+  const renderImage = (src: string, alt: string, props?: ColumnConfig<T>['imageProps']) => (
+    <Box
+      component="img"
+      src={src}
+      alt={alt}
+      sx={{
+        width: props?.width || '100%',
+        height: props?.height || 200,
+        objectFit: 'cover',
+        borderRadius: 1,
+        mt: 1,
+        display: 'block'
+      }}
+      onError={(e) => {
+        (e.target as HTMLImageElement).style.display = 'none';
+      }}
+    />
+  );
+
+  const renderImagesGrid = (images: string[], alt: string, props?: ColumnConfig<T>['imageProps']) => (
+    <Grid container spacing={1} mt={1}>
+      {images.map((src, index) => (
+        <Grid item xs={6} key={index}>
+          {renderImage(src, `${alt} ${index + 1}`, props)}
+        </Grid>
+      ))}
+    </Grid>
+  );
+
+  const renderValue = (column: ColumnConfig<T>, value: any) => {
+    if (column.type === 'image' && value) {
+      return renderImage(value, column.label, column.imageProps);
     }
 
-    return (
-        <StyledCard variant="outlined">
-            <StyledHeader
-                title={
-                    <Typography variant="h5" component="h2">
-                        Détails
-                    </Typography>
-                }
-            />
-            <StyledContent>
-                <Stack spacing={2}>
-                    {columns.map((column, index) => (
-                        <Box key={column.accessor as string}>
-                            <RenderDetail
-                                label={column.label}
-                                value={data[column.accessor]}
-                            />
-                            {index < columns.length - 1 && <Divider sx={{ mt: 1, mb: 1 }} />}
-                        </Box>
-                    ))}
-                </Stack>
-            </StyledContent>
-        </StyledCard>
-    );
+    if (column.type === 'images' && Array.isArray(value) && value.length > 0) {
+      return renderImagesGrid(value, column.label, column.imageProps);
+    }
+
+    return <Typography>{value || '-'}</Typography>;
+  };
+
+  return (
+    <Card variant="outlined" sx={{ borderRadius: 2 }}>
+      <CardContent>
+        <Stack spacing={2}>
+          {columns.map((column, index) => {
+            const value = data[column.accessor];
+            return (
+              <Box key={column.accessor as string}>
+                <Typography variant="subtitle2" color="text.secondary">
+                  {column.label}
+                </Typography>
+                {renderValue(column, value)}
+                {index < columns.length - 1 && <Divider sx={{ my: 2 }} />}
+              </Box>
+            );
+          })}
+        </Stack>
+      </CardContent>
+    </Card>
+  );
 };
 
 export default DetailsComponent;

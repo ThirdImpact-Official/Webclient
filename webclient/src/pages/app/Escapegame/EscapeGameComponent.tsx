@@ -22,7 +22,7 @@ import { useModal } from '@/context/ContextHook/ModalContext';
 import { useLoading } from '@/context/ContextHook/LoadingContext';
 import { Refresh } from '@mui/icons-material';
 import { PaginationResponse } from '@/interfaces/ServiceResponse';
-
+import { FormDataHelper } from '@/classes/FormDataHelper';
 const EscapeGameComponent = () => {
   //const { id } = useParams();
   const { id } = useParams();
@@ -131,7 +131,25 @@ const EscapeGameComponent = () => {
   const handleFormSubmit = async (eventData: AddEscapeGameDto) => {
     let response;
     try {
-        response = await EscapeAction.createEscapeGame(eventData);
+      console.log(eventData)
+      const formData= new FormData();
+       // Ajoutez les champs textuels
+      formData.append('ESGNom', eventData.esgNom);
+      formData.append('ESGCreator', eventData.esgCreator);
+      formData.append('ESGTitle', eventData.esgTitle);
+      formData.append('ESGContent', eventData.esgContent);
+      formData.append('ESGWebsite', eventData.esgWebsite);
+      formData.append('ESGPhoneNumber', eventData.esgPhoneNumber);
+      formData.append('ESG_IsForChildren', eventData.esg_IsForChildren.toString());
+      formData.append('ESG_Price_Id', eventData.esg_Price_Id.toString());
+      formData.append('ESG_DILE_Id', eventData.esg_DILE_Id.toString());
+
+  // Ajoutez le fichier séparément avec le bon nom
+  if (eventData.esgImgResources) {
+    formData.append('ESGImgResources', eventData.esgImgResources);
+  }
+    console.log("Form Data",formData);
+        response = await EscapeAction.createEscapeGame(formData);
 
         if (response.Success) {
             Modal.handleOpen();
@@ -282,10 +300,10 @@ const handleUpdateSubmit = async (eventData: UpdateEscapeGameDto) => {
   return (
     <Grid2 className="flex flex-row justify-evenly items-center" container spacing={2}>
       <Box className="flex flex-row gap-4">
-        <Item>
+        <Item className='flex w-1/3 =d:w-1/3'>
           <OrganisationDetails data={organisationData} />
         </Item>
-        <Item className="flex ">
+        <Item className="flex w-2/3 md:w-2/3">
           <GenericTabs
             ref={tabsRef}
             tabs={tabs}

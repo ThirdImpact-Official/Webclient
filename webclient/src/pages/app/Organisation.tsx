@@ -10,7 +10,7 @@ import { useNavigate} from 'react-router-dom';
          if (!isAuth){
              navigate("/login");
          }
-     })
+     },[isAuth ])
     return(
         <div className="w-full h-full flex items-center justify-center">
              <OrganisationComponent/> 

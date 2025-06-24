@@ -1,7 +1,6 @@
-import { Box, Typography, Snackbar, Alert, Tabs, Tab, Grid2, Skeleton, Modal,FormControl,Button } from '@mui/material';
-import GenericTabs from "@/components/factory/GenericComponent/TabGénéric";
-import { useEffect, useRef,useState } from 'react';
-import { TabItem } from '@/components/factory/GenericComponent/TabGénéric';
+import { Box, Typography, Snackbar, Alert, Tabs, Tab, Grid2, Skeleton, Modal, FormControl, Button, Pagination, CircularProgres,Card,CardContent } from '@mui/material';
+import GenericTabs,{TabItem} from "@/components/factory/GenericComponent/TabGénéric";
+import { useEffect, useRef, useState } from 'react';
 import EventTab from './EventTab';
 import { GetEventDto, EventTypeColumns } from '@/interfaces/EscapeGameInterface/Event/getEventDto';
 import DetailsComponent from '@/components/factory/GenericComponent/DetailsComponent';
@@ -18,198 +17,262 @@ import Item from '@/components/factory/GenericComponent/Item';
 import { EscapeGameAction } from '@/actions/EscapeGameAction';
 import { useLoading } from '@/context/ContextHook/LoadingContext';
 import { useModal } from '@/context/ContextHook/ModalContext';
+import { PaginationResponse } from '@/interfaces/ServiceResponse';
 import ModalComponent from '@/components/factory/GenericComponent/Modal';
-//mock data
 
-/**
- * EventComponentTab renders a tab component to display events
- * within the Escape Room game. The component is reusable and
- * can be used in multiple places throughout the application.
- * The component is currently not being used anywhere in the
- * application, but it can be reused in the future.
- */
 const EventComponentTab = () => {
-    const {id} =useParams();
+    const { id } = useParams();
     const tabsRef = useRef<{ changeTab: (index: number) => void } | null>(null);
-    //----Variable-----
-    const [page,setPage]= useState(1);
-    const [eventList, setEventList] = useState<GetEventDto[]>();
+    
+    // State variables
+    const [page, setPage] = useState(1);
+    const [totalPage, setPageTotal] = useState(0);
+    const [pageSize, setPageSize] = useState(5);
+    const [eventList, setEventList] = useState<GetEventDto[]>([]);
     const [selectedEvent, setSelectedEvent] = useState<GetEventDto | null>(null);
-    //---escapegame--
-    const [escapegame,setEscapeGame]=useState<GetEscapeGameDto>();
-    const escapeAction= new EscapeGameAction();
-    //Context 
-    const loading=useLoading();
-    const Modal=useModal();
-
-    //SnackBar
+    const [escapegame, setEscapeGame] = useState<GetEscapeGameDto>();
+    
+    // Context hooks
+    const {  isLoading, setLoading } = useState<boolean>(false);
+    const { handleOpen, handleClose, setDescription, setTitle } = useModal();
+    
+    // Snackbar state
     const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
     const [snackbarMessage, setSnackbarMessage] = useState<string>("");
-    /**
-     * Changes the active tab in the tab component.
-     *
-     * @param {number} index - The index of the tab to be activated.
-     * This function uses the tabsRef to switch to the desired tab
-     * if the reference to the tab component is available.
-     */
+    const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error" | "warning" | "info">("success");
+
+    const escapeAction = new EscapeGameAction();
+
     const handleTabChange = (index: number) => {
         if (tabsRef.current) {
             tabsRef.current.changeTab(index);
         }
     };
+
     const handLeDetails = (event: GetEventDto) => {
         setSelectedEvent(event);
         handleTabChange(1);
-    }
-    const handleUpdate=(event: GetEventDto) =>{
+    };
+
+    const handleUpdate = (event: GetEventDto) => {
         setSelectedEvent(event);
         handleTabChange(3);
-    }
-    /**
-     * Handles the form submission for adding or updating an event.
-     *
-     * @param {AddEventDto | UpdateEventDto} eventData - The event data to be submitted.
-     * This can either be data for adding a new event or updating an existing event.
-     */
+    };
+
     const handleFormSubmit = async (eventData: AddEventDto) => {
-            loading.showLoading;
-            loading.isLoading = true;
         try {
-            Modal.handleOpen();
-            Modal.setDescription("waiting for response");
+            setLoading(true);
+            setDescription("Creating event...");
+            handleOpen();
+            
             const response = await escapeAction.createEvent(eventData);
+            
             if (response.Success) {
-                Modal.setDescription(response.Message);
-                Modal.setTitle("Success");
+                setDescription(response.Message);
+                setTitle("Success");
+                setSnackbarMessage(response.Message);
+                setSnackbarSeverity("success");
+                setSnackbarOpen(true);
+                fetchEventList();
             } else {
-                Modal.handleOpen();
-                Modal.setDescription(response.Message);
-                Modal.setTitle("Error");
+                setDescription(response.Message);
+                setTitle("Error");
+                setSnackbarMessage(response.Message);
+                setSnackbarSeverity("error");
+                setSnackbarOpen(true);
             }
         } catch (error) {
-            Modal.handleOpen();
-            Modal.setDescription(error instanceof Error ? error.message : 'An error occurred we were not ablet to create the event');
-            Modal.setTitle("Error");
+            const errorMessage = error instanceof Error ? error.message : 'An error occurred while creating the event';
+            setDescription(errorMessage);
+            setTitle("Error");
+            setSnackbarMessage(errorMessage);
+            setSnackbarSeverity("error");
+            setSnackbarOpen(true);
+        } finally {
+            setLoading(false);
         }
     };
+
     const handleUpdateSubmit = async (eventData: UpdateEventDto) => {
         try {
+            
+            setDescription("Updating event...");
+            handleOpen();
+            
             const response = await escapeAction.updateEvent(eventData);
 
             if (response.Success) {
-                Modal.handleOpen();
-                Modal.setDescription(response.Message);
-                Modal.description = response.Message;
-                Modal.setTitle("Success");
+                setDescription(response.Message);
+                setTitle("Success");
+                setSnackbarMessage(response.Message);
+                setSnackbarSeverity("success");
+                setSnackbarOpen(true);
+                fetchEventList();
+                handleTabChange(0); // Return to list view
             } else {
-                Modal.handleOpen();
-                Modal.setDescription(response.Message);
-                Modal.setTitle("Error");
+                setDescription(response.Message);
+                setTitle("Error");
+                setSnackbarMessage(response.Message);
+                setSnackbarSeverity("error");
+                setSnackbarOpen(true);
             }
         } catch (error) {
-            Modal.handleOpen();
-            Modal.setDescription(error instanceof Error ? error.message : 'An error occurred');
-            Modal.setTitle("Error");
+            const errorMessage = error instanceof Error ? error.message : 'An error occurred while updating the event';
+            setDescription(errorMessage);
+            setTitle("Error");
+            setSnackbarMessage(errorMessage);
+            setSnackbarSeverity("error");
+            setSnackbarOpen(true);
+        } finally {
+             setLoading(false);
         }
-    }
-    /**
-     * Closes the snackbar.
-     */
+    };
+
     const handleCloseSnackbar = () => {
         setSnackbarOpen(false);
-    }
+    };
 
-    // event list Columns
+    const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+        setPage(value);
+    };
+
     const eventColumns = EventTypeColumns;
 
-    // récupération des information d'un escapeGame 
-    const fetchEscapeGame = async ()  => {
-        try {     
-            const response= await escapeAction.getEscapeGameById(Number.parseInt(id));
-            if(response.Success){
+    const fetchEscapeGame = async () => {
+        try {
+            if (!id) return;
+            
+            const response = await escapeAction.getEscapeGameById(parseInt(id));
+            if (response.Success) {
                 setEscapeGame(response.Data as GetEscapeGameDto);
             }
         } catch (error) {
             console.error(error);
+            setSnackbarMessage("Failed to fetch escape game details");
+            setSnackbarSeverity("error");
+            setSnackbarOpen(true);
         }
-      
-    }
-
+    };
 
     const fetchEventList = async () => {
-        const response = await escapeAction.getEventsByEscapeGameId(Number.parseInt(id), page, 10);
-        if (response.Success) {
-            console.log(response.Data);
-            setEventList(response.Data as GetEventDto[]);
+        try {
+            if (!id) return;
+            
+            const response = await escapeAction.getEventsByEscapeGameId(
+                parseInt(id), 
+                page, 
+                pageSize
+            ) as PaginationResponse<GetEventDto>;
+            
+            if (response.Success) {
+                setEventList(response.Data as GetEventDto[]);
+                setPageTotal(response.TotalPage);
+            }
+        } catch (error) {
+            console.error(error);
+            setSnackbarMessage("Failed to fetch events");
+            setSnackbarSeverity("error");
+            setSnackbarOpen(true);
         }
-        console.log("message : "+ response.Message);
-        console.log(response.Data);
-    }
-    //Use effect ---------
+    };
+
     useEffect(() => {
-        if(id !=null)
-        {
+        if (id) {
             fetchEscapeGame();
             fetchEventList();
-        }   
-    },[id]);
+        }
+    }, [id, page, pageSize]);
+
     const tabs: TabItem[] = [
         {
             label: "Event Table",
-            content:(
+            content: (
                 <>
-                <FormControl className='flex flex-row space-x-10 float-end justify-end items-end'>
-                    <Button
-                    variant='contained'
-                    color='warning'
-                    onClick={fetchEventList}>Refresh</Button>
-                </FormControl>
-                <EventTab data={eventList} OnDetail={handLeDetails} OnUpdate={handleUpdate} />,
-            </>
+                    <FormControl className='flex flex-row space-x-10 float-end justify-end items-end'>
+                        <Button
+                            variant='contained'
+                            color='warning'
+                            onClick={fetchEventList}
+                        >
+                            Refresh
+                        </Button>
+                    </FormControl>
+                    <EventTab 
+                        data={eventList} 
+                        OnDetail={handLeDetails} 
+                        OnUpdate={handleUpdate} 
+                    />
+                    <Pagination 
+                        count={totalPage} 
+                        page={page} 
+                        onChange={handlePageChange} 
+                    />
+                </>
             ) 
         },
         {
             label: "Details",
-            content:selectedEvent ? ( 
-                <EventDetails data={selectedEvent} columns={eventColumns} onUpdate={handleUpdate} />
-            ) :<Skeleton variant="rectangular" height={200} width={500}></Skeleton>
+            content: selectedEvent ? ( 
+                <EventDetails 
+                    data={selectedEvent} 
+                    columns={eventColumns} 
+                    onUpdate={handleUpdate} 
+                />
+            ) : <Skeleton variant="rectangular" height={200} width={500} />
         },
         {
             label: "Create",
-            content: <CreateEvent 
-                        escapeGameId={Number.parseInt(id)}
-                        onSubmit={handleFormSubmit} />,
+            content: id ? (
+                <CreateEvent 
+                    escapeGameId={parseInt(id)}
+                    onSubmit={handleFormSubmit} 
+                />
+            ) : <Typography>No escape game selected</Typography>,
         },
         {
             label: "Update",
-            content: <UpdateEvent 
-                        onSubmit={handleUpdateSubmit} 
-                        data={selectedEvent} />,
+            content: selectedEvent ? (
+                <UpdateEvent 
+                    onSubmit={handleUpdateSubmit} 
+                    data={selectedEvent} 
+                />
+            ) : <Typography>No event selected</Typography>,
         },
     ];
-
+    if(isLoading)
+    {
+        return (
+            <Card>
+                <CardContent>
+                  <CircularProgress />
+                </CardContent>
+            </Card>
+        )
+    }
     return (
-        <Grid2 container spacing={2} className=" items-center justify-evenly">
+        <Grid2 container spacing={2} className="items-center justify-evenly">
             <Box className="flex flex-row gap-4">
-                <Item>
+                <Item className='w-1/3 md:1/3'>
                     <EscapeGameDetails data={escapegame} />
                 </Item>
-                <Item>
+                <Item className='w-2/3 md:1/3'>
                     <Typography variant="body1">Event</Typography>
-            
-                        <GenericTabs
-                            ref={tabsRef}
-                            tabs={tabs}
-                            defaultTab={0}
-                            ChangeTab={handleTabChange}
-                            />
-                  
+                    <GenericTabs
+                        ref={tabsRef}
+                        tabs={tabs}
+                        defaultTab={0}
+                        ChangeTab={handleTabChange}
+                    />
                 </Item>
                 <Snackbar
                     open={snackbarOpen}
-                    autoHideDuration={30}
-                    onClose={()=> handleCloseSnackbar}>
-                    <Alert onClose={handleCloseSnackbar} security="success">
+                    autoHideDuration={6000}
+                    onClose={handleCloseSnackbar}
+                >
+                    <Alert 
+                        onClose={handleCloseSnackbar} 
+                        severity={snackbarSeverity}
+                    >
                         {snackbarMessage}
                     </Alert>
                 </Snackbar>  

@@ -1,10 +1,9 @@
 import { GetActivityPlaceTypeDto } from "./getActivityPlaceTypeDto";
 
 export interface AddActivityPlaceDto  {
-    acpEsgId: number;
-    activityId: number;
+    escapegameId: number;
+    activityTypeId: number;
     name: string;
     description: string;
-    address: string;
     imgressources: string;
 }
