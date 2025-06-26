@@ -11,7 +11,21 @@ import {
   ListItemText,
   CircularProgress
 } from '@mui/material';
-import {Comment, BarChart, Dashboard, ExitToApp, Home, HomeWork, BookOnline, NotificationAddSharp, PermDeviceInformation } from '@mui/icons-material';
+import {
+  Dashboard,
+  Person,
+  Contacts,
+
+  Groups,
+  Lock,
+  BarChart,
+  Help,
+  ExitToApp,
+  CalendarToday,
+  VideogameAsset,
+  EventSeat,
+  DashboardCustomize
+} from '@mui/icons-material';
 import { Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { UserAction } from '@/actions/UserAction';
@@ -19,6 +33,10 @@ import { GetUserDto } from '@/interfaces/User/GetUserDto';
 import { useAuth } from '@/context/AuthContext';
 import { UnitofAction } from '@/actions/UnitofAction';
 import { GetOrganisationDto } from '@/interfaces/OrganisationInterface/Organisation/getOrganisationDto';
+import { GroupIcon } from 'lucide-react';
+import { Notifications } from '@mui/icons-material';
+import { BookOnlineRounded } from '@mui/icons-material';
+import { useCallback } from 'react';
 
 // Account User Component
 const AccountUser = () => {
@@ -95,304 +113,281 @@ const AccountUser = () => {
     </Box>
   );
 };
-
-// Main Sidebar Component
-interface SidebarProps {
-  nom: string;
-  link: string;
-  icon: React.ReactNode;
-}
-
-const Sidebar: React.FC = () => {
+export const useRole = () => {
   const { user } = useAuth();
-  const [organisation, setOrganisation] = React.useState<GetOrganisationDto | null>(null);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = React.useState(false);
+  const [isSuperAdmin, setIsSuperAdmin] = React.useState(false);
+  const [rolesLoaded, setRolesLoaded] = React.useState(false);
   const action = new UnitofAction();
-  const navigate = useNavigate();
-  const [isAdmin, setAdmin] = React.useState<boolean>(false);
-  const [isSuperAdmin, setSuperAdmin] = React.useState<boolean>(false);
-  const [rolesLoaded, setRolesLoaded] = React.useState<boolean>(false);
 
-  const handleRedirection = (arg: string) => {
-    navigate(arg);
-  };
-
-  const fetchIsAdmin = async () => {
-    if (user) {
-      try {
-        const response = await action.CredentialAction.IsAdmin();
-        if (response.Success) {
-          setAdmin(response.Data);
-        }
-      } catch (error) {
-        console.error('Error fetching admin status:', error);
-      }
-    }
-  };
-
-  const fetchIsSuperAdmin = async () => {
-    if (user) {
-      try {
-        const response = await action.CredentialAction.IsSuperAdmin();
-        if (response.Success) {
-          setSuperAdmin(response.Data);
-        }
-      } catch (error) {
-        console.error('Error fetching super admin status:', error);
-      }
-    }
-  };
-
-  const fetchDataOrganisation = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await action.organisationAction.GetOrganisationByIdForCurrentUser();
-      if (response.Success) {
-        const statData = response.Data as GetOrganisationDto[];
-        console.log(statData);
-        setOrganisation(statData[0] || null);
-      } else {
-        setError('Failed to load organisation statistics.');
-      }
-    } catch (err) {
-      setError('An error occurred while loading organisation statistics.');
-      console.error('Organisation fetch error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Load user roles and organization data
-  useEffect(() => {
-  
-    const loadData = async () => {
-      if ( !rolesLoaded) {
-        await Promise.all([
-          fetchIsSuperAdmin(),
-          fetchIsAdmin(),
-          fetchDataOrganisation()
-        ]);
-         getSidebarElements();
-        setRolesLoaded(true);
-      }
-    };
-
-    loadData();
-  }, [user, rolesLoaded,isSuperAdmin]); // Only depend on user and rolesLoaded
-
-  // Super Admin sidebar elements
-  const getSuperAdminSidebarElements = (): SidebarProps[] => [
-    {
-      nom: "Admin Panel",
-      link: "/admin",
-      icon: <Home />,
-    },
-    {
-      nom: "Profils",
-      link: "/profile",
-      icon: <PermDeviceInformation />,
-    },
-    {
-      nom: "Dashboard",
-      link: "/",
-      icon: <Dashboard />,
-    },
-    {
-      nom: "Notifications",
-      link: "/notification",
-      icon: <NotificationAddSharp />,
-    },
-    {
-      nom: "Organisation",
-      link: "/organisation",
-      icon: <HomeWork />,
-    },
-    {
-      nom: "Reservation",
-      link: "/escapegame/1",
-      icon: <BookOnline />,
-    },
-    {
-      nom: "F.A.Q.",
-      link: "/Faq",
-      icon: <Comment />,
-    },
-    {
-      nom: "Statistic",
-      link: "/statistic",
-      icon: <BarChart />,
-    },
-    {
-      nom: "Déconnexion",
-      link: "/logout",
-      icon: <ExitToApp />,
-    }
-  ];
-
-  // Admin sidebar elements
-  const getAdminSidebarElements = (): SidebarProps[] => [
-    {
-      nom: "Profils",
-      link: "/profile",
-      icon: <PermDeviceInformation />,
-    },
-    {
-      nom: "Dashboard",
-      link: "/",
-      icon: <Dashboard />,
-    },
-    {
-      nom: "Notifications",
-      link: "/notification",
-      icon: <NotificationAddSharp />,
-    },
-    {
-      nom: "Organisation",
-      link: organisation ? `/organisation/user/${organisation.orgId}` : "/organisation",
-      icon: <HomeWork />,
-    },
-    {
-      nom: "Reservation",
-      link: "/escapegame/1",
-      icon: <BookOnline />,
-    },
-    {
-      nom: "F.A.Q.",
-      link: "/Faq",
-      icon: <Comment />,
-    },
-    {
-      nom: "Statistic",
-      link: "/statistic",
-      icon: <BarChart />,
-    },
-    {
-      nom: "Déconnexion",
-      link: "/logout",
-      icon: <ExitToApp />,
-    }
-  ];
-
-  // Regular user sidebar elements
-  const getUserSidebarElements = (): SidebarProps[] => [
-    {
-      nom: "Profils",
-      link: "/profile",
-      icon: <PermDeviceInformation />,
-    },
-    {
-      nom: "Dashboard",
-      link: "/",
-      icon: <Dashboard />,
-    },
-    {
-      nom: "Notifications",
-      link: "/notification",
-      icon: <NotificationAddSharp />,
-    },
-    {
-      nom: "Reservation",
-      link: "/escapegame/1",
-      icon: <BookOnline />,
-    },
-    {
-      nom: "F.A.Q.",
-      link: "/Faq",
-      icon: <Comment />,
-    },
-    {
-      nom: "Déconnexion",
-      link: "/logout",
-      icon: <ExitToApp />,
-    }
-  ];
-
-  // Get appropriate sidebar elements based on user role
-  const getSidebarElements = (): SidebarProps[] => {
+  const fetchRoles = (async () => {
+    if (!user) return;
     
-    if (isSuperAdmin) {
-      return getSuperAdminSidebarElements();
-    } else if (isAdmin && !isSuperAdmin) {
-      return getAdminSidebarElements();
-    } else {
-      return getUserSidebarElements();
+    try {
+      const [adminResponse, superAdminResponse] = await Promise.all([
+        action.CredentialAction.IsAdmin(),
+        action.CredentialAction.IsSuperAdmin()
+      ]);
+      console.log(adminResponse);
+      console.log(superAdminResponse);
+      if (adminResponse.Success) setIsAdmin(adminResponse.Data);
+      if (superAdminResponse.Success) setIsSuperAdmin(superAdminResponse.Data);
+
+    } catch (error) {
+      console.error('Error fetching roles:', error);
+    } finally {
+      setRolesLoaded(true);
     }
+  });
+
+  useEffect(() => {
+    if (user && !rolesLoaded) {
+      fetchRoles();
+    }
+  }, [user, rolesLoaded, fetchRoles]);
+
+  return { isAdmin, isSuperAdmin, rolesLoaded };
+};
+
+export const SidebarAdmin: React.FC = () => {
+  const navigate = useNavigate();
+  const { isAdmin, isSuperAdmin } = useRole();
+  const handleNavigation = (path: string) => {
+    navigate(path);
   };
-
-  if (loading || !rolesLoaded) {
-    return (
-      <Box sx={{ width: 240, bgcolor: "background.paper", height: "100%" }}>
-        {/* Logo */}
-        <Box sx={{ p: 2, textAlign: "center", fontWeight: "bold", fontSize: 20 }}>
-          My Dashboard
-        </Box>
-        <Box sx={{ p: 2, textAlign: "center", fontWeight: "bold", fontSize: 20 }}>
-          <AccountUser />
-        </Box>
-        <Divider />
-
-        {/* Loading Menu */}
-        <List className="w-full h-fit flex flex-col gap-4 items-center justify-start">
-          <ListItem key="Chargement" disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                <CircularProgress size={24} />
-              </ListItemIcon>
-              <ListItemText primary="Chargement..." />
-            </ListItemButton>
-          </ListItem>
-        </List>
-      </Box>
-    );
-  }
-
-  if (error) {
-    return (
-      <Box sx={{ width: 240, bgcolor: "background.paper", height: "100%" }}>
-        <Box sx={{ p: 2, textAlign: "center", fontWeight: "bold", fontSize: 20 }}>
-          My Dashboard
-        </Box>
-        <Box sx={{ p: 2, textAlign: "center", fontWeight: "bold", fontSize: 20 }}>
-          <AccountUser />
-        </Box>
-        <Divider />
-        <Box sx={{ p: 2, textAlign: "center", color: "error.main" }}>
-          <Typography variant="body2">{error}</Typography>
-        </Box>
-      </Box>
-    );
-  }
-
-  const sidebarElements = getSidebarElements();
 
   return (
-    <Box sx={{ width: 240, bgcolor: "background.paper", height: "100%" }}>
-      {/* Logo */}
-      <Box sx={{ p: 2, textAlign: "center", fontWeight: "bold", fontSize: 20 }}>
-        My Dashboard
-      </Box>
-      <Box sx={{ p: 2, textAlign: "center", fontWeight: "bold", fontSize: 20 }}>
+    <Box sx={{ 
+      width: 240,
+      height: '100vh',
+      bgcolor: 'background.paper',
+      position: 'fixed',
+      left: 0,
+      top: 0,
+      overflowY: 'auto',
+      borderRight: '1px solid #ccc'
+    }}>
+      <Box sx={{p: 2, textAlign: "center", fontWeight: "bold", fontSize: 20  }}>
+        <h3>Menu Principal</h3>
         <AccountUser />
       </Box>
       <Divider />
+      
+      <List>
+        {/* Section Principale */}
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/')}>
+            <ListItemIcon><Dashboard /></ListItemIcon>
+            <ListItemText primary="Dashboard" />
+          </ListItemButton>
+        </ListItem>
 
-      {/* Menu */}
-      <List className="w-full h-fit flex flex-col gap-4 items-center justify-start">
-        {sidebarElements.map((item: SidebarProps) => (
-          <ListItem key={item.nom} disablePadding>
-            <ListItemButton onClick={() => handleRedirection(item.link)}>
-              <ListItemIcon>
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText primary={item.nom} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/contact')}>
+            <ListItemIcon><Contacts /></ListItemIcon>
+            <ListItemText primary="Contacts" />
+          </ListItemButton>
+        </ListItem>
+
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/notification')}>
+            <ListItemIcon><Notifications /></ListItemIcon>
+            <ListItemText primary="Annonce" />
+          </ListItemButton>
+        </ListItem>
+
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/profile')}>
+            <ListItemIcon><Settings /></ListItemIcon>
+            <ListItemText primary="Profil" />
+          </ListItemButton>
+        </ListItem>
+
+        {/* Section Organisation */}
+        <Divider sx={{ my: 1 }} />
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/organisation')}>
+            <ListItemIcon><Groups /></ListItemIcon>
+            <ListItemText primary="Organisation" />
+          </ListItemButton>
+        </ListItem>
+
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/organisation/user')}>
+            <ListItemIcon><Person /></ListItemIcon>
+            <ListItemText primary="Membres" />
+          </ListItemButton>
+        </ListItem>
+
+        {/* Section Escape Game */}
+        <Divider sx={{ my: 1 }} />
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/escapegame')}>
+            <ListItemIcon><VideogameAsset /></ListItemIcon>
+            <ListItemText primary="Escape Games" />
+          </ListItemButton>
+        </ListItem>
+
+      
+
+        {/* Section Autres */}
+        <Divider sx={{ my: 1 }} />
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/faq')}>
+            <ListItemIcon><Help /></ListItemIcon>
+            <ListItemText primary="FAQ" />
+          </ListItemButton>
+        </ListItem>
+
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/statistic')}>
+            <ListItemIcon><BarChart /></ListItemIcon>
+            <ListItemText primary="Statistiques" />
+          </ListItemButton>
+        </ListItem>
+
+
+        {/* Déconnexion */}
+        <Divider sx={{ my: 1 }} />
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/logout')}>
+            <ListItemIcon><ExitToApp /></ListItemIcon>
+            <ListItemText primary="Déconnexion" />
+          </ListItemButton>
+        </ListItem>
       </List>
     </Box>
   );
 };
 
-export default Sidebar;
+export  const SideBarSuperAdmin: React.FC = () => {
+  const navigate = useNavigate();
+  
+  const handleNavigation = (path: string) => {
+    navigate(path);
+  };
+   return (
+    <Box sx={{ 
+      width: 240,
+      height: '100vh',
+      bgcolor: 'background.paper',
+      position: 'fixed',
+      left: 0,
+      top: 0,
+      overflowY: 'auto',
+      borderRight: '1px solid #ccc'
+    }}>
+      <Box sx={{p: 2, textAlign: "center", fontWeight: "bold", fontSize: 20  }}>
+        <h3>Menu Principal</h3>
+        <AccountUser />
+      </Box>
+      <Divider />
+      
+      <List>
+        {/* Section Principale */}
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/')}>
+            <ListItemIcon><Dashboard /></ListItemIcon>
+            <ListItemText primary="Dashboard" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+            <ListItemButton onClick={() => handleNavigation('/admin')}>
+              <ListItemIcon><DashboardCustomize/></ListItemIcon>
+              <ListItemText primary="Hamdoulilah" />
+            </ListItemButton>
+          </ListItem>
+        
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => handleNavigation('/admin')}>
+              <ListItemIcon><DashboardCustomize/></ListItemIcon>
+              <ListItemText primary="Admin" />
+            </ListItemButton>
+          </ListItem>
+        
+      
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/signalement')}>
+            <ListItemIcon><Person /></ListItemIcon>
+            <ListItemText primary="Utilisateurs" />
+          </ListItemButton>
+        </ListItem>
+
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/contact')}>
+            <ListItemIcon><Contacts /></ListItemIcon>
+            <ListItemText primary="Contacts" />
+          </ListItemButton>
+        </ListItem>
+
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/notification')}>
+            <ListItemIcon><Notifications /></ListItemIcon>
+            <ListItemText primary="Annonce" />
+          </ListItemButton>
+        </ListItem>
+
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/profile')}>
+            <ListItemIcon><Settings /></ListItemIcon>
+            <ListItemText primary="Profil" />
+          </ListItemButton>
+        </ListItem>
+
+        {/* Section Organisation */}
+        <Divider sx={{ my: 1 }} />
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/organisation')}>
+            <ListItemIcon><Groups /></ListItemIcon>
+            <ListItemText primary="Organisation" />
+          </ListItemButton>
+        </ListItem>
+
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/organisation/user')}>
+            <ListItemIcon><Person /></ListItemIcon>
+            <ListItemText primary="Membres" sx={{ pl: 4 }} />
+          </ListItemButton>
+        </ListItem>
+
+        {/* Section Escape Game */}
+        <Divider sx={{ my: 1 }} />
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/escapegame')}>
+            <ListItemIcon><VideogameAsset /></ListItemIcon>
+            <ListItemText primary="Escape Games" />
+          </ListItemButton>
+        </ListItem>
+
+      
+
+        {/* Section Autres */}
+        <Divider sx={{ my: 1 }} />
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/faq')}>
+            <ListItemIcon><Help /></ListItemIcon>
+            <ListItemText primary="FAQ" />
+          </ListItemButton>
+        </ListItem>
+
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/statistic')}>
+            <ListItemIcon><BarChart /></ListItemIcon>
+            <ListItemText primary="Statistiques" />
+          </ListItemButton>
+        </ListItem>
+
+
+        {/* Déconnexion */}
+        <Divider sx={{ my: 1 }} />
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('/logout')}>
+            <ListItemIcon><ExitToApp /></ListItemIcon>
+            <ListItemText primary="Déconnexion" />
+          </ListItemButton>
+        </ListItem>
+      </List>
+    </Box>);
+}
+
+

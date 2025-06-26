@@ -20,13 +20,23 @@ export class NotificationAction {
             .GetRequestType(param)
             .executePagination<GetNotificationDto>();
     }
-
+    /**
+     * 
+     */
     public async getNotificationById(id: number): Promise<ServiceResponse<GetNotificationDto> | PaginationResponse<GetNotificationDto>> {
         return await this.httpClient
             .GetRequestType(`/${id}`)
             .execute<GetNotificationDto>();
     }
-
+    /**
+     * 
+     * @returns 
+     */
+    public async GetNotificationcount(): Promise<ServiceResponse<number> | PaginationResponse<number>> {
+        return await this.httpClient
+            .GetRequestType('/number')
+            .execute<number>();
+    }
     public async addNotification(notification: AddNotificationDto): Promise<ServiceResponse<GetNotificationDto> | PaginationResponse<GetNotificationDto>> {
         return await this.httpClient
             .PostRequestType('')

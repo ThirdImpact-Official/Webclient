@@ -6,13 +6,15 @@ import { on } from "events";
 //content: string;
 
 interface CreateforumProps {
+    organisationId: number;
     OnSubmit: (data: AddForumDto) => void;
 }
-const CreateForumTopic:FC<CreateforumProps>=({OnSubmit})=> {
+const CreateForumTopic:FC<CreateforumProps>=({OnSubmit,organisationId})=> {
     const [formData,setFormData] =useState<AddForumDto>({
         title: "",
         content: "",
-        userId:0
+        userId:0,
+        OrganisationId:organisationId
     });
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;

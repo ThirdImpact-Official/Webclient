@@ -20,7 +20,12 @@ export class ForumAction {
             .GetRequestType(param)
             .executePagination<GetForumDto>();
     }
-
+    public async GetForumoRganisation(page: number, pageSize: number): Promise<PaginationResponse<GetForumDto>> {
+        const param: string =`?page=${page}&pageSize=${pageSize}`;
+        return await this.httpClient
+            .GetRequestType("/organisation"+param)
+            .executePagination<GetForumDto>();
+    }
     public async getForumById(id: number): Promise<ServiceResponse<GetForumDto> | PaginationResponse<GetForumDto>> {
         return await this.httpClient
             .GetRequestType(`/${id}`)

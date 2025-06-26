@@ -20,6 +20,11 @@ const EscapeGameOrganisationTable: FC<EscapeGameOrganisationTableProps> = ({data
         return isNaN(date.getTime()) ? 'Date inconnue' : new Intl.DateTimeFormat('fr-FR').format(date);
     
     }
+
+      const navigateTo = (path: string) => {
+    window.location.href = `escapegame/${path}`;
+    };
+
     useEffect(() => {
         setEscapeData(data);
     },[data])
@@ -73,10 +78,10 @@ const EscapeGameOrganisationTable: FC<EscapeGameOrganisationTableProps> = ({data
                                 <Button variant='contained' onClick={() => OnUpdate(escapeGame)}>Update</Button>
                             </TableCell>
                             <TableCell>
-                                <Button variant='contained' onClick={() =>window.location.href =(`${escapeGame.esgId}/session`)}>session</Button>
+                                <Button variant='contained' onClick={() =>navigateTo(escapeGame.esgId+"/session")} >session</Button>
                             </TableCell>
                             <TableCell>
-                                <Button variant='contained' onClick={() =>window.location.href =(`${escapeGame.esgId}/event`)}>Event</Button>
+                                <Button variant='contained' onClick={() =>navigateTo(escapeGame.esgId+"/event")}>Event</Button>
                             </TableCell>
                             </Stack>
                         </TableRow>

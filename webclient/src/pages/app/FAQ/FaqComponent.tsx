@@ -3,7 +3,7 @@ import { GetForumDto } from "@/interfaces/PublicationInterface/Forum/getForumDto
 import { AddForumDto } from "@/interfaces/PublicationInterface/Forum/addForumDto";
 import {UpdateForumDto} from "@/interfaces/PublicationInterface/Forum/updateForumDto";
 import { Forum } from "@mui/icons-material";
-import { Box ,Snackbar,CircularProgress,Alert, Typography, FormControl, Select, MenuItem, Grid2, Skeleton,Pagination,Button } from "@mui/material";
+import { Box ,Snackbar,CircularProgress,Alert, Typography, FormControl, Select, MenuItem, Grid2, Skeleton,Pagination,Button,Card,CardContent } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import ForumTabList from "./ForumComponent/ForumList";
 import SelectedForum from "./ForumComponent/SelectedForum";
@@ -11,6 +11,10 @@ import CreateForumTopic from './ForumComponent/CreateForum';
 import UpdateForumTopic from "./ForumComponent/UpdateForum";
 import { ForumAction } from "@/actions/ForumAction";
 import { PostAction } from "@/actions/PostAction";
+import { OrganisationAction } from "@/actions/OrganisationActions";
+import { GetOrganisationDto } from "@/interfaces/OrganisationInterface/Organisation/getOrganisationDto";
+import Organisation from "../Organisation";
+
 
 
 const FaqComponent = () => {
@@ -20,18 +24,29 @@ const FaqComponent = () => {
     const [page,setPage]= useState<number>(1);
     const [serverData, setServerData] = useState<GetForumDto[]>();
     const [forumData, setForumData] = useState<GetForumDto | null>(null);
+    const[organisation,setorgansiation]= useState<GetOrganisationDto | null>(null);
+    const [isloading,setloading] = useState<boolean>(false);
+    const [error,setError] =useState<string>("");
     //setup filtering  
     const [filter, setFilter] = useState();
     //-------Api-------
     const ForAction= new ForumAction();
     const postAction= new PostAction();
-    
+    const organisationAction=new OrganisationAction();
     /**
      * Navigates to the specified tab index.
      * Utilizes the tabsRef to change the current tab.
      * @param index The index of the tab to navigate to.
     */
-
+  const fetchOrganisation= async ()=> {
+    const response= await organisationAction.GetOrganisationByIdForCurrentUser();
+    if(response.Success)
+    {
+      setorgansiation(response.Data as GetOrganisationDto);
+    }else{
+      setError("unable to retrieve the organisations");
+    }
+  }
    const goToTab = (index: number) => {
      if (tabsRef.current) {
        tabsRef.current.changeTab(index);
@@ -75,7 +90,7 @@ const FaqComponent = () => {
     };
     
     
-    const onSubmit = (data: AddForumDto | UpdateForumDto) =>
+    const onSubmit =async  (data: AddForumDto | UpdateForumDto) =>
       {
         if(data === null || data === undefined) {
           setSnackbarMessage(" Unable to submit Successfully");
@@ -83,9 +98,29 @@ const FaqComponent = () => {
           return;
         }
         if(isUpdateForumDto(data)){
+          const response= await ForAction.updateForum(data);
+          if(response.Success)
+          {
+            setSnackbarMessage("Forum Updated Successfully");
+            setSnackbarOpen(true);
+          }
+          else{
+            setSnackbarMessage(" Unable to submit Successfully");
+            setSnackbarOpen(true);
+          }
           console.log("Data submitted:", data);
         }
         else{
+          const response= await ForAction.createForum(data);
+           if(response.Success)
+          {
+            setSnackbarMessage("Forum Updated Successfully");
+            setSnackbarOpen(true);
+          }
+          else{
+            setSnackbarMessage(" Unable to submit Successfully");
+            setSnackbarOpen(true);
+          }
           console.log("Data submitted:", data);
         }
       }
@@ -105,6 +140,7 @@ const FaqComponent = () => {
     */
     const handleAddForum=(data:AddForumDto)=> 
     {
+
       onSubmit(data);
       setSnackbarMessage("Forum Created Successfully");
       setSnackbarOpen(true);
@@ -123,7 +159,9 @@ const FaqComponent = () => {
     //--------UseEffects
     const fetchForums = async () => {
       try {
-        const response = await ForAction.getAllForums(1,10);
+        const response = await ForAction.GetForumoRganisation(page, 5);
+        console.log(response);
+        console.log(page);
         if(response.Success)
           {
             setServerData(response.Data as GetForumDto[]);
@@ -132,10 +170,24 @@ const FaqComponent = () => {
         console.error("Error fetching forums:", error);
       }
     }
-   
-    useEffect(() => {
-      fetchForums();
-    },[page])
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+        await fetchOrganisation();
+        if (organisation) {
+            await fetchForums();
+        }
+    };
+    fetchData();
+}, []);
+
+useEffect(() => {
+    if (organisation) {
+        fetchForums();
+    }
+}, [page, organisation]);
+  
     ///-------
     const tabs: TabItem[]=[
         {
@@ -195,19 +247,43 @@ const FaqComponent = () => {
         {
             
             label:"Create Topic",
-            content:<>
-              <CreateForumTopic OnSubmit={handleAddForum} />
-            </>
+            content: organisation !==null ? (<>
+              <CreateForumTopic organisationId={organisation.orgId} OnSubmit={handleAddForum} />
+            </>):<><CircularProgress /></>
         },
         {
             
             label:"update Topic",
-            content:<>
-              <UpdateForumTopic data={forumData} OnSubmit={handleUpdateForum}  /> 
-            </>
+            content: forumData !== null ? (<>
+              <UpdateForumTopic 
+                data={forumData} 
+                OnSubmit={handleUpdateForum}  /> 
+            </>) : (<><Box className="flex justify-center items-center">
+                <CircularProgress />
+              </Box>
+              </>)
         }, 
     ]
-
+    if(isloading)
+    return (
+      <Card>
+        <CardContent>
+          <CircularProgress />
+        </CardContent>
+      </Card>
+    )
+    if(error)
+    {
+      return (
+        <Card>
+          <CardContent>
+            <Typography variant="h5" color="error">
+              {error}
+            </Typography>
+          </CardContent>
+        </Card>
+      )
+    }
     return(
     <Grid2>
         <section>

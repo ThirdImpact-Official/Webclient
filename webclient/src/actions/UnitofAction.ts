@@ -11,7 +11,8 @@ import { ForumAction } from './ForumAction';
 import { SessionAction } from './SessionAction';
 import { OrganisationAction } from './OrganisationActions';
 import { StatisticAction } from './statisticAction';
-
+import { RatingAction } from './RatingAction';
+import {AddressAction} from './AddressAction';
 
 export class UnitofAction
 {
@@ -28,6 +29,8 @@ export class UnitofAction
     private readonly SessionAction = new SessionAction();
     private readonly OrganisationAction = new OrganisationAction();
     private readonly StatisticAction = new StatisticAction();
+    private readonly RatingAction = new RatingAction();
+    private readonly AddressAction = new AddressAction();
 
     public get adminDemandAction() { return this.AdminDemandAction; }
     public get annonceAction() { return this.AnnonceAction; }
@@ -42,4 +45,6 @@ export class UnitofAction
     public get sessionAction() { return this.SessionAction; }
     public get organisationAction() { return this.OrganisationAction; }
     public get statisticAction() { return this.StatisticAction; }
+    public get addressAction(){ return this.AddressAction}
+    public get ratingAction(){return this.RatingAction}
 }

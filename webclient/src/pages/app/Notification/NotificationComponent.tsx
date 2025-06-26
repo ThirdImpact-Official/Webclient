@@ -2,7 +2,7 @@ import { useEffect,useRef,useState } from "react";
 import { NotificationAction } from "@/actions/NotificationAction";
 import { AnnonceService } from "@/actions/AnnonceAction";
 import { AnnonceColumns, GetAnnonceDto,AnnonceColumnsTab } from "@/interfaces/NotificationInterface/Annonce/getAnnonceDto";
-import { Box, Skeleton, Tabs, Snackbar, Alert, Card, CardContent, CardHeader, Typography, FormControl,Button, CardActions,Pagination } from '@mui/material';
+import { Box, Skeleton, Tabs, Snackbar, Alert, Card, CardContent, CardHeader, Typography, FormControl,Button, CardActions,Pagination, CircularProgress } from '@mui/material';
 import GenericTabs, { TabItem } from "@/components/factory/GenericComponent/TabGénéric";
 import { NotificationColumns } from "@/interfaces/NotificationInterface/Notification/getNotificationDto";
 import { AddAnnonceDto } from "@/interfaces/NotificationInterface/Annonce/addAnnonceDto";
@@ -176,14 +176,22 @@ const NotificationComponent = () => {
         },
         {
             label: "Details",
-            content: (
+            content: selectAnnonce != null ? (
             <>
                 <Card elevation={3} >
                      <CardContent>
                        <AnnonceDetails data={selectAnnonce} columns={annoncecolumns} onUpdate={handleUpdate} /> 
                      </CardContent>
                 </Card>
-            </>),
+            </>):(<Card>
+                <CardContent className="text-center items-center justify-center ">
+                    
+                    <CircularProgress />
+                
+                    
+                </CardContent>
+                </Card>
+                ),
         },
         {
             label: "Create Annonce",

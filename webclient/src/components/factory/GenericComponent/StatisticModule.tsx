@@ -17,7 +17,15 @@ interface LineChartProps {
 const LineChartState: FC<LineChartProps> = (props) => {
 
     const [value, setValue] = useState<number[]>(props.data);
-
+    const isempty=value.length==0 || value[0]==0;
+    if(isempty)
+        {
+        <Card>
+            <CardContent>
+                <th>aucune donnée disponible pour le momment </th>
+            </CardContent>
+        </Card>
+        } 
     return (<>
         <Card>
             <CardHeader title={props.title} />

@@ -79,4 +79,29 @@ export class CategoryAction {
             .DeleteRequestType(`/subcategory/${id}`)
             .execute<GetCategoryDto>();
     }
+    /**
+     * 
+     * @param id 
+     * @returns 
+     */
+    public async  AddEscapeGameDto(id: number): Promise<ServiceResponse<GetCategoryDto> | PaginationResponse<GetCategoryDto>> {
+        return await this.httpClient
+            .PostRequestType(`/escapegame/${id}`)
+            .execute<GetCategoryDto>();
+    }
+    /**
+     * 
+     * @param id 
+     * @returns 
+     */
+    public async RemoveEscapeGameDto(id: number): Promise<ServiceResponse<GetCategoryDto> | PaginationResponse<GetCategoryDto>> {
+        return await this.httpClient
+            .DeleteRequestType(`/escapegame/${id}`)
+            .execute<GetCategoryDto>();
+    }
+    public async  GetEscapeGamecategory(id: number): Promise<ServiceResponse<GetCategoryDto[]>> {
+        return await this.httpClient
+            .GetRequestType(`/escapegame/${id}`)
+            .execute<GetCategoryDto[]>();
+    }
 }

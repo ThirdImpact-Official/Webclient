@@ -3,7 +3,7 @@ import FormUtils from "@/classes/FormUtils";
 export interface GetSessionGameDto {
     segId: number;
     escapeGameId: number;
-    date: Date;
+    date: string;
     price: number;
     isReserved: boolean;
     placeAvailable: number;

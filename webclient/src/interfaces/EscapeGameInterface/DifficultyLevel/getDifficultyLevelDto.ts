@@ -1,4 +1,5 @@
 export interface GetDifficultyLevelDto  {
-    dowId: number;
-    dowName: string;
+    dileId: number;
+    dileLevel: string;
+    dileDescription:string;
 }

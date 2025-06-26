@@ -3,9 +3,11 @@ import LineChartState from "@/components/factory/GenericComponent/StatisticModul
 import GenericTabs, { TabItem } from "@/components/factory/GenericComponent/TabGénéric";
 import { Box } from "@mui/material"
 import { useRef, useState } from "react";
-import { Typography } from "@mui/material";
+import { Typography,Card,CardContent } from "@mui/material";
 import { UnitofAction } from "@/actions/UnitofAction";
 import { StatisticDataDto } from "@/actions/statisticAction";
+import EscapeGameStatistic from "./EscapegameStatistic";
+import { OrganisationStatistic } from "./Organisationstation";
 const statisticComponent = () => {
     const tabsRef = useRef<{ changeTab: (index: number) => void } | null>(null);
     const goToTab = (index: number) => {
@@ -26,32 +28,20 @@ const statisticComponent = () => {
         {
             label:"tab1",
             content:<>
-                <LineChartState 
-                    data={data}
-                    title={"title"}
-                    labels={[]}
-                 />
+                <EscapeGameStatistic />
             </>
         },
-        {
-            
-            label:"Escapegame",
-            content:<> </>
-        },
+       
         {
             
             label:"organisation",
             content:<>
-               <LineChartState 
-                    data={data}
-                    title={"title"}
-                    labels={[]}
-                 />
+              <OrganisationStatistic />
             </>
         },
         {
             
-            label:"tab1",
+            label:"+",
             content:<>
                 <Typography>More to comme </Typography>
             </>
@@ -60,7 +50,13 @@ const statisticComponent = () => {
     ]
     return(
     <Box className="flex items-center justify-center">
-       
+        <Box>
+            <Card>
+                <CardContent>
+                    <Typography>vos statisitic bientot a portée de main </Typography>
+                </CardContent>    
+            </Card>
+        </Box>
         <Box>
             <GenericTabs ref={tabsRef} tabs={tabs} defaultTab={0}  ChangeTab={goToTab}  />
         </Box>

@@ -10,7 +10,8 @@ import { UpdateEscapeGameDto } from "@/interfaces/EscapeGameInterface/EscapeGame
 import { AddEventDto } from "@/interfaces/EscapeGameInterface/Event/addEventDto";
 import { GetEventDto } from "@/interfaces/EscapeGameInterface/Event/getEventDto";
 import { UpdateEventDto } from "@/interfaces/EscapeGameInterface/Event/updateEventDto";
-
+import { GetPriceDto } from "@/interfaces/EscapeGameInterface/Price/getPriceDto";
+import { GetDifficultyLevelDto } from "@/interfaces/EscapeGameInterface/DifficultyLevel/getDifficultyLevelDto";
 export class EscapeGameAction {
     private readonly httpClient: HttpClient;
     private readonly apibaseurl: string;
@@ -139,4 +140,14 @@ export class EscapeGameAction {
             .DeleteRequestType(`escapegame/event/${id}`)
             .execute<GetEventDto>();
     }
+       public async GetPriceIndice(): Promise<ServiceResponse<GetPriceDto[]>> {
+            return await this.httpClient
+                .GetRequestType('escapegame/price')
+                .execute<GetPriceDto[]>();
+        }
+        public async GetDifficultyLevelDto(): Promise<ServiceResponse<GetDifficultyLevelDto[]>> {
+            return await this.httpClient
+                .GetRequestType('escapegame/difficulty')
+                .execute<GetDifficultyLevelDto[]>();
+        }
 }

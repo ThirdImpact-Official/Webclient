@@ -25,6 +25,7 @@ import ActivityPlacePage from "./app/ActivityPlace";
 import Profile from "@/pages/app/Profile";
 import { useAuth } from "@/context/AuthContext";
 import ResetPassWordComponent from "./auth/ResetPassWordMail";
+import Rating from "./app/Rating";
 
 /**
  * Webclient app entry point.
@@ -53,12 +54,14 @@ const App: React.FC = () => {
               <Route path="profile" element={<Profile />} />
               <Route path="organisation" element={<Organisation />} />
               <Route path="organisation/user" element={<UserOrganisation />} />
-              <Route path="escapegame/:id" element={<EscapeGame />} />
+              <Route path="escapegame" element={<EscapeGame />} />
               <Route path="escapegame/:id/session" element={<Session />} />
+              <Route path="escapegame/:esgId/rating" element={<Rating />} />
               <Route path="escapegame/:esgId/session/:id/reservation" element={<Reservation/>} />
               <Route path="escapegame/:id/event" element={<Event />} />
               <Route path="escapegame/:id/activity" element={<ActivityPlacePage />} />
               <Route path="faq" element={<FAQ />} />
+              <Route path="signalement" element={<Contact />} />
               <Route path="VerifyEmail" element={<VerifyEmail />} />
               <Route path="statistic" element={<Statistic />} />
               <Route path="logout" element={<Logout />}/>

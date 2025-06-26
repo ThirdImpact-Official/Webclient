@@ -1,3 +1,4 @@
+
 import { AddSessionReservedDto } from '@/interfaces/EscapeGameInterface/Reservation/addSessionReservedDto';
 import { GetSessionReservedDto } from '@/interfaces/EscapeGameInterface/Reservation/getSessionReservedDto';
 import { AddSessionGameDto } from '@/interfaces/EscapeGameInterface/Session/addSessionGameDto';
@@ -147,6 +148,16 @@ export class SessionAction {
      * @returns 
      */
     public async ResetSessionReserved(sessionId: number): Promise<ServiceResponse<GetSessionReservedDto> | PaginationResponse<GetSessionReservedDto>> {
+        return await this.httpClient
+            .DeleteRequestType(`/reserved/reset/${sessionId}`)
+            .execute<GetSessionReservedDto>();
+    }
+     /**
+     * Compte le nombre de reservation lié a un escapegame pour la jjournéee
+     * @param sessionId 
+     * @returns 
+     */
+    public async countSessionReservedForToday(sessionId: number): Promise<ServiceResponse<GetSessionReservedDto> | PaginationResponse<GetSessionReservedDto>> {
         return await this.httpClient
             .DeleteRequestType(`/reserved/reset/${sessionId}`)
             .execute<GetSessionReservedDto>();

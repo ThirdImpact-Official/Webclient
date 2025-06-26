@@ -45,7 +45,7 @@ const RenderDetail: FC<RenderProps> = ({ label, value }) => {
 
         if (typeof value === 'object') {
             if (FormUtils.isGetDifficultyLevelDto(value)) {
-                return value.dowName;
+                return value.dileLevel.toString();
             }
 
             if (FormUtils.isGetPriceDto(value)) {
@@ -60,10 +60,10 @@ const RenderDetail: FC<RenderProps> = ({ label, value }) => {
 
     return (
         <Stack direction="row" spacing={2} justifyContent="space-between" alignItems="flex-start" sx={{ width: '100%' }}>
-        <Typography variant="subtitle1" fontWeight={600} color="text.secondary">
+        <Typography variant="subtitle1" gutterBottom fontWeight={600} color="text.secondary">
             {label}:
         </Typography>
-        <Typography variant="body1" color="text.primary" sx={{ whiteSpace: 'pre-wrap', textAlign: 'right' }}>
+        <Typography variant="body1" gutterBottom color="text.primary" sx={{ whiteSpace: 'pre-wrap', textAlign: 'right' }}>
             {formatValue(value)}
         </Typography>
     </Stack>

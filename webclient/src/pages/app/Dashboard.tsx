@@ -3,6 +3,71 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import React from 'react';
 import { Box, Card, CardContent, Typography, Button,Stack } from '@mui/material';
+import { UnitofAction } from '@/actions/UnitofAction';
+
+
+interface DashboardCardProps{
+  gridArea:string;
+  title: string;
+  description: string;
+  backgroundColor:string;
+  onClick?: () => void;
+  buttonText: string;
+  buttonOnClick?: () => void;
+}
+
+const DashBoardCard = ({
+  gridArea,
+  title,
+  description,
+  backgroundColor,
+  onClick,
+  buttonText,
+  buttonOnClick,
+}: DashboardCardProps) => (
+  <Box sx={{ gridArea, height: '100%',padding:"10px" }}>
+    <Card
+      onClick={onClick}
+      sx={{
+        margin: 2,
+        width: '100%',
+        height: 'auto',
+        cursor: onClick ? 'pointer' : 'default',
+        transition: 'transform 0.2s',
+        '&:hover': {
+          transform: onClick ? 'scale(1.02)' : 'none',
+        },
+      }}
+    >
+      <CardContent sx={{ backgroundColor, color: '#fff', height: '100%' }}>
+        <Typography variant="h5" gutterBottom>
+          {title}
+        </Typography>
+        <Typography variant="body2">{description}</Typography>
+        {buttonText && (
+          <Button
+            variant="contained"
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent card onClick if button is clicked
+              buttonOnClick?.();
+            }}
+            sx={{
+              mt: 2,
+              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              '&:hover': {
+                backgroundColor: 'rgba(255, 255, 255, 0.3)',
+              },
+            }}
+          >
+            {buttonText}
+          </Button>
+        )}
+      </CardContent>
+    </Card>
+  </Box>
+);
+
+
 
 /**
  * Dashboard component that renders a simple dashboard view. 
@@ -12,6 +77,19 @@ import { Box, Card, CardContent, Typography, Button,Stack } from '@mui/material'
 const Dashboard = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const action = new UnitofAction();
+  const [count,setCount ]= React.useState<number>(0);
+
+  const fetchUnreadNotification= async ()=> {
+    const response = await  action.notificationAction.GetNotificationcount();
+    if(response.Success)
+    {
+      setCount(response.Data as number);
+    }
+  }
+  useEffect(()=> {
+    fetchUnreadNotification();
+  },[]);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -35,86 +113,62 @@ const Dashboard = () => {
         p: 2,
       }}
     >
-      <Box sx={{ gridArea: '1 / 1 / 2 / 3', height: '100%' }}>
-        <Card onClick={() => navigate('/profile')} sx={{ height: '100%' ,width:'70%' }}>
-          <CardContent sx={{ backgroundColor: '#f44336', color: '#fff' }}>
-            <Typography variant="h5" gutterBottom>
-              Profile
-            </Typography>
-            <Typography variant="body2">
-              View and edit your profile information.
-            </Typography>
-          </CardContent>
-        </Card>
-      </Box>
-
-      <Box sx={{ gridArea: '1 / 3 / 2 / 6' }}>
-        <Card onClick={() => navigate('/notification')} sx={{ height: '100%',width:'70%' }}>
-          <CardContent sx={{ backgroundColor: '#e91e63', color: '#fff' }}>
-            <Typography variant="h5" gutterBottom>
-              Notifications
-            </Typography>
-            <Typography variant="body2">
-              You have 3 unread notifications.
-            </Typography>
-          </CardContent>
-        </Card>
-      </Box>
-
-      <Box sx={{ gridArea: '2 / 1 / 6 / 3' }}>
-        <Card sx={{ height: '100%',width:'70%' }}>
-          <CardContent sx={{ backgroundColor: '#9c27b0', color: '#fff' }}>
-            <Typography variant="h5" gutterBottom>
-              Overview
-            </Typography>
-            <Typography variant="body2">
-              Here is a quick overview of your activity and stats.
-            </Typography>
-            <Button variant="contained" color="secondary" sx={{ mt: 2 }} onClick={() => navigate('/stats')}>
-              View Stats
-            </Button>
-          </CardContent>
-        </Card>
-      </Box>
-
-      <Box sx={{ gridArea: '2 / 3 / 3 / 6' }}>
-        <Card sx={{ height: '100%',width:'70%' }}>
-          <CardContent sx={{ backgroundColor: '#673ab7', color: '#fff' }}>
-            <Typography variant="h6">Forum</Typography>
-            <Typography variant="body2">Access frequent tools easily.</Typography>
-          </CardContent>
-        </Card>
-      </Box>
-
-      <Box sx={{ gridArea: '3 / 3 / 4 / 6' }}>
-        <Card sx={{ height: '100%',width:'70%' }}>
-          <CardContent sx={{ backgroundColor: '#3f51b5', color: '#fff' }}>
-            <Typography variant="h6">Messages</Typography>
-            <Typography variant="body2">Check your inbox for new messages.</Typography>
-          </CardContent>
-        </Card>
-      </Box>
-
-      <Box sx={{ gridArea: '4 / 3 / 5 / 6' }}>
-        <Card  sx={{ height: '100%',width:'70%' }}>
-          <CardContent sx={{ backgroundColor: '#2196f3', color: '#fff' }}>
-            <Typography variant="h6">vos EscapeGame</Typography>
-            <Typography variant="body2">You have 2 pending tasks.</Typography>
-          </CardContent>
-        </Card>
-      </Box>
-
-      <Box sx={{ gridArea: '5 / 3 / 6 / 6' }}>
-        <Card sx={{ height: '100%',width:'70%' }}>
-          <CardContent sx={{ backgroundColor: '#03a9f4', color: '#fff' }}>
-            <Typography variant="h6">Settings</Typography>
-            <Typography variant="body2">Manage your account preferences.</Typography>
-            <Button size="small" onClick={() => navigate('/settings')} sx={{ mt: 1 }} variant="outlined" color="inherit">
-              Go to Settings
-            </Button>
-          </CardContent>
-        </Card>
-      </Box>
+     <DashBoardCard
+        gridArea="1 / 1 / 2 / 4"
+        title="Annonces"
+        description="Liste des annonces"
+        backgroundColor="#e91e63"
+        buttonText="Voir"
+        buttonOnClick={() => navigate('/notification')}
+      />
+      <DashBoardCard
+        gridArea="1 / 4 / 2 / 6"
+        title="Forums"
+        description="Liste des forums disponibles"
+        backgroundColor="#9c27b0"
+        buttonText="Voir"
+        buttonOnClick={() => navigate('/forum')}
+      />
+      <DashBoardCard
+        gridArea="2 / 1 / 3 / 4"
+        title="Organisation"
+        description="Gérer votre organisation"
+        backgroundColor="#3f51b5"
+        buttonText="Voir"
+        buttonOnClick={() => navigate('/organisation/user')}
+      />
+      <DashBoardCard
+        gridArea="2 / 4 / 3 / 6"
+        title="Notifications"
+        description={`Vous avez ${count} notifications`}
+        backgroundColor="#673ab7"
+        buttonText="Voir"
+      
+      />
+      <DashBoardCard
+        gridArea="3 / 1 / 6 / 3"
+        title="Statistiques"
+        description="Vos statistiques d'activité"
+        backgroundColor="#2196f3"
+        buttonText="Voir"
+        buttonOnClick={() => navigate('/stats')}
+      />
+      <DashBoardCard
+        gridArea="3 / 3 / 6 / 4"
+        title="Profile"
+        description="Accéder à votre profile"
+        backgroundColor="#03a9f4"
+        buttonText="Voir"
+        buttonOnClick={() => navigate('/profile')}
+      />
+      <DashBoardCard
+        gridArea="3 / 4 / 6 / 6"
+        title="EscapeGame"
+        description="Vos parties en cours"
+        backgroundColor="#4caf50"
+        buttonText="Voir"
+        buttonOnClick={() => navigate('/escape-game')}
+      />
     </Stack>
   );
 };

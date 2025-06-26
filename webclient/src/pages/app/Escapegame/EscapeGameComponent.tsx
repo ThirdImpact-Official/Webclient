@@ -1,7 +1,7 @@
 import { GetEscapeGameDto } from '@/interfaces/EscapeGameInterface/EscapeGame/getEscapeGameDto';
 import {  
   Box,Grid2,Typography,Select,FormControl,MenuItem,
-  Divider,Skeleton,Button, CardHeader,Card, CardContent, CardActions,Pagination} from '@mui/material';
+  Divider,Skeleton,Button, CardHeader,Card, CardContent, CardActions,Pagination,CircularProgress} from '@mui/material';
 import { useState, useRef, useEffect } from 'react';
 import { useParams, data } from 'react-router-dom';
 import EscapeGameOrganisationTable from './EscapeGameOrganisationTable';
@@ -23,6 +23,7 @@ import { useLoading } from '@/context/ContextHook/LoadingContext';
 import { Refresh } from '@mui/icons-material';
 import { PaginationResponse } from '@/interfaces/ServiceResponse';
 import { FormDataHelper } from '@/classes/FormDataHelper';
+
 const EscapeGameComponent = () => {
   //const { id } = useParams();
   const { id } = useParams();
@@ -78,12 +79,13 @@ const EscapeGameComponent = () => {
   };
   const handleRefresh =(event: React.ChangeEvent<unknown>) => {
     setPage(1);
+    fetchEscapeGames();
   }
   //-------------Function------------
   const fetchEscapeGames = async () => {
         try {
           console.log("Page Of eScapegame",page);
-          const response   = await EscapeAction.getAllEscapeGamesFromOrganisation(Number.parseInt(id),page,pageSize) as PaginationResponse<GetEscapeGameDto>;
+          const response   = await EscapeAction.getAllEscapeGamesFromOrganisation(Number.parseInt(organisationData?.orgId),page,pageSize) as PaginationResponse<GetEscapeGameDto>;
           console.log(response);
           console.log("Page Count",response.TotalPage);
           setPageCount(response.TotalPage);
@@ -110,13 +112,8 @@ const EscapeGameComponent = () => {
   };
   const fetchOrganisation= async () => {
         try {
-          let orgId=Number.parseInt(id);
-          
-          if(isNaN(orgId)) {
-            throw new Error("id is not a number");
-          }
 
-          const response = await OrgaAction.GetOrganisationById(Number.parseInt(id));
+          const response = await OrgaAction.GetOrganisationByIdForCurrentUser();
           if (response.Success) {
             console.log(response.Data);
             
@@ -190,10 +187,8 @@ const handleUpdateSubmit = async (eventData: UpdateEscapeGameDto) => {
   },[page,id])
 
   useEffect(() => {
-    if(id != null){
       fetchOrganisation();
-    }
-  },[id]);
+  },[]);
   
   const tabs: TabItem[] = [
     {
@@ -285,25 +280,25 @@ const handleUpdateSubmit = async (eventData: UpdateEscapeGameDto) => {
     },
     {
       label: 'Update',
-      content: (
+      content: selectedEscapeGame != null ? (
         <Card elevation={3}> 
           <CardContent>
             <UpdateEscapeGameForm 
                     data={selectedEscapeGame} 
                     onSubmit={handleUpdateSubmit} />
           </CardContent>
-          </Card>
-      ),
+        </Card>
+      ) : (<CircularProgress/>),
     },
   ];
 
   return (
     <Grid2 className="flex flex-row justify-evenly items-center" container spacing={2}>
       <Box className="flex flex-row gap-4">
-        <Item className='flex w-1/3 =d:w-1/3'>
+        <Box className='flex w-1/3 =d:w-1/3'>
           <OrganisationDetails data={organisationData} />
-        </Item>
-        <Item className="flex w-2/3 md:w-2/3">
+        </Box>
+        <Box className="flex w-2/3 md:w-2/3">
           <GenericTabs
             ref={tabsRef}
             tabs={tabs}
@@ -311,7 +306,7 @@ const handleUpdateSubmit = async (eventData: UpdateEscapeGameDto) => {
             ChangeTab={goToTab}
             ariaLabel="generic tabs"
           />
-        </Item>
+        </Box>
       </Box>
     </Grid2>
   );

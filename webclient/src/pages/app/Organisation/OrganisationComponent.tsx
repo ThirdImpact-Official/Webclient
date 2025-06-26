@@ -14,6 +14,7 @@ import {
   Typography,
   CardActionArea,
   CardActions,
+  CircularProgress
 } from '@mui/material';
 import { Refresh } from '@mui/icons-material';
 
@@ -252,12 +253,17 @@ const OrganisationComponent = () => {
     },
     {
       label:"Admin Demand Details",
-      content:<>
+      content: adminDemand != null ?(<>
        <Card elevation={3} className='p-2'>
           <CardContent> 
             <AdminDetails data={adminDemand}/> 
           </CardContent>
-        </Card></>
+        </Card></>):(
+          <Card>
+            <CardContent className="text-center justify-center items-center flex flex-col">
+              <CircularProgress />
+            </CardContent>
+          </Card>)
     }]
 
   const goToTab = (index: number) => {

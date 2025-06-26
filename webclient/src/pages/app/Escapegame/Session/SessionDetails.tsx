@@ -1,39 +1,106 @@
 import { GetSessionGameDto } from "@/interfaces/EscapeGameInterface/Session/getSessionGameDto";
-import { Box,Divider,Button } from "@mui/material";
-import { FC } from "react";
-import DetailsComponent from "@/components/factory/GenericComponent/DetailsComponent";
-interface SessionDetailsProps {
-    data : GetSessionGameDto ;
-    columns: {label:string; accessor: keyof GetSessionGameDto }[]
-    OnUpdate: (org: GetSessionGameDto) => void
+import { Box, Divider, Chip, Stack, CircularProgress, Alert } from "@mui/material";
+import { FC, useEffect, useState } from 'react';
+import { GetEscapeGameDto } from "@/interfaces/EscapeGameInterface/EscapeGame/getEscapeGameDto";
+import RenderDetail from "@/components/factory/GenericComponent/RenderDetails";
+import FormUtils from '@/classes/FormUtils';
+import {EscapeGameAction} from "@/actions/EscapeGameAction"; // Utilisez import ES6 au lieu de require
 
+interface SessionDetailsProps {
+    data: GetSessionGameDto;
+    columns: { label: string; accessor: keyof GetSessionGameDto }[];
+    OnUpdate: (org: GetSessionGameDto) => void;
 }
-const SessionDetails :FC<SessionDetailsProps> = (prop)=> {
-    const handleUpdate=(item: GetSessionGameDto)=>
-    {
-        prop.OnUpdate(item);
-    }
-   
-    return (
-        <Box className="flex flex-col items-center justify-center ">    
-            <DetailsComponent key={prop.data.segId}  data={prop.data} 
-                                       columns={prop.columns} />
-            <Divider className="mt-4 p-4" orientation="horizontal" flexItem />
-            <Box className="items-center flex flex-row ">
-                       
-                <Button color="success" 
-                        onClick={()=>window.location.href=`session/${prop.data.segId}/reservation`}>Reservation</Button>
-                <Divider orientation="vertical" 
-                            flexItem />
-                <Button color="primary" 
-                        onClick={()=>handleUpdate} >Update</Button>
-                <Divider orientation="vertical" 
-                            flexItem />
-                <Button color="error">Delete</Button>
-                        
+
+const SessionDetails: FC<SessionDetailsProps> = ({ data, columns, OnUpdate }) => {
+    const [escape, setEscape] = useState<GetEscapeGameDto | null>(null);
+    const [error, setError] = useState<string | null>(null);
+    const [isLoading, setLoading] = useState<boolean>(false);
+    const action= new EscapeGameAction();
+    const fetchEscapeGame = async () => {
+        setLoading(true);
+        try {
+            const escapeGame = await action.getEscapeGameById(data.escapeGameId);
+            if (escapeGame.Success) {
+                setEscape(escapeGame.Data as GetEscapeGameDto);
+            } else {
+                setError(escapeGame.Message || "Failed to load escape game");
+            }
+        } catch (err) {
+            setError("An unexpected error occurred");
+            console.error("Error fetching escape game:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleUpdate = () => {
+        OnUpdate(data);
+    };
+
+    useEffect(() => {
+        fetchEscapeGame();
+    }, [data.escapeGameId]); // Ajoutez la dépendance pour recharger si l'ID change
+
+    if (isLoading) {
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+                <CircularProgress />
             </Box>
+        );
+    }
+
+    if (error) {
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+                <Alert severity="error">{error}</Alert>
+            </Box>
+        );
+    }
+
+    if (!escape) {
+        return null; // Ou un message d'erreur approprié
+    }
+
+    return (
+        <Box className="flex flex-col items-center justify-center">
+            <Stack spacing={2}>
+                <RenderDetail value={escape.esgTitle} label="Escape Game" />
+                <RenderDetail value={data.placeAvailable} label="Places Available" />
+                <RenderDetail value={data.placeMaximum} label="Maximum Capacity" />
+                <RenderDetail value={`${data.price} €`} label="Price" />
+                <RenderDetail 
+                    value={FormUtils.FormatDate(data.date)} 
+                    label="Session Date" 
+                />
+            </Stack>
+
+            <Divider className="mt-4 p-4" orientation="horizontal" flexItem />
+
+            <Stack direction="row" spacing={2} className="items-center mt-4">
+                <Chip 
+                    color="success"
+                    variant="outlined"
+                    label="Reservation" 
+                    onClick={() => window.location.href=`session/${data.segId}/reservation`} 
+                />
+                <Divider orientation="vertical" flexItem />
+                <Chip 
+                    variant="outlined"
+                    color="primary" 
+                    label="Update"
+                    onClick={handleUpdate} 
+                />
+                <Divider orientation="vertical" flexItem />
+                <Chip 
+                    variant="outlined"
+                    color="error" 
+                    label="Delete" 
+                    // Ajoutez un handler pour delete si nécessaire
+                />
+            </Stack>
         </Box>
-    )
-}
+    );
+};
 
 export default SessionDetails;
