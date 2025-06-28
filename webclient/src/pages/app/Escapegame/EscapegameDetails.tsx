@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import {
   Typography,
   Box,
@@ -22,6 +22,7 @@ import FormUtils from '@/classes/FormUtils';
 import { UnitofAction } from '@/actions/UnitofAction';
 import { GetPriceDto } from '@/interfaces/EscapeGameInterface/Price/getPriceDto';
 import { GetDifficultyLevelDto } from '@/interfaces/EscapeGameInterface/DifficultyLevel/getDifficultyLevelDto';
+import { GetCategoryDto } from '@/interfaces/EscapeGameInterface/Category/getCategoryDto';
 
 interface EscapeGameDetailsProps {
   data?: GetEscapeGameDto | null;
@@ -43,7 +44,7 @@ const EscapeGameDetails: FC<EscapeGameDetailsProps> = ({
   const [getDifficulty, setDifficulty] = useState<GetDifficultyLevelDto[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
+  const [getcategories,setcategoris]= useState<GetCategoryDto[] | null>(null)
   const open = Boolean(anchorEl);
 
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -58,6 +59,23 @@ const EscapeGameDetails: FC<EscapeGameDetailsProps> = ({
     window.location.href = `escapegame/${data.esgId}/${path}`;
   };
 
+  const handleCateByEscapegame= async ()=>{
+    try
+    {
+      const response = await  action.categoryAction.GetEscapeGamecategory(data.esgId)
+      {
+        if(response.Success)
+        {
+          setcategoris(response.Data);
+        }
+      }
+    }
+    catch(error)
+    {
+
+    }
+
+  }
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
@@ -85,6 +103,7 @@ const EscapeGameDetails: FC<EscapeGameDetailsProps> = ({
 
     if (data) {
       fetchData();
+      handleCateByEscapegame();
     }
   }, [data]);
 
@@ -135,7 +154,9 @@ const EscapeGameDetails: FC<EscapeGameDetailsProps> = ({
                 <MenuItem onClick={() => navigateTo('session')}>Session</MenuItem>
                 <MenuItem onClick={() => navigateTo('event')}>Event</MenuItem>
                 <MenuItem onClick={() => navigateTo('activity')}>Activity</MenuItem>
-                  <MenuItem onClick={() => navigateTo('rating')}>Evalutation</MenuItem>
+                <MenuItem onClick={() => navigateTo('rating')}>Evalutation</MenuItem>
+                <MenuItem onClick={() => navigateTo('categories')}>catégories</MenuItem>
+                <MenuItem onClick={()=>navigateTo("reservation")}>Reservation</MenuItem>
               </Menu>
             </>
           )
@@ -153,6 +174,12 @@ const EscapeGameDetails: FC<EscapeGameDetailsProps> = ({
               variant="outlined"
             />
           )}
+         
+            <Chip
+              label={`status: ${data.esg_IsDeleting ? "invisible" :"Visible"}`}
+              variant="outlined"
+            />
+         
         </Stack>
 
         <Box
@@ -186,7 +213,24 @@ const EscapeGameDetails: FC<EscapeGameDetailsProps> = ({
             </>
           ))}
         </Stack>
-
+        <Stack direction="column" spacing={2} mb={3}>
+          { getcategories !== null ? 
+            (getcategories.map((item)=> (
+                <React.Fragment>
+                    <Chip 
+                      label={item.catName}
+                      variant="outlined"
+                    />
+                </React.Fragment>
+            ))
+            ) :(
+              <Chip 
+              variant='outlined'
+              label="Undefined"
+              />
+            )
+        }  
+        </Stack>
         <Stack direction="row" spacing={1} justifyContent="center" flexWrap="wrap">
           {priceInfo && (
             <Chip 

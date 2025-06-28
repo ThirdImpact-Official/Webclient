@@ -198,24 +198,18 @@ export const SidebarAdmin: React.FC = () => {
 
         <ListItem disablePadding>
           <ListItemButton onClick={() => handleNavigation('/profile')}>
-            <ListItemIcon><Settings /></ListItemIcon>
+            <ListItemIcon><Person /></ListItemIcon>
             <ListItemText primary="Profil" />
           </ListItemButton>
         </ListItem>
 
         {/* Section Organisation */}
+        {/* Section Organisation */}
         <Divider sx={{ my: 1 }} />
         <ListItem disablePadding>
-          <ListItemButton onClick={() => handleNavigation('/organisation')}>
+          <ListItemButton onClick={() => handleNavigation('/organisation/user')}>
             <ListItemIcon><Groups /></ListItemIcon>
             <ListItemText primary="Organisation" />
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem disablePadding>
-          <ListItemButton onClick={() => handleNavigation('/organisation/user')}>
-            <ListItemIcon><Person /></ListItemIcon>
-            <ListItemText primary="Membres" />
           </ListItemButton>
         </ListItem>
 
@@ -291,15 +285,9 @@ export  const SideBarSuperAdmin: React.FC = () => {
             <ListItemText primary="Dashboard" />
           </ListItemButton>
         </ListItem>
-        <ListItem disablePadding>
-            <ListItemButton onClick={() => handleNavigation('/admin')}>
-              <ListItemIcon><DashboardCustomize/></ListItemIcon>
-              <ListItemText primary="Hamdoulilah" />
-            </ListItemButton>
-          </ListItem>
         
           <ListItem disablePadding>
-            <ListItemButton onClick={() => handleNavigation('/admin')}>
+            <ListItemButton onClick={() => handleNavigation('/organisation')}>
               <ListItemIcon><DashboardCustomize/></ListItemIcon>
               <ListItemText primary="Admin" />
             </ListItemButton>
@@ -309,7 +297,7 @@ export  const SideBarSuperAdmin: React.FC = () => {
         <ListItem disablePadding>
           <ListItemButton onClick={() => handleNavigation('/signalement')}>
             <ListItemIcon><Person /></ListItemIcon>
-            <ListItemText primary="Utilisateurs" />
+            <ListItemText primary="Signalement" />
           </ListItemButton>
         </ListItem>
 
@@ -337,16 +325,9 @@ export  const SideBarSuperAdmin: React.FC = () => {
         {/* Section Organisation */}
         <Divider sx={{ my: 1 }} />
         <ListItem disablePadding>
-          <ListItemButton onClick={() => handleNavigation('/organisation')}>
+          <ListItemButton onClick={() => handleNavigation('/organisation/user')}>
             <ListItemIcon><Groups /></ListItemIcon>
             <ListItemText primary="Organisation" />
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem disablePadding>
-          <ListItemButton onClick={() => handleNavigation('/organisation/user')}>
-            <ListItemIcon><Person /></ListItemIcon>
-            <ListItemText primary="Membres" sx={{ pl: 4 }} />
           </ListItemButton>
         </ListItem>
 

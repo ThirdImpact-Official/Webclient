@@ -1,5 +1,5 @@
 import { LoginDto } from "@/interfaces/Credentials/loginDto";
-import { Box, Button, TextField, Typography,InputAdornment,IconButton } from "@mui/material";
+import { Box, Button, TextField, Typography, InputAdornment, IconButton, CardContent,Card, CircularProgress } from '@mui/material';
 import { Visibility,VisibilityOff } from "@mui/icons-material";
 import { CreadentialAction } from "@/actions/CreadentialAction";
 import React, { useEffect, useState } from "react";
@@ -22,6 +22,7 @@ const Login:React.FC = () => {
 
     const CredAction= new CreadentialAction();
     const authContext= useAuth();
+    const [isloading,setloading]=useState<boolean>(false)
     const NavTo=useNavigate();
     const [isAuthenticated,setIsAuthenticated]=useState(authContext.isAuthenticated);
 //------------------Handlers-----------
@@ -42,6 +43,7 @@ const Login:React.FC = () => {
         }));
     }
     const handleSubmit = async () => {
+        setloading(true);
         try {
             console.log(formData);
             const responseAuth= await authContext.login(formData);
@@ -55,6 +57,10 @@ const Login:React.FC = () => {
             }
         } catch (error) {
             console.error("Failed to login:", error);
+        }
+        finally
+        {
+            setloading(false)
         }
     };
     
@@ -83,13 +89,25 @@ const Login:React.FC = () => {
     {
         return(
             <>
-                <p>Auth already complete</p>
+            <Card>
+                <CardContent>
+                    <Typography>
+                        <p>Auth already complete</p>
+                    </Typography>
+                    </CardContent>
+                </Card>
             </>
         )
       
     }
-    else
+    if(isloading)
     {
+        return (<Card>
+            <CardContent>
+                <CircularProgress />
+            </CardContent>
+        </Card>)
+    }
         return(
             <Box className="m-2 p-2 text-center">
                 <form className="items-center justify-center">
@@ -156,7 +174,7 @@ const Login:React.FC = () => {
                     </Box>
                 </form>
             </Box>)
-    }
+    
 }
 
 export default Login;

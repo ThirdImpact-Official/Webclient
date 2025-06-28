@@ -1,5 +1,5 @@
 import ModalComponent from "@/components/factory/GenericComponent/Modal";
-import { Box, Button, Skeleton, Typography, MenuItem, Select, FormControl, Paper, Container, Grid2, Card, CardContent, InputLabel, CardHeader } from '@mui/material';
+import { Box, Button, Skeleton, Typography, MenuItem, Select, FormControl, Paper, Container, Grid2, Card, CardContent, InputLabel, CardHeader, CircularProgress, CardActionArea} from '@mui/material';
 import { useEffect, useRef, useState} from 'react';
 import UserOrganisationTable from "./UserOrganisationTable";
 import UserOrganisationDetails from "./UserOrganisationDetails";
@@ -15,8 +15,9 @@ import { Console } from "console";
 import { ServiceResponse } from "@/interfaces/ServiceResponse";
 import Item from '@/components/factory/GenericComponent/Item';
 import { Refresh } from "@mui/icons-material";
-
-
+import { UpdateOrganisationDto } from "@/interfaces/OrganisationInterface/Organisation/updateOrganisationDto";
+import UpdateOrganisationForm from '../UpdateOrganisation';
+import { on } from 'events';
 
 
 const UserOrganisationComponent = () => {
@@ -37,7 +38,25 @@ const UserOrganisationComponent = () => {
     setSelectedUser(user);
     goToTab(1)
   };
-
+const handleDeactivation=async ()=>{
+    try
+    {
+      const response = await organisationAction.DeleteOrganisation(selectedOrganisation.orgId);
+      if( response.Success)
+      {
+        setSelectedOrganisation(response.Data as GetOrganisationDto);
+      }
+      else
+      {
+      
+      }
+    }
+    catch
+    {
+      console .log("Error")
+    }
+    handlerefresh();
+  }
   const handleUserUpdate = (user: GetUserDto) => {
     setSelectedUser(user);
       goToTab(2)
@@ -87,6 +106,19 @@ const UserOrganisationComponent = () => {
     catch (e) {
       console.log(e);
     }
+  }
+  const handlerefresh= async()=>
+  {
+    const response= await organisationAction.GetOrganisationByIdForCurrentUser();
+    if(response.Success)
+    {
+
+      setSelectedOrganisation(response.Data as GetOrganisationDto)
+    }
+  }
+  const Handlereactivation= async()=>{
+    const response = await organisationAction.reactivateOrganisation(selectedOrganisation.orgId);
+    handlerefresh();
   }
   //-----useEffect---------------------
   useEffect(() => {
@@ -186,7 +218,15 @@ const UserOrganisationComponent = () => {
             </Grid2>
             </CardContent>
           </Card>
-         :<Skeleton width={0} height={0} />
+         :<Card>
+            <CardContent >
+              <Box className="p-4 m-4 text-center">
+                <Typography>
+                  Veuillez Selectionner un Utilisateur 
+                </Typography>
+              </Box>
+            </CardContent>
+         </Card>
         )
       },
       {
@@ -202,10 +242,61 @@ const UserOrganisationComponent = () => {
             </Grid2>
             </CardContent>
           </Card>
-        :
-        <Skeleton width={0} height={0}/>
+         :<Card>
+            <CardContent >
+              <Box className="p-4 m-4 text-center">
+                <Typography>
+                  Veuillez Selectionner un Utilisateur 
+                </Typography>
+              </Box>
+            </CardContent>
+         </Card>
         )
-      }
+      },
+       {
+            label: "Update",
+            content: selectedOrganisation ? (
+              <Card elevation={3} className='p-2'>
+                <CardContent>
+                  <UpdateOrganisationForm
+                      data={selectedOrganisation}
+                      handleCallBackResponse={handlerefresh} />
+                </CardContent>
+              </Card>):(
+                <Card>
+                  <CardContent className="text-center items-end">
+                    <CircularProgress/>
+                  </CardContent>
+                </Card>
+              )
+          },
+          {
+            label:"Reactivation",
+            content: selectedOrganisation ? (
+              <>
+              <Box className="items-center p-10 m-10 justify-center text-center">
+                <Card>
+                  <CardContent>
+                  <Typography>
+                    vous lez vous réactiver cette organisation ?
+                  </Typography>
+                  </CardContent>
+                  <CardActionArea>
+                    <Button   disabled={selectedOrganisation.isActive} onClick={Handlereactivation}>
+                      réactiver 
+                    </Button>
+                  </CardActionArea>
+                </Card>
+              </Box>
+              </>
+            ):(
+              <Card>
+                  <CardContent>
+                    <CircularProgress />
+                    </CardContent>
+              </Card>
+            )
+          }
 
     ]
 
@@ -221,7 +312,7 @@ const UserOrganisationComponent = () => {
                   {isLoading ? (
                     <Skeleton width={210} height={118} />
                   ) : (
-                    <OrganisationDetails data={selectedOrganisation} />
+                    <OrganisationDetails data={selectedOrganisation} onDeactivate={handleDeactivation} />
                   )}
                 </CardContent>
               </Grid2>

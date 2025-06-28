@@ -5,6 +5,8 @@ import { GetEscapeGameDto } from "@/interfaces/EscapeGameInterface/EscapeGame/ge
 import RenderDetail from "@/components/factory/GenericComponent/RenderDetails";
 import FormUtils from '@/classes/FormUtils';
 import {EscapeGameAction} from "@/actions/EscapeGameAction"; // Utilisez import ES6 au lieu de require
+import { Label } from '@mui/icons-material';
+import { SessionAction } from "@/actions/SessionAction";
 
 interface SessionDetailsProps {
     data: GetSessionGameDto;
@@ -13,10 +15,13 @@ interface SessionDetailsProps {
 }
 
 const SessionDetails: FC<SessionDetailsProps> = ({ data, columns, OnUpdate }) => {
+    const [getdata,setData]=useState<GetSessionGameDto>(data);
     const [escape, setEscape] = useState<GetEscapeGameDto | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setLoading] = useState<boolean>(false);
+    const [deleted,setdeleted]=useState<boolean>(getdata.isDeleted);
     const action= new EscapeGameAction();
+    const actionsession= new SessionAction();
     const fetchEscapeGame = async () => {
         setLoading(true);
         try {
@@ -33,11 +38,50 @@ const SessionDetails: FC<SessionDetailsProps> = ({ data, columns, OnUpdate }) =>
             setLoading(false);
         }
     };
-
+    const FetchDatasession=async()=>{
+            setLoading(true)
+        try
+        {
+            const response=await actionsession.getSessionById(data.segId);
+            if(response.Success)
+            {
+                setData(response.Data as GetSessionGameDto);
+              
+            }
+            else
+            {
+                setError(response.Message)
+            }
+        }
+        catch
+        {
+            setError("an error has occured ")
+        }
+        finally
+        {
+            setLoading(false);
+        }
+    }
     const handleUpdate = () => {
-        OnUpdate(data);
+        OnUpdate(getdata);
     };
-
+    const handleDelete=async ()=>{
+        try
+        {
+            const response= await actionsession.deleteSessionGame(data.segId);
+            if(response.Success)
+            {
+                  setdeleted(true);
+            }
+        }
+        catch
+        {
+setError("an error has occured ")
+        }
+    }
+    useEffect(()=>{
+        FetchDatasession();
+    },[])
     useEffect(() => {
         fetchEscapeGame();
     }, [data.escapeGameId]); // Ajoutez la dépendance pour recharger si l'ID change
@@ -64,14 +108,19 @@ const SessionDetails: FC<SessionDetailsProps> = ({ data, columns, OnUpdate }) =>
 
     return (
         <Box className="flex flex-col items-center justify-center">
+            
             <Stack spacing={2}>
                 <RenderDetail value={escape.esgTitle} label="Escape Game" />
-                <RenderDetail value={data.placeAvailable} label="Places Available" />
-                <RenderDetail value={data.placeMaximum} label="Maximum Capacity" />
-                <RenderDetail value={`${data.price} €`} label="Price" />
+                <RenderDetail value={getdata.placeAvailable} label="Places Available" />
+                <RenderDetail value={getdata.placeMaximum} label="Maximum Capacity" />
+                <RenderDetail value={`${getdata.price} €`} label="Price" />
                 <RenderDetail 
-                    value={FormUtils.FormatDate(data.date)} 
+                    value={FormUtils.FormatDate(getdata.date)} 
                     label="Session Date" 
+                />
+                <RenderDetail 
+                    value={deleted ? "supprimer" : "active"} 
+                    label="Status" 
                 />
             </Stack>
 
@@ -96,6 +145,7 @@ const SessionDetails: FC<SessionDetailsProps> = ({ data, columns, OnUpdate }) =>
                     variant="outlined"
                     color="error" 
                     label="Delete" 
+                    onClick={handleDelete}
                     // Ajoutez un handler pour delete si nécessaire
                 />
             </Stack>

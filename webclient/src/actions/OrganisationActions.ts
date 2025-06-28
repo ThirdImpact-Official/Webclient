@@ -6,6 +6,7 @@ import { ErrorType } from '@/enums/RequestType';
 import { AddOrganisationDto } from '@/interfaces/OrganisationInterface/Organisation/addOrganisationDto';
 import { UpdateUserOrganisationDto } from '../interfaces/OrganisationInterface/UserOrganisation/updateUserOrganisationDto';
 import { GetUserDto } from '@/interfaces/User/GetUserDto';
+import { UpdateOrganisationDto } from '@/interfaces/OrganisationInterface/Organisation/updateOrganisationDto';
 
 export class OrganisationAction {
     private _httpClient: HttpClient;
@@ -67,7 +68,7 @@ export class OrganisationAction {
      */
     public async GetAllOrganisation(page: number, pageSize: number): Promise<PaginationResponse<GetOrganisationDto>> {
         const param: string = `?page=${page}&pageSize=${pageSize}`;
-        return await this._httpClient.GetRequestType(param)
+        return await this._httpClient.GetRequestType("admin"+param)
             .executePagination<GetOrganisationDto>();
     }
 
@@ -95,7 +96,7 @@ export class OrganisationAction {
      *          be false.
      * @throws {Error} If the request to update the organisation fails.
      */
-    public async updateOrganization(organization: GetOrganisationDto): Promise<ServiceResponse<GetOrganisationDto>|PaginationResponse<GetOrganisationDto>> {
+    public async updateOrganization(organization: FormData ): Promise<ServiceResponse<GetOrganisationDto> |PaginationResponse<GetOrganisationDto>> {
         return await this._httpClient.PutRequestType("")
             .setData(organization)
             .execute<GetOrganisationDto>();     
@@ -114,7 +115,10 @@ export class OrganisationAction {
         return await this._httpClient.DeleteRequestType("/" + id)
                                 .execute<GetOrganisationDto>(); 
     }
-
+  public async reactivateOrganisation(id: number): Promise<ServiceResponse<GetOrganisationDto>|PaginationResponse<GetOrganisationDto>> {
+        return await this._httpClient.PutRequestType("/reactivate/" + id)
+                                .execute<GetOrganisationDto>(); 
+    }
     /**
      * Adds a new organisation.
      * @param {AddOrganisationDto} organisation - The details of the organisation to be added.

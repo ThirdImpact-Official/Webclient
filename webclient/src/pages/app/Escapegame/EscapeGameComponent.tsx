@@ -23,6 +23,7 @@ import { useLoading } from '@/context/ContextHook/LoadingContext';
 import { Refresh } from '@mui/icons-material';
 import { PaginationResponse } from '@/interfaces/ServiceResponse';
 import { FormDataHelper } from '@/classes/FormDataHelper';
+import EscapeGameOrganisation from '../../../../../../MobileApp/EscapeGameNextDoor/app/Organisation/EscapeGame/EscapeGameOrganisation';
 
 const EscapeGameComponent = () => {
   //const { id } = useParams();
@@ -33,6 +34,7 @@ const EscapeGameComponent = () => {
   const OrgaAction = new OrganisationAction();
   //getter Setter  ---------------
   const [page,setPage] = useState<number|null>(1);
+  const [totalPage,setTotalPage]=useState<number>(0);
   const [pageSize,setPageSize] = useState(5); 
   const [pageCount,setPageCount] = useState<number | null>(null);
   const [escapeGames, setEscapeGames] = useState<GetEscapeGameDto[]>();
@@ -94,7 +96,7 @@ const EscapeGameComponent = () => {
       
             // Set state separately from logging
             setEscapeGames(response.Data);
-            
+            setTotalPage(response.TotalPage);
             // If there's data available, set the selected escape game
             setSelectedEscapeGame(response.Data[0]);
             
@@ -165,7 +167,27 @@ const EscapeGameComponent = () => {
   }
 const handleUpdateSubmit = async (eventData: UpdateEscapeGameDto) => {
     try {
-        const response = await EscapeAction.updateEscapeGame(eventData);
+      console.log()
+       const formData= new FormData();
+      formData.append("ESGID",eventData.esgId.toString())
+      formData.append('ESGNom', eventData.esgNom);
+      formData.append('ESGCreator', eventData.esgCreator);
+      formData.append('ESGTitle', eventData.esgTitle);
+      formData.append('ESGContent', eventData.esgContent);
+      formData.append('ESGWebsite', eventData.esgWebsite);
+      formData.append('ESGPhoneNumber', eventData.esgPhoneNumber);
+      formData.append('ESG_IsForChildren', eventData.esg_IsForChildren.toString());
+      formData.append('ESG_Price_Id', eventData.esg_Price_Id.toString());
+      formData.append('ESG_DILE_Id', eventData.esg_DILE_Id.toString());
+      formData.append('Language', eventData.language.toString());
+      formData.append('MaxPlayer', eventData.maxPlayers.toString());
+      formData.append('Minplayer', eventData.minPlayers.toString());
+      // Ajoutez le fichier séparément avec le bon nom
+      if (eventData.esgImgResources) {
+        formData.append('ESGImgResources', eventData.esgImgResources);
+      }
+      console.log(formData);
+        const response = await EscapeAction.updateEscapeGame(formData);
         if (response.Success) {
             Modal.handleOpen();
             Modal.setDescription(response.Message);
@@ -179,6 +201,30 @@ const handleUpdateSubmit = async (eventData: UpdateEscapeGameDto) => {
         Modal.handleOpen();
         Modal.setDescription(error instanceof Error ? error.message : 'An error occurred');
         Modal.setTitle("Error");
+    }
+  }
+  /**
+   * 
+   * @param item 
+   */
+  const handleDelete= async (item: GetEscapeGameDto)=>{
+    try
+    {
+      const response = await EscapeAction.deleteEscapeGame(item.esgId);
+      if(response.Success)
+      if (response.Success) {
+            Modal.handleOpen();
+            Modal.setDescription(response.Message);
+            Modal.setTitle("Success");
+        } else {
+            Modal.handleOpen();
+            Modal.setDescription(response.Message);
+            Modal.setTitle("Error");
+        }
+    }
+    catch(error)
+    {
+
     }
   }
   //-------------UseEffect------------
@@ -259,6 +305,7 @@ const handleUpdateSubmit = async (eventData: UpdateEscapeGameDto) => {
               <EscapeGameDetails
                     data={selectedEscapeGame}
                     onUpdateButton={handleUpdate}
+                    onDeleteButton={handleDelete}
                     displayButton={true}
               />
               :<Skeleton></Skeleton>

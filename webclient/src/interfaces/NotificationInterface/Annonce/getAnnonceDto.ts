@@ -3,7 +3,7 @@ import FormUtils from '../../../classes/FormUtils';
 export interface GetAnnonceDto{
     id: number;
     name: string;
-    imageressources: string;
+    image: string;
     description: string;
     createdDate: string;
     updatedDate: string;

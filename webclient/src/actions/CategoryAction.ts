@@ -84,9 +84,9 @@ export class CategoryAction {
      * @param id 
      * @returns 
      */
-    public async  AddEscapeGameDto(id: number): Promise<ServiceResponse<GetCategoryDto> | PaginationResponse<GetCategoryDto>> {
+    public async  AddEscapeGameDto(idescape: number,idcat:number): Promise<ServiceResponse<GetCategoryDto> | PaginationResponse<GetCategoryDto>> {
         return await this.httpClient
-            .PostRequestType(`/escapegame/${id}`)
+            .PostRequestType(`/escapegame/${idescape}/${idcat}`)
             .execute<GetCategoryDto>();
     }
     /**
@@ -94,9 +94,9 @@ export class CategoryAction {
      * @param id 
      * @returns 
      */
-    public async RemoveEscapeGameDto(id: number): Promise<ServiceResponse<GetCategoryDto> | PaginationResponse<GetCategoryDto>> {
+    public async RemoveEscapeGameDto(idescape: number,idcat:number): Promise<ServiceResponse<GetCategoryDto> | PaginationResponse<GetCategoryDto>> {
         return await this.httpClient
-            .DeleteRequestType(`/escapegame/${id}`)
+            .DeleteRequestType(`/escapegame/${idescape}/${idcat}`)
             .execute<GetCategoryDto>();
     }
     public async  GetEscapeGamecategory(id: number): Promise<ServiceResponse<GetCategoryDto[]>> {

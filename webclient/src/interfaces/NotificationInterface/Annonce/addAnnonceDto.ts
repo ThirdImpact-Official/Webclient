@@ -1,6 +1,6 @@
 export interface AddAnnonceDto{
    name: string;
     description: string;
-    formFile: FormFile | null;
+    formFile: File | null;
     organisationId: number;
 }

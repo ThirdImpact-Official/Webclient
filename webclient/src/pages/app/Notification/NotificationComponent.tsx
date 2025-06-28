@@ -17,6 +17,10 @@ import DetailsComponent from '@/components/factory/GenericComponent/DetailsCompo
 import { RefreshCwIcon } from "lucide-react";
 import { FormDataHelper } from "@/classes/FormDataHelper";
 import AnnonceDetails from "./Annonce/Annoncedetails";
+import { GetOrganisationDto } from "@/interfaces/OrganisationInterface/Organisation/getOrganisationDto";
+
+import { OrganisationAction } from "@/actions/OrganisationActions";
+import OrganisationDetails from '../Organisation/OrganisationDetails';
 /*
     Notification Component 
     ce composant Contient la liste des notifications 
@@ -29,9 +33,14 @@ const NotificationComponent = () => {
     const [notification, setNotification] = useState<GetNotificationDto[] | null>();
     const [annonce,setAnnonce] = useState<GetAnnonceDto [] | null>(null);
     const [selectAnnonce,setSelectAnnonce]=useState<GetAnnonceDto| null>(null);
+    const [getorganisation,setOrganisation]=useState<GetOrganisationDto | null >(null);
+
     const [page,setPage]= useState(1);
     const annService = new AnnonceService();
     const notifiService= new NotificationAction();
+    const organisationAction=new OrganisationAction();
+    const [error,setError]=useState("");
+    const [isLoading,setLoaging]=useState<boolean>(false);
     //------------Tans reference---
     const tabsRef = useRef<{ changeTab: (index: number) => void } | null>(null);
     const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
@@ -43,6 +52,14 @@ const NotificationComponent = () => {
           tabsRef.current.changeTab(index);
         }
       };
+       const fetchOrganisation = async () => {
+          const res = await organisationAction.GetOrganisationByIdForCurrentUser();
+          if (res.Success) {
+            setOrganisation(res.Data as GetOrganisationDto);
+          } else {
+            setError("Unable to retrieve the organisation");
+          }
+        };
     const fetchAnnonce = async () => {
         try {
             const response= await annService.getAllAnnonces(page,5);
@@ -69,6 +86,24 @@ const NotificationComponent = () => {
                 
             }
     }
+    const handleDelete=async(item:GetAnnonceDto)=>{
+        try
+        {
+            const response= await annService.deleteAnnonce(item.id)
+            if(response.Success)
+            {
+                 fetchAnnonce();
+            }
+            else{
+                setError("");
+            }
+        }
+        catch(rtt)
+        {
+             setError("");
+        }
+    }
+
     const handleCreatSubmit = async (data: AddAnnonceDto) => {
         if(data === null || data === undefined) {
             
@@ -125,6 +160,7 @@ const NotificationComponent = () => {
     //------------UseEffect--------
     useEffect   (() => {
         fetchAnnonce();
+        fetchOrganisation();
     }, [page]);
     //------------Columns----------
     const annoncecolumns =AnnonceColumns;
@@ -180,7 +216,7 @@ const NotificationComponent = () => {
             <>
                 <Card elevation={3} >
                      <CardContent>
-                       <AnnonceDetails data={selectAnnonce} columns={annoncecolumns} onUpdate={handleUpdate} /> 
+                       <AnnonceDetails data={selectAnnonce} columns={annoncecolumns} onUpdate={handleUpdate}  onDelete={handleDelete}/> 
                      </CardContent>
                 </Card>
             </>):(<Card>
@@ -219,7 +255,10 @@ const NotificationComponent = () => {
     ]
     return (
         <>
-            <Box>
+            <Box className="flex flex-row text-center items-center justify-center ">
+                  <Box>
+                        <OrganisationDetails data={getorganisation}   />
+                      </Box>
                 <GenericTabs tabs={tabs} ref={tabsRef} ChangeTab={goToTab}   />
             </Box>
             <Snackbar

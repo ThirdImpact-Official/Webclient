@@ -1,5 +1,5 @@
 import GenericTabs, { TabItem } from "@/components/factory/GenericComponent/TabGénéric";
-import { Box, Typography, Select, FormControl, MenuItem, Grid, Skeleton, Modal,Button, Card, CardContent, CardHeader, CardActions,Divider } from '@mui/material';
+import { Box, Typography, Select, FormControl, MenuItem, Grid, Skeleton, Modal,Button, Card, CardContent, CardHeader, CardActions,Divider, CircularProgress,Pagination } from '@mui/material';
 import { useRef, useState,useEffect } from "react";
 import { GetSessionReservedDto, reservationcolumns } from "@/interfaces/EscapeGameInterface/Reservation/getSessionReservedDto";
 import GetReservation from "./GetReservation";
@@ -20,6 +20,8 @@ import UpdateReservation from "./UpdateReservation";
 import { UpdateSessionReservedDto } from "@/interfaces/EscapeGameInterface/Reservation/updateSessionReservedDto";
 import GetUserDetails from "../../Profile/ProfileComponent/GetUserDetails";
 import { GetUserDto } from "../../../../interfaces/User/GetUserDto";
+import EscapeGameDetails from "../EscapegameDetails";
+import { PaginationResponse } from "@/interfaces/ServiceResponse";
 
 
 const ReservationComponent = () => {
@@ -30,7 +32,11 @@ const ReservationComponent = () => {
         changeTab: (index: number) => void;
     } | null>(null);
     //variable
+    const [getescapeGame,setescapeGame]=useState<GetEscapeGameDto>()
     const [page,setPage]=useState(1);
+    const [totalpage,settotalpage]=useState<number>(0);
+    const [error,setError]= useState<string>("");
+
     const [selectedSession,setSelectedSession]=useState<GetSessionGameDto | null >(null);
     const [reservations, setReservations] = useState<GetSessionReservedDto[]>([]);
     const [user,setUser] = useState<GetUserDto | null>(null); // Correction: ajout de | null
@@ -52,6 +58,7 @@ const ReservationComponent = () => {
 
     const handleDetails = (reservation: GetSessionReservedDto) => {
         setSelectedReservation(reservation);
+        
         goToTab(1);
     };
 
@@ -62,18 +69,35 @@ const ReservationComponent = () => {
     //------------Fonction-----------
     const fetchReservations = async () => {
       try {
-        const response = await ReservAction.getSessionReservedByEscapeGameId(Number.parseInt(esgId!),page,5);
+        const response = await ReservAction.getSessionReservedByEscapeGameId(Number.parseInt(esgId!),page,5) as PaginationResponse<GetSessionReservedDto>;
   
         if (response.Success) {
           console.log(response.Data);
           setReservations(response.Data as GetSessionReservedDto[]);
+          settotalpage(response.TotalPage);
         }
         
       } catch (error) {
         console.error(error);
       }
     }
-    
+    const fetchescapegame= async()=>{
+      try
+      {
+        const response = await escapeAction.getEscapeGameById(Number(esgId));
+        if(response.Success)
+        {
+         setescapeGame(response.Data as GetEscapeGameDto);
+        }else
+        {
+          setError(response.Message)
+        }
+      }
+      catch
+      {
+        setError("une erreur est srurvenu durant la recupération des donnéee");
+      }
+    }
     // Correction: Fonction séparée et simplifiée
     const fetchSelectedReservation = async () => {
       try {
@@ -161,7 +185,26 @@ const ReservationComponent = () => {
         Modal.setTitle("Error");
     }
   }
+    const handleChangePage =(event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
+  const fetchSessionById=async (item:number) =>{
+    try
+    {
+      const response= await ReservAction.getSessionById(item);
+      if(response.Success)
+      {
 
+      }
+      else{
+        setError(response.Message)
+      }
+    }
+    catch(err)
+    {
+      setError("an errro has occured during the process ")
+    }
+  }
   // Correction: useEffect principal avec gestion du loading
   useEffect(() => {
     if (id && esgId) {
@@ -173,6 +216,7 @@ const ReservationComponent = () => {
             fetchSession(),
             fetchSelectedReservation(),
             fetchReservations()
+           
           ]);
         } catch (error) {
           console.error('Error fetching data:', error);
@@ -184,7 +228,15 @@ const ReservationComponent = () => {
       fetchData();
     }
   }, [id, esgId, page]); // Correction: Retirer les dépendances qui causent des boucles
-
+useEffect(()=>{
+  fetchescapegame();
+},[esgId]);
+useEffect(()=>{
+  if(selectedReservation !== null)
+  {
+    fetchSessionById(selectedReservation.sessionGameId)
+  }
+},[selectedReservation])
   const sessionCol= Sessioncolumns;
   const columns = reservationcolumns;
 
@@ -220,6 +272,9 @@ const ReservationComponent = () => {
                 OnDetails={handleDetails}
                 OnUpdate={handleUpdate} />
         </CardContent>
+        <CardActions>
+          <Pagination count={totalpage} page={page} onChange={handleChangePage} />
+        </CardActions>
         </Card>
         </>
         ),
@@ -229,7 +284,7 @@ const ReservationComponent = () => {
         content:(
           <Card elevation={3}>
             <CardHeader title="Details de la reservation"  style={{textAlign:"center"}}/>
-            <CardContent>
+            <CardContent className="text-center items-center justify-center">
               <Grid container spacing={2}>
                 <Grid xs={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {
@@ -242,7 +297,7 @@ const ReservationComponent = () => {
                   {
                     selectedReservation ? (
                             <GetUserDetails user={selectedReservation.user} />
-                        ) : <Skeleton variant="rectangular" height={200} width={400}  />
+                        ) : <Skeleton className="tex-center item-center justify-center flex flex-col" variant="rectangular" height={200} width={400}  />
                   }
                 </Grid>
               </Grid>
@@ -276,7 +331,9 @@ const ReservationComponent = () => {
                         data={selectedReservation}
                         onSubmit={handleUpdateSubmit} />
                     ) : (
-                      <Skeleton variant="rectangular" height={200} />
+                      <Box className="text-center items-center justify-center">
+                        <Skeleton variant="rectangular" height={200} />
+                      </Box>
                     )  
                     }
                   </CardContent>
@@ -290,7 +347,7 @@ const ReservationComponent = () => {
         return <Skeleton variant="rectangular" height={200} width={500} />;
     }
 
-    if(!id || !esgId) {
+    if(!esgId) {
       return(
         <Grid container spacing={2} className="items-center justify-evenly"> 
             <Box className="flex flex-row gap-2">
@@ -306,34 +363,54 @@ const ReservationComponent = () => {
       )
     }
 
-    return (
+  
+ return (
   <Grid container spacing={2} sx={{ alignItems: "stretch" }}>
-    {/* Colonne Session */}
+    {/* Colonne Escape Game */}
     <Grid item xs={12} md={4}>
       <Card elevation={3} sx={{ height: "100%" }}>
         <CardContent sx={{ minHeight: 200 }}>
-          {selectedSession ? (
-            <SessionDetails 
-              data={selectedSession} 
-              columns={sessionCol} 
-              OnUpdate={console.log} 
-            />
-          ) : (
-            <Skeleton variant="rectangular" height="100%" />
-          )}
+
+         <EscapeGameDetails data={getescapeGame} />
         </CardContent>
       </Card>
     </Grid>
 
     {/* Colonne Tabs */}
-    <Grid item xs={12} md={8}>
+    <Grid item xs={12} md={4}>
       <GenericTabs
         ref={tabsRef}
         tabs={tabs}
         defaultTab={1}
         ChangeTab={goToTab}
-        sx={{ height: "100%" }}
       />
+    </Grid>
+
+    {/* Colonne Session Details */}
+    <Grid item xs={12} md={4}>
+      <Card elevation={3} sx={{ height: "auto" }}>
+        <CardHeader title={
+          <Typography className="text-center items-center justify-center">
+           détails de la session Session
+
+          </Typography>
+        } />
+        <CardContent>
+          {
+            selectedSession ?(
+              <SessionDetails 
+                data={selectedSession} 
+                columns={sessionCol} 
+                OnUpdate={console.log} 
+              />
+            ): (
+              <Box className="text-center ">
+                <CircularProgress/>
+              </Box>
+            )
+          }
+        </CardContent>
+      </Card>
     </Grid>
   </Grid>
 );

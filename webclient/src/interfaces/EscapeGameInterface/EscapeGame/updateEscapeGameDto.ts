@@ -10,4 +10,7 @@ export interface UpdateEscapeGameDto  {
     esg_IsForChildren: boolean;
     esg_Price_Id: number;
     esg_DILE_Id: number;
+    maxPlayers: number;
+    minPlayers: number;
+    language: string;
 }

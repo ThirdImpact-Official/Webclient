@@ -9,7 +9,7 @@ import { AddSessionGameDto } from "@/interfaces/EscapeGameInterface/Session/addS
 
 import DetailsComponent from "@/components/factory/GenericComponent/DetailsComponent";
 import { useParams } from "react-router";
-import { Box, Button, Divider, Select, FormControl, MenuItem, Typography, Grid2, Skeleton, CardContent, CardHeader, Card, Grid } from '@mui/material';
+import { Box, Button, Divider, Select, FormControl, MenuItem, Typography, Grid2, Skeleton, CardContent, CardHeader, Card, Grid, CardActions, Pagination } from '@mui/material';
 import GetsessionFromEscapeGame from './GetSessionFromEscapegame';
 import SessionDetails from './SessionDetails';
 
@@ -35,6 +35,7 @@ const SessionComponent = () => {
     const [tableSession,setTableSession]= useState([])
     const [selectSession,setSelectSession] = useState(tableSession[0])
     const [page,setPage] = useState<number>(0);  
+    const [totalPage,setTotalPage]= useState<number>(0)
     //escapegame
     const [escapegame, setEscapeGame]=useState<GetEscapeGameDto>(null)
     // Api call-------------
@@ -72,10 +73,11 @@ const SessionComponent = () => {
     // API Function to fetch sessions by escape game ID
     async function fetchSessionsByEscapeGameId(escapeGameId: string) {
         try {
-            const response = await SessionActions.getSessionEscapeGameById(Number.parseInt(id),page,5);
+            const response = await SessionActions.getSessionEscapeGameById(Number.parseInt(id),page,5) as PaginationResponse<GetSessionGameDto>;
             if (response.Success) {
                 console.log("response", console.log(response.Data));
                 setTableSession(response.Data as GetSessionGameDto[]);
+                setTotalPage(response.TotalPage)
             }
         } catch (error) {
             console.error('Error fetching sessions:', error);
@@ -100,7 +102,9 @@ const SessionComponent = () => {
                 Modal.setTitle("Error");
             }
        }
-
+ const handleChangePage =(event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
         const handleUpdateSubmit = async (eventData: UpdateSessionGameDto) => {
             try {
                 const response = await SessionActions.updateSessionGame(eventData);
@@ -128,6 +132,9 @@ const SessionComponent = () => {
             fetchEscapeGameById(id);
         }
     },[id]);
+    useEffect(()=>{
+  fetchSessionsByEscapeGameId(id);
+    },[page])
     const columns = Sessioncolumns;
     const tabs: TabItem[]=[
         {
@@ -168,6 +175,13 @@ const SessionComponent = () => {
                                 : <Skeleton variant="rectangular" height={500} />
                     }
                 </CardContent>
+                <CardActions>
+                    <Pagination
+                    count={totalPage}
+                    page={page}
+                    onChange={handleChangePage}
+                    />
+                </CardActions>
              </Card>
              </>)
         },

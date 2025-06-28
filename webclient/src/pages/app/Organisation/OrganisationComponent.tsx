@@ -34,6 +34,7 @@ import AdminDemandTable from './AdminDemand/AdminDemandTable';
 import { data } from 'react-router-dom';
 import AdminDetails from './AdminDemand/AdminDemandDetail';
 import Organisation from '../Organisation';
+import { error } from 'console';
 
 
 const OrganisationComponent = () => {
@@ -47,6 +48,7 @@ const OrganisationComponent = () => {
   const [adminDemand,setAdminDemand]=useState<GetAdminDemandDto | null>(null);
   //page
   const [page, setPage] = useState<number>(1);
+  const [pageCount,setcoun]=useState<number>(0)
   const [adminpage, setAdminPage] = useState<number>(1);
 
 //---------------Actions----------------------------
@@ -101,6 +103,7 @@ const OrganisationComponent = () => {
       const response: ServiceResponse<GetOrganisationDto> | PaginationResponse<GetOrganisationDto> = await organisationAction.GetAllOrganisation(page, 5);
       setOrganisations(Array.isArray(response.Data) ? response.Data : []);
       setSelectedOrganisation(response.Data[0]);
+      setcoun(response.TotalPage);
     } catch (error) {
       console.error('Failed to load organisations:', error);
     }
@@ -113,6 +116,24 @@ const OrganisationComponent = () => {
     }
     catch (error) {
 
+    }
+  }
+  const handleDeactivation=async ()=>{
+    try
+    {
+      const response = await organisationAction.DeleteOrganisation(selectedOrganisation.orgId);
+      if( response.Success)
+      {
+        setSelectedOrganisation(response.Data as GetOrganisationDto);
+      }
+      else
+      {
+      
+      }
+    }
+    catch
+    {
+      console .log("Error")
     }
   }
   //---------------refresh handler
@@ -178,7 +199,7 @@ const OrganisationComponent = () => {
                 page={page}
                 className="float-end"
                 onChange={handlePageChange}
-                count={10}
+                count={pageCount}
                 />
           </CardActions>
         </Card>
@@ -189,9 +210,10 @@ const OrganisationComponent = () => {
       content:(
         <>
     
-          <Card className='p-2'>
+          <Card className='p-2 w-1/2 items-center'>
             <CardContent>
               <OrganisationDetails 
+                  onDeactivate={handleDeactivation}
                   data={selectedOrganisation} />
             </CardContent>
           </Card>
@@ -201,14 +223,20 @@ const OrganisationComponent = () => {
     },
     {
       label: "Update",
-      content: 
+      content: selectedOrganisation ? (
         <Card elevation={3} className='p-2'>
           <CardContent>
             <UpdateOrganisationForm
                 data={selectedOrganisation}
                 handleCallBackResponse={()=> console.log("")} />
           </CardContent>
-        </Card>
+        </Card>):(
+          <Card>
+            <CardContent className="text-center items-end">
+              <CircularProgress/>
+            </CardContent>
+          </Card>
+        )
     },
     {
       label:"Admin Demand Table",

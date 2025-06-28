@@ -12,6 +12,7 @@ const FAQ = () => {
                 navigate("/login");
             }
         })
+        
     return (
         <Box className="flex items-center justify-center">
             <FaqComponent />

@@ -48,7 +48,7 @@ export class EscapeGameAction {
             .execute<GetEscapeGameDto>();
     }
 
-    public async updateEscapeGame(escapeGame: UpdateEscapeGameDto): Promise<ServiceResponse<GetEscapeGameDto> | PaginationResponse<GetEscapeGameDto>> {
+    public async updateEscapeGame(escapeGame: FormData): Promise<ServiceResponse<GetEscapeGameDto> | PaginationResponse<GetEscapeGameDto>> {
         return await this.httpClient
             .PutRequestType('escapegame')
             .setData(escapeGame)

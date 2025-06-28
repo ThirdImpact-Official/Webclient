@@ -13,7 +13,8 @@ import {
   Stack,
   Chip,
   CircularProgress,
-  Alert
+  Alert,
+  colors
 } from '@mui/material';
 import { FC, useState } from 'react';
 import RenderDetail from '@/components/factory/GenericComponent/RenderDetails';
@@ -81,9 +82,14 @@ const OrganisationDetails: FC<OrganisationDetailsProps> = ({
     <Card className="m-4 bg-white shadow-lg rounded-lg hover:shadow-2xl transition-all">
       <CardHeader 
         title={
-          <Typography variant="h4" component="h1">
-            {data.name}
-          </Typography>
+          <Box>
+            <Typography variant="h4" component="h1">
+              {data.name}
+            </Typography>
+            <Chip 
+              label={data.isActive ? "Actif" : "Inactif"}
+              />
+          </Box>
         } 
         action={
           <div>
@@ -111,9 +117,12 @@ const OrganisationDetails: FC<OrganisationDetailsProps> = ({
               }}>
                 Escape Games
               </MenuItem>
-              <MenuItem onClick={() => {
+              <MenuItem 
+              colors='red'
+              onClick={() => {
                 handleMenuClose();
                 onDeactivate?.();
+                
               }}>
                 Deactivate
               </MenuItem>

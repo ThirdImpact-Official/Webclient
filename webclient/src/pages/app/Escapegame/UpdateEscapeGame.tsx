@@ -23,12 +23,21 @@ const UpdateEscapeGameForm: FC<UpdateEscapeGameProps> = ({ data, onSubmit }) => 
     esgPhoneNumber: data.esgPhoneNumber,
     esg_IsForChildren: data.esg_IsForChildren,
     esg_Price_Id: data.esg_Price_Id,
-    esg_DILE_Id: data.esg_DILE_Id
+    esg_DILE_Id: data.esg_DILE_Id,
+    // Add the missing fields with default values or from data
+    maxPlayers: (data as any).maxPlayers || 1,
+    minPlayers: (data as any).minPlayers || 1,
+    language: (data as any).language || ''
   });
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setUpdatedEscapeGame((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleNumberInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setUpdatedEscapeGame((prev) => ({ ...prev, [name]: Number(value) || 0 }));
   };
 
   const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -120,6 +129,40 @@ const UpdateEscapeGameForm: FC<UpdateEscapeGameProps> = ({ data, onSubmit }) => 
                 fullWidth
                 placeholder="Téléphone"
                 value={updatedEscapeGame.esgPhoneNumber}
+                onChange={handleInputChange}
+              />
+            </Box>
+            <Box>
+              <TextField
+                name="minPlayers"
+                label="Nombre minimum de joueurs"
+                type="number"
+                fullWidth
+                placeholder="Nombre minimum de joueurs"
+                value={updatedEscapeGame.minPlayers}
+                onChange={handleNumberInputChange}
+                inputProps={{ min: 1 }}
+              />
+            </Box>
+            <Box>
+              <TextField
+                name="maxPlayers"
+                label="Nombre maximum de joueurs"
+                type="number"
+                fullWidth
+                placeholder="Nombre maximum de joueurs"
+                value={updatedEscapeGame.maxPlayers}
+                onChange={handleNumberInputChange}
+                inputProps={{ min: 1 }}
+              />
+            </Box>
+            <Box>
+              <TextField
+                name="language"
+                label="Langue"
+                fullWidth
+                placeholder="Langue"
+                value={updatedEscapeGame.language}
                 onChange={handleInputChange}
               />
             </Box>

@@ -14,7 +14,7 @@ const CreateForumTopic:FC<CreateforumProps>=({OnSubmit,organisationId})=> {
         title: "",
         content: "",
         userId:0,
-        OrganisationId:organisationId
+        organizationId:organisationId
     });
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;

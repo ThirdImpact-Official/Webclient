@@ -8,12 +8,6 @@ const Signalement = () => {
     const {isAuthenticated} =useAuth();
     const [isAuth, setIsAuth] = useState(isAuthenticated);
 
-    useEffect(()=>{
-        if (!isAuth){
-            Navigate("/login");
-        }
-    },[])
-
 
     return (
       <SignalementComponent/>

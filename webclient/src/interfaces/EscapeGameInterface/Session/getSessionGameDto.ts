@@ -6,6 +6,7 @@ export interface GetSessionGameDto {
     date: string;
     price: number;
     isReserved: boolean;
+    isDeleted:boolean;
     placeAvailable: number;
     placeMaximum: number;
 }
