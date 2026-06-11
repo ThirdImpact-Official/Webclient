@@ -1,8 +1,9 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { AppBar,  Button, Box, IconButton, Toolbar, Typography } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { grey } from "@mui/material/colors";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -38,6 +39,7 @@ export default Header;
 
 export const HeaderHome:FC<HeaderProps> = ({onMenuClick}) => {
   const color=  grey[900];
+ 
   return(
     <>
      <AppBar  sx={{ backgroundColor: color, py: 2,px: 10 }} position="sticky">
@@ -57,11 +59,7 @@ export const HeaderHome:FC<HeaderProps> = ({onMenuClick}) => {
                 </Typography>
                 <Box >
                   <Box sx={{ minHeight: "10vh",width:"auto" }}>
-                    /* Bouton de connexion */
-                    <Button className="bg-red-600">
-                      <Link to="login">Login</Link>
-                      </Button>
-                    <Button className="bg-red-600" >Logout</Button>
+                    <HeaderButton />
                   </Box>
                 </Box>
             </Toolbar>
@@ -69,3 +67,47 @@ export const HeaderHome:FC<HeaderProps> = ({onMenuClick}) => {
     </>
   )
 };
+
+const HeaderButton =()=> {
+  const auth= useAuth();
+  const [isauthenticated,setauthenticated]=useState(false);
+  useEffect(()=>{
+    if(isauthenticated){
+      setauthenticated(true);
+    }
+    else{
+      setauthenticated(auth.isAuthenticated);
+    }
+  },[auth.isAuthenticated])
+  if(!auth.isAuthenticated){
+    console.log("From header : " +auth.isAuthenticated);
+    console.log("FromHeader : " + isauthenticated);
+  }
+  if(isauthenticated)
+  {
+    return(
+      <>
+        <Box>
+            <Typography>Connected </Typography>
+            <Button
+              onClick={auth.logout}
+              variant="contained"
+              className="bg-red-600" >Logout</Button>
+        </Box>
+      </>
+    )
+  }
+  else{
+    return(
+      <>  
+      <Typography> not Connected {auth.isAuthenticated}</Typography>
+      <Button
+            variant="contained"
+            className="bg-red-600">
+            <Link to="login">Login</Link>
+        </Button>
+      </>
+    )
+  }
+}
+

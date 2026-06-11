@@ -1,178 +1,279 @@
 import { ErrorType, RequestType } from "@/enums/RequestType";
 import { PaginationResponse, ServiceResponse } from "@/interfaces/ServiceResponse";
-import axios,{ AxiosInstance} from "axios";
+import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 
-
-export class HttpClient 
-{
+export class HttpClient {
     private Axios: AxiosInstance;
-    private baseUrl: string ="";
-    private url: string= "";
+    private baseUrl: string = "";
+    private url: string = "";
     private requestType: RequestType = RequestType.GET;
     private static instance: HttpClient;
-    private Data : unknown = null;
+    private Data: unknown = null;
     private jwtCookieName: string = 'jwt';
-    // 
-    constructor(  )
-    {
-       this.Axios= axios.create({
-           headers:{
-                'Content-Type': 'application/json'
-           },
-           withCredentials: true
-       });
+    
+    constructor() {
+        this.Axios = axios.create({
+            withCredentials: true
+        });
+        
+        // Intercepteur pour ajouter le token JWT à chaque requête
+        this.Axios.interceptors.request.use((config) => {
+            const token = this.getJwtCookieValue();
+            
+            // Toujours définir Content-Type
+            if (!config.headers['Content-Type']) {
+               
+               
+            }
+            
+            // Ajouter le token JWT s'il existe
+            if (token) {
+                config.headers['Authorization'] = `Bearer ${token}`;
+                console.log('JWT token added to request:', token.substring(0, 20) + '...');
+            } else {
+                console.log('No JWT token found in cookies');
+                // Ne pas supprimer l'en-tête Authorization s'il n'y a pas de token
+                // car certaines routes peuvent ne pas en avoir besoin
+            }
+            
+            return config;
+        }, (error) => {
+            return Promise.reject(error);
+        });
+
+        // Intercepteur de réponse pour gérer les erreurs d'authentification
+        this.Axios.interceptors.response.use(
+            (response) => response,
+            (error) => {
+                if (error.response?.status === 401) {
+                    console.log('Unauthorized request - JWT may be invalid or expired');
+                    // Optionnellement, supprimer le cookie JWT invalide
+                    this.clearJwtCookie();
+                }
+                return Promise.reject(error);
+            }
+        );
     }
     
-    // ceci est un expemple d'utilisation
-    /*
-        public exemples(): void
-        {
-            dans le cadre d'un get 
-
-            const response = await HttpClient
-                .getInstance()
-                .setBaseUrl('https://api.example.com')
-                .GetRequestType('/users/1')
-                .execute<User>();
-
-            if (response.success) {
-                console.log(response.data);
-                }
-        }
-
-        // Exemple POST
-        const createUser = async () => {
-            const userData = { name: "John" };
-            
-            const response = await HttpClient
-                .getInstance()
-                .setBaseUrl('https://api.example.com')
-                .PostRequestType('/users')
-                .setData(userData)
-                .execute<User>();
-
-            if (response.success) {
-                console.log(response.data);
-    }
-};
-
-    */
-
     /**
     * Sends a request to the server and returns a promise that resolves with a ServiceResponse object.
-    * @param {string} url - The URL of the request.
-    * @param {RequestType} requestType - The type of the request.
-    * @param {T} data - The data to be sent with the request.
-    * @returns {Promise<ServiceResponse<T>>} A promise that resolves with a ServiceResponse object.
     */
-    private Sendrequest<T>( actionurl: string, requestType: RequestType, data?: T ): Promise<ServiceResponse<T> |PaginationResponse<T>>
-    {
-        return new Promise<ServiceResponse<T>>((resolve)=>
-            {
-                let methodes:string;
-                switch (requestType) {
-                    case RequestType.GET:
-                        methodes = "get";
-                        break;
-                    case RequestType.POST:
-                        methodes = "post";
-                        break;
-                    case RequestType.PUT:
-                        methodes = "put";
-                        break;
-                    case RequestType.DELETE:
-                        methodes = "delete";
-                        break;
-                    default:
-                        methodes = "get";
-                        break;
-                }
-                this.Axios
-                .request({
-                        headers: {
-                            'Content-Type':'application/json'
-                            ,'Access-Control-Allow-Origin': '*'
-                        },
-                        url: actionurl, 
-                        method: methodes,
-                        data: data})
-                .then((response) => {
-                        resolve({
-                            Data: response.data, 
-                            Success: true, 
-                            Message: "Success", 
-                            ErrorType: ErrorType.Good})    
-                })
-                .catch((error) => {
-                        resolve({
-                            Data: null,
-                            Success: false,
-                            Message: error.message,
-                            ErrorType: ErrorType.Bad});
-                })
+    private Sendrequest<T>(actionurl: string, requestType: RequestType, data?: T): Promise<ServiceResponse<T>> {
+        console.log("Sending request to:", actionurl);
+        console.log("Request type:", requestType);
+        console.log("Request data:", data);
+        
+        return new Promise<ServiceResponse<T>>((resolve) => {
+            const method = this.getHttpMethod(requestType);
             
+            const config: AxiosRequestConfig = {
+                url: actionurl,
+                method: method,
+                data: data
+            };
+             // Si c'est du FormData, on ne définit pas Content-Type (axios le fait automatiquement)
+            if (data instanceof FormData) {
+                config.data = data;
+            } else if (data) {
+                config.data = data;
+                config.headers = {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                };
+            }
+            this.Axios.request(config)
+            .then((axiosResponse) => {
+                console.log("Response received:", axiosResponse.status);
+                const res = axiosResponse.data;
+                const standard: ServiceResponse<T> = {
+                    Data: res.data,
+                    Success: res.success,
+                    Message: res.message,
+                    ErrorType: res.errorType
+                };
+                resolve(standard);
+            })
+            .catch((error) => {
+                console.error("Request failed:", error);
+                console.error("Error response:", error.response?.data);
+                console.error("Error status:", error.response?.status);
+                
+                resolve({
+                    Data: null,
+                    Success: false,
+                    Message: error.response?.data?.message || error.message || "Request failed",
+                    ErrorType: error.response?.data?.errorType || ErrorType.Bad
+                });
             });
-    
+        });        
     }
-      /**
-     * Définit le nom du cookie contenant le JWT
-     * 
-     * @param {string} cookieName - Le nom du cookie JWT
-     * @returns {HttpClient} L'instance HttpClient pour le chaînage de méthodes
+    
+    private SendPageRequest<T>(actionurl: string, requestType: RequestType, data?: T): Promise<PaginationResponse<T>> {
+        console.log("Sending paginated request to:", actionurl);
+        
+        return new Promise<PaginationResponse<T>>((resolve) => {
+            const method = this.getHttpMethod(requestType);
+            
+            const config: AxiosRequestConfig = {
+                url: actionurl,
+                method: method,
+                data: data
+            };
+            
+            this.Axios.request(config)
+            .then((axiosResponse) => {
+                const res = axiosResponse.data;
+                const paginated: PaginationResponse<T> = {
+                    Data: res.data,
+                    Success: res.success,
+                    Message: res.message,
+                    ErrorType: res.errorType,
+                    Page: res.page,
+                    PageSize: res.pageSize,
+                    TotalPage: res.totalPage
+                };
+                resolve(paginated);
+            })
+            .catch((error) => {
+                console.error("Paginated request failed:", error);
+                resolve({
+                    Data: null,
+                    Success: false,
+                    Page: 0,
+                    PageSize: 0,
+                    TotalPage: 0,
+                    Message: error.response?.data?.message || error.message || "Request failed",
+                    ErrorType: error.response?.data?.errorType || ErrorType.Bad
+                });
+            });
+        });
+    }
+    
+    /**
+     * Convertit le RequestType en méthode HTTP string
      */
-      public setJwtCookieName(cookieName: string): HttpClient {
+    private getHttpMethod(requestType: RequestType): string {
+        switch (requestType) {
+            case RequestType.GET:
+                return "get";
+            case RequestType.POST:
+                return "post";
+            case RequestType.PUT:
+                return "put";
+            case RequestType.DELETE:
+                return "delete";
+            default:
+                return "get";
+        }
+    }
+    
+    /**
+     * Définit le nom du cookie contenant le JWT
+     */
+    public setJwtCookieName(cookieName: string): HttpClient {
         this.jwtCookieName = cookieName;
         return this;
     }
     
     /**
      * Vérifie si le cookie JWT est présent dans le document
-     * 
-     * @returns {boolean} true si le cookie JWT est présent
      */
     private hasJwtCookie(): boolean {
-        if (typeof document !== 'undefined') {
-            const cookies = document.cookie.split(';');
-            return cookies.some(cookie => cookie.trim().startsWith(`${this.jwtCookieName}=`));
-        }
-        return false;
+        return this.getJwtCookieValue() !== null;
     }
     
     /**
-     * Récupère la valeur du cookie JWT
-     * 
-     * @returns {string|null} La valeur du cookie JWT ou null si non trouvé
+     * Récupère la valeur du cookie JWT avec une meilleure gestion des erreurs
      */
     private getJwtCookieValue(): string | null {
-        if (typeof document !== 'undefined') {
-            const cookies = document.cookie.split(';');
-            const jwtCookie = cookies.find(cookie => cookie.trim().startsWith(`${this.jwtCookieName}=`));
-            if (jwtCookie) {
-                return jwtCookie.split('=')[1].trim();
+        try {
+            if (typeof document === 'undefined') {
+                console.log('Document is undefined (SSR context)');
+                return null;
             }
+            
+            if (!document.cookie) {
+                console.log('No cookies found in document');
+                return null;
+            }
+            
+            const cookies = document.cookie.split(';');
+            console.log('Available cookies:', cookies.map(c => c.split('=')[0].trim()));
+            
+            const jwtCookie = cookies.find(cookie => {
+                const trimmedCookie = cookie.trim();
+                return trimmedCookie.startsWith(`${this.jwtCookieName}=`);
+            });
+            
+            if (jwtCookie) {
+                const value = jwtCookie.split('=')[1]?.trim();
+                if (value && value !== '') {
+                    console.log(`JWT cookie '${this.jwtCookieName}' found`);
+                    return value;
+                } else {
+                    console.log(`JWT cookie '${this.jwtCookieName}' is empty`);
+                    return null;
+                }
+            } else {
+                console.log(`JWT cookie '${this.jwtCookieName}' not found`);
+                return null;
+            }
+        } catch (error) {
+            console.error('Error reading JWT cookie:', error);
+            return null;
         }
-        return null;
+    }
+
+    /**
+     * Supprime le cookie JWT (utile en cas de token expiré)
+     */
+    private clearJwtCookie(): void {
+        try {
+            if (typeof document !== 'undefined') {
+                document.cookie = `${this.jwtCookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+                console.log(`JWT cookie '${this.jwtCookieName}' cleared`);
+            }
+        } catch (error) {
+            console.error('Error clearing JWT cookie:', error);
+        }
+    }
+
+    /**
+     * Définit manuellement le token JWT (utile après connexion)
+     */
+    public setJwtToken(token: string, expires?: Date): HttpClient {
+        try {
+            if (typeof document !== 'undefined') {
+                let cookieString = `${this.jwtCookieName}=${token}; path=/; SameSite=Strict`;
+                
+                if (expires) {
+                    cookieString += `; expires=${expires.toUTCString()}`;
+                }
+                
+                // Ajouter Secure en production
+                if (window.location.protocol === 'https:') {
+                    cookieString += '; Secure';
+                }
+                
+                document.cookie = cookieString;
+                console.log(`JWT token set in cookie '${this.jwtCookieName}'`);
+            }
+        } catch (error) {
+            console.error('Error setting JWT cookie:', error);
+        }
+        return this;
     }
 
     /**
      * Sets the base URL of the API endpoint for all subsequent requests.
-     * 
-     * @param {string} baseUrl - The base URL of the API endpoint. This URL
-     * is prepended to all request URLs used in the other methods of this class.
-     * @returns {HttpClient} The instance of HttpClient for method chaining.
      */
-    public setBaseUrl( baseUrl: string ): HttpClient
-    {
+    public setBaseUrl(baseUrl: string): HttpClient {
         this.baseUrl = baseUrl;
         return this;
     }
     
     /**
      * Returns the single instance of HttpClient.
-     * This is a singleton method that returns the single instance of HttpClient,
-     * creating one if it doesn't already exist. This is useful for when you want
-     * to ensure that all requests are made with the same instance of HttpClient.
-     * @returns {HttpClient} The single instance of HttpClient.
      */
     public static getInstance(): HttpClient {
         if (!HttpClient.instance) {
@@ -183,79 +284,69 @@ export class HttpClient
 
     /**
      * Sets the HTTP request type to GET and configures the request URL.
-     *
-     * @param {string} url - The endpoint URL for the GET request.
-     * @returns {HttpClient} The instance of HttpClient for method chaining.
      */
-    public GetRequestType( url: string ): HttpClient
-    {
+    public GetRequestType(url: string): HttpClient {
         this.requestType = RequestType.GET;
         this.url = url;
         return this;
     }
+    
     /**
      * Sets the HTTP request type to POST and configures the request URL.
-     *
-     * @param {string} url - The endpoint URL for the POST request.
-     * @returns {HttpClient} The instance of HttpClient for method chaining.
      */
-
-    public PostRequestType( url: string ): HttpClient
-    {
+    public PostRequestType(url: string): HttpClient {
         this.requestType = RequestType.POST;
         this.url = url;
         return this;
     }
-/**
- * Sets the HTTP request type to PUT and configures the request URL.
- *
- * @param {string} url - The endpoint URL for the PUT request.
- * @returns {HttpClient} The instance of HttpClient for method chaining.
- */
-
-    public PutRequestType( url: string ): HttpClient
-    {
+    
+    /**
+     * Sets the HTTP request type to PUT and configures the request URL.
+     */
+    public PutRequestType(url: string): HttpClient {
         this.requestType = RequestType.PUT;
         this.url = url;
         return this;
     }
-/**
- * Sets the HTTP request type to DELETE and configures the request URL.
- *
- * @param {string} url - The endpoint URL for the DELETE request.
- * @returns {HttpClient} The instance of HttpClient for method chaining.
- */
-
-    public DeleteRequestType( url: string ): HttpClient
-    {
+    
+    /**
+     * Sets the HTTP request type to DELETE and configures the request URL.
+     */
+    public DeleteRequestType(url: string): HttpClient {
         this.requestType = RequestType.DELETE;
         this.url = url;
         return this;
     }
-/**
- * Sets the data to be used in an HTTP request.
- *
- * @template T - The type of data to be set.
- * @param {T} data - The data to be used in the request.
- * @returns {HttpClient} The instance of HttpClient for method chaining.
- */
-
-    public setData<T>( data: T ): HttpClient
-    {
+    
+    /**
+     * Sets the data to be used in an HTTP request.
+     */
+    public setData<T>(data: T): HttpClient {
         this.Data = data;
         return this;
     }
+    public setFormDate<T>(data: T): HttpClient {
+        
+        this.Data = data;
+        return this;
+    }
+    private ResetState(): void {
+        this.url = '';
+        this.requestType = RequestType.GET;
+        this.Data = null;
+    }
+    
+    /**
+     * Executes an HTTP request based on the configured request type and URL.
+     */
+    public async execute<T>(): Promise<ServiceResponse<T>> {
+        const currentState = {
+            baseUrl: this.baseUrl,
+            url: this.url,
+            requestType: this.requestType,
+            Data: this.Data,
+        };
 
-/**
- * Executes an HTTP request based on the configured request type and URL.
- * 
- * @template T - The type of data expected in the response.
- * @returns {Promise<ServiceResponse<T>>} A promise that resolves to a service response containing the data, success status, message, and error type.
- * @throws Will return an error response if the base URL is not set or if the request fails.
- */
-
-    public async execute<T>(): Promise<ServiceResponse<T> | PaginationResponse<T>>
-    {
         if (!this.baseUrl) {
             return {
                 Data: null,
@@ -266,37 +357,101 @@ export class HttpClient
         }
 
         try {
-            let response: ServiceResponse<T> | PaginationResponse<T>;
             const fullUrl = `${this.baseUrl}${this.url}`;
-            if(!this.hasJwtCookie)
-            {
-                throw new Error('JWT cookie not found');
+            console.log("Executing request:", {
+                url: fullUrl,
+                method: this.getHttpMethod(this.requestType),
+                hasData: this.Data !== null,
+                hasJWT: this.hasJwtCookie()
+            });
+            
+            let response: ServiceResponse<T>;
+            
+            if (this.requestType === RequestType.GET) {
+                response = await this.Sendrequest(fullUrl, this.requestType);
+            } else {
+                response = await this.Sendrequest(fullUrl, this.requestType, this.Data as T);
             }
-            if(this.requestType == RequestType.GET)
-            {
-                 response = await this.Sendrequest(fullUrl, this.requestType);
-            }
-            else
-            {
-                if(this.Data == null)
-                {
-                    response = await this.Sendrequest(fullUrl, this.requestType);
-                }
-                else
-                {
-                    response = await this.Sendrequest(fullUrl, this.requestType, this.Data as T);
-                }
-            }
-
+            
             return response as ServiceResponse<T>;
-        } catch (error) {
+        } catch (error: any | Error) {
+            console.error("Execute error:", error);
             return {
                 Data: null,
                 Success: false,
-                Message: error.message,
+                Message: error.message || "Unknown error",
                 ErrorType: ErrorType.Bad,
             };
+        } finally {
+            // Optionnellement, vous pouvez choisir de réinitialiser l'état ou le conserver
+            // this.ResetState();
         }
     }
- 
-}   
+    
+    public async executePagination<T>(): Promise<PaginationResponse<T>> {
+        const currentState = {
+            baseUrl: this.baseUrl,
+            url: this.url,
+            requestType: this.requestType,
+            Data: this.Data,
+        };
+
+        if (!this.baseUrl) {
+            return {
+                Data: null,
+                Success: false,
+                Message: 'Base URL not set',
+                TotalPage: 0,
+                Page: 0,
+                PageSize: 0,
+                ErrorType: ErrorType.Null,
+            };
+        }
+
+        try {
+            const fullUrl = `${this.baseUrl}${this.url}`;
+            console.log("Executing paginated request:", {
+                url: fullUrl,
+                method: this.getHttpMethod(this.requestType),
+                hasData: this.Data !== null,
+                hasJWT: this.hasJwtCookie()
+            });
+            
+            let response: PaginationResponse<T>;
+            
+            if (this.requestType === RequestType.GET) {
+                response = await this.SendPageRequest(fullUrl, this.requestType);
+            } else {
+                response = await this.SendPageRequest(fullUrl, this.requestType, this.Data as T);
+            }
+            
+            return response as PaginationResponse<T>;
+        } catch (error: any | Error) {
+            console.error("ExecutePagination error:", error);
+            return {
+                Data: null,
+                Success: false,
+                Message: error.message || "Unknown error",
+                TotalPage: 0,
+                Page: 0,
+                PageSize: 0,
+                ErrorType: ErrorType.Bad,
+            };
+        } finally {
+            // Optionnellement, vous pouvez choisir de réinitialiser l'état ou le conserver
+            // this.ResetState();
+        }
+    }
+
+    /**
+     * Méthode utilitaire pour déboguer les cookies
+     */
+    public debugCookies(): void {
+        console.log('=== Cookie Debug Info ===');
+        console.log('JWT Cookie Name:', this.jwtCookieName);
+        console.log('Document cookies:', document.cookie);
+        console.log('JWT Cookie Value:', this.getJwtCookieValue());
+        console.log('Has JWT Cookie:', this.hasJwtCookie());
+        console.log('========================');
+    }
+}

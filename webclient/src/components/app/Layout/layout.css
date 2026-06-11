@@ -1,0 +1,17 @@
+.c-page-wrapper{
+    position: relative;
+    background-color: white;
+    min-height: 100vh;
+    left: 240px; 
+    width: calc(100vw - 240px);
+    transition: ease all .5s;
+    padding: 55px 30px;
+
+}
+
+@media screen and (max-width:900px){
+    .c-page-wrapper{
+        left:0;
+        width: 100vw !important;
+    }
+}

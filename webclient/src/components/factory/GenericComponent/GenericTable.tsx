@@ -1,68 +1,121 @@
+import { FC } from "react";
+import {
+    Table,
+    TableRow,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableBody,
+    Button,
+    Paper,
+    Skeleton,
+    Typography,
+    Box,
+    Stack,
+} from "@mui/material";
+import FormUtils from "@/classes/FormUtils";
 
+interface GenerationTableProps<T> {
+    data: T[];
+    columns: { label: string; accessor: keyof T }[];
+    OnDetails?: (item: T) => void;
+    OnUpdate?: (item: T) => void;
+}
 
-import { TableProps } from "@/interfaces/GenericInterface/GenericInterfaceComponent";
-import { useState } from "react";
-import { ArrowUp, ArrowDown } from "lucide-react";
-import Table from "@mui/material/Table";
-import { TableRow, TableHead, Button, TableBody, TableCell } from "@mui/material";
-
-function GenericTable<T>({ data, columns, actions }: TableProps<T>) {
-    const [sortConfig, setSortConfig] = useState<{ key: keyof T; direction: "asc" | "desc" } | null>(null);
-
-    const sortedData = [...data].sort((a, b) => {
-        if (!sortConfig) return 0;
-        const { key, direction } = sortConfig;
-        if (a[key] < b[key]) return direction === "asc" ? -1 : 1;
-        if (a[key] > b[key]) return direction === "asc" ? 1 : -1;
-        return 0;
-    });
-
-    const handleSort = (columnKey: keyof T) => {
-        setSortConfig((prevConfig) => {
-            if (prevConfig?.key === columnKey) {
-                return { key: columnKey, direction: prevConfig.direction === "asc" ? "desc" : "asc" };
-            }
-            return { key: columnKey, direction: "asc" };
-        });
-    };
+const GenericTable = <T,>({
+    data,
+    columns,
+    OnDetails,
+    OnUpdate
+}: GenerationTableProps<T>) => {
+    if (!data || data.length === 0) {
+        return (
+            <Box sx={{ p: 3 }}>
+                <Skeleton variant="rectangular" height={200} />
+                <Typography variant="body2" sx={{ mt: 2, color: "text.secondary" }}>
+                    No results found.
+                </Typography>
+            </Box>
+        );
+    }
 
     return (
-        <Table>
-            <TableHead>
-                <TableRow>
-                    {columns.map(({ key, label, sortable }) => (
-                        <TableCell key={String(key)}>
-                            <div className="flex items-center gap-2">
-                                {label}
-                                {sortable && (
-                                    <Button variant="text"  onClick={() => handleSort(key)}>
-                                        {sortConfig?.key === key ? (
-                                            sortConfig.direction === "asc" ? <ArrowUp size={16} /> : <ArrowDown size={16} />
-                                        ) : (
-                                            <ArrowUp size={16} className="opacity-50" />
-                                        )}
-                                    </Button>
-                                )}
-                            </div>
-                        </TableCell>
-                    ))}
-                    {actions && <TableCell>Actions</TableCell>}
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {sortedData.map((row, index) => (
-                    <TableRow key={index}>
-                        {columns.map(({ key, render }) => (
-                            <TableCell key={String(key)}>
-                            {render ? render(row[key], row) : row[key] ?? "N/A"}
-                        </TableCell>
+        <TableContainer 
+            component={Paper} 
+            className="hover:shadow-2xl transition-all"
+            sx={{ borderRadius: 2, overflow: "auto" }}>
+            <Table aria-label="customized table">
+                <TableHead>
+                    <TableRow>
+                        {columns.map((col) => (
+                            <TableCell key={String(col.accessor)}>
+                                <Typography variant="subtitle2" fontWeight="bold">
+                                    {col.label}
+                                </Typography>
+                            </TableCell>
                         ))}
-                        {actions && <TableCell>{actions(row)}</TableCell>}
+                        {(OnDetails || OnUpdate) && (
+                            <TableCell align="center">
+                                <Typography variant="subtitle2" fontWeight="bold">
+                                    Actions
+                                </Typography>
+                            </TableCell>
+                        )}
                     </TableRow>
-                ))}
-            </TableBody>
-        </Table>
+                </TableHead>
+                <TableBody>
+                    {data.map((item, index) => (
+                        <TableRow key={index} hover>
+                            {columns.map((col) => {
+                                const value = item[col.accessor];
+                                const isDate =
+                                    value instanceof Date ||
+                                    (typeof value === "string" && !isNaN(Date.parse(value)));
+
+                                return (
+                                    <TableCell key={String(col.accessor)}>
+                                        {isDate
+                                            ? FormUtils.FormatDate(value?.toString() ?? "")
+                                            : value != null
+                                            ? String(value)
+                                            : ""}
+                                    </TableCell>
+                                );
+                            })}
+                            {(OnDetails || OnUpdate) && (
+                                <TableCell>
+                                    <Stack direction="row" spacing={1} justifyContent="center">
+                                        <Box sx={{ display: "flex", gap: 1 }}>
+                                            {OnDetails && (
+                                                <Button
+                                                    size="small"
+                                                    variant="outlined"
+                                                    onClick={() => OnDetails(item)}
+                                                >
+                                                    Details
+                                                </Button>
+                                            )}
+                                            {OnUpdate && (
+                                                <Button
+                                                    size="small"
+                                                    variant="outlined"
+                                                    color="primary"
+                                                    onClick={() => OnUpdate(item)}
+                                                >
+                                                    Update
+                                                </Button>
+                                            )}
+                                        </Box>
+
+                                    </Stack>
+                                </TableCell>
+                            )}
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
     );
-}
+};
 
 export default GenericTable;

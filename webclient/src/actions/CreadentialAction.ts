@@ -4,6 +4,9 @@ import { HttpClient } from "./httpClient";
 import { GetUserDto } from "@/interfaces/User/GetUserDto";
 import { ErrorType } from "@/enums/RequestType";
 import { LoginCredentials } from "@/interfaces/login/loginCredentials";
+import { LoginDto } from "@/interfaces/Credentials/loginDto";
+import { RegisterDto } from "@/interfaces/Credentials/RegisterDto";
+import { AuthResponse } from "@/interfaces/User/Authresponse";
 
 
 
@@ -11,19 +14,19 @@ export class CreadentialAction
 {
     private _httpClient: HttpClient
     private apibaseurl: string
-    constructor(apibaseurl: string = "http://localhost:5000/api/v1/user") { 
+    constructor(apibaseurl: string = "http://localhost:7159/escape-game/") { 
         this.apibaseurl = apibaseurl;
-        this._httpClient = HttpClient.getInstance();
+        this._httpClient = new HttpClient();
         this._httpClient.setBaseUrl(this.apibaseurl);
     }
 
-    public async Login(credentials: LoginCredentials): Promise<ServiceResponse<GetUserDto> |PaginationResponse<GetUserDto>> {
+    public async Login(credentials: LoginCredentials): Promise<ServiceResponse<AuthResponse> |PaginationResponse<AuthResponse>> {
         try 
         {
             const response = await this._httpClient
-                                       .PostRequestType("/login")
+                                       .PostRequestType("account/login")
                                         .setData(credentials)
-                                        .execute<GetUserDto>();
+                                        .execute<AuthResponse>();
             if(response.Success)
             {
                 return response;
@@ -53,12 +56,12 @@ export class CreadentialAction
      *          be false.
      * @throws {Error} If the request to log out fails.
      */
-    public async Logout(): Promise<ServiceResponse<GetUserDto> | PaginationResponse<GetUserDto>> {
+    public async Logout(): Promise<ServiceResponse<AuthResponse> | PaginationResponse<AuthResponse>> {
         try 
         {
             const response = await this._httpClient
-                                       .PostRequestType("/logout")
-                                       .execute<GetUserDto>();
+                                       .PostRequestType("account/logout")
+                                       .execute<AuthResponse>();
             if(response.Success)
             {
                 return response;
@@ -84,12 +87,12 @@ export class CreadentialAction
      *          be false.
      * @throws {Error} If the request to register the user fails.
      */
-    public async Register(credentials: RequestCredentials): Promise<ServiceResponse<GetUserDto> | PaginationResponse<GetUserDto>> {
+    public async Register(login : RegisterDto): Promise<ServiceResponse<GetUserDto> | PaginationResponse<GetUserDto>> {
         try
         {
             const response = await this._httpClient
-                                       .PostRequestType("/register")
-                                       .setData(credentials)
+                                       .PostRequestType("account/register")
+                                       .setData(login)
                                        .execute<GetUserDto>();
             if(response.Success)
             {
@@ -116,10 +119,10 @@ export class CreadentialAction
          *          be false.
          * @throws {Error} If the request to verify the email fails.
          */
-    public async verifyEmail (token: string): Promise<ServiceResponse<GetUserDto> | PaginationResponse<GetUserDto>> {
+    public async verifyEmail (token: string,email:string): Promise<ServiceResponse<GetUserDto> | PaginationResponse<GetUserDto>> {
         try {
             const response = await this._httpClient
-                .PostRequestType("/verifyemail/"+token)
+                .PostRequestType("account/emailverification?token="+token+"&email="+email)
                 .execute<GetUserDto>();            
             if (response.Success) {
                 return response;
@@ -135,5 +138,28 @@ export class CreadentialAction
             }
         }
     }
-
+    public async Checkauth():Promise<ServiceResponse<GetUserDto> | PaginationResponse<GetUserDto>> {
+        try {
+             const response = await this._httpClient
+                .GetRequestType("user/checkauth")
+                .execute<GetUserDto>();            
+            if (response.Success) {
+                return response;
+            }
+        } catch (error) {
+            
+        }
+    }
+       public async IsAdmin(): Promise<ServiceResponse<boolean>>
+      {
+        const response = await this._httpClient
+            .GetRequestType("account/admin/check")
+            .execute<boolean>();
+        return response;
+      }
+       public async IsSuperAdmin(): Promise<ServiceResponse<boolean>>
+      {
+        const response = await this._httpClient.GetRequestType("account/superadmin/check").execute<boolean>();
+        return response;
+      }
 }

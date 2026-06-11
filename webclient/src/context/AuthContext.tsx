@@ -1,137 +1,192 @@
-import React , { createContext, useContext, useState,useEffect, FC } from "react";
-import axios from "axios";
+import React, { createContext, useContext, useState, useEffect, FC } from "react";
+import axios, { AxiosResponse } from "axios";
 import { ServiceResponse } from "@/interfaces/ServiceResponse";
-import { error } from "console";
+import { AuthResponse } from "@/interfaces/User/Authresponse";
+import { CreadentialAction } from '../actions/CreadentialAction';
+import { GetUserDto } from "@/interfaces/User/GetUserDto";
+import { jwtDecode } from 'jwt-decode';
 
-
-interface LoginCredentials 
-{
-        username: string;
-        password: string;
+interface LoginCredentials {
+    emailAdress: string;
+    password: string;
 }
 
 interface AuthContextType {
-    login:(credentials: LoginCredentials)=> Promise<void> ;
-    logout:()=> Promise<void>,
+    login: (credentials: LoginCredentials) => Promise<void>;
+    logout: () => Promise<void>;
     isAuthenticated: boolean;
-};
-
-export const AuthContext= createContext<AuthContextType | undefined>(undefined);
-interface AuthProviderProps {
-    children: React.ReactNode   
+    user: GetUserDto | null;
+    isLoading: boolean; // Ajouté pour gérer l'état de chargement
 }
+
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+interface AuthProviderProps {
+    children: React.ReactNode;
+}
+
 /**
  * Provides authentication state and functions to the application.
- *
- * The `AuthProvider` component is used to wrap the entire application in
- * order to provide authentication state and functions to the application.
- *
- * The component uses the `useState` hook to store the authentication state in
- * the component's state, and the `useEffect` hook to set up an interceptor for
- * axios to handle authentication.
- *
- * The `login` function is used to log in to the server, and the `logout`
- * function is used to log out of the server.
- *
- * The `isAuthenticated` state is used to determine whether the user is
- * authenticated or not.
- *
- * The component also provides a `checkAuth` function that can be used to
- * check the authentication state of the server.
- *
- * @example
- * <AuthProvider>
- *   <App />
- * </AuthProvider>
  */
 export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-    const apiUrl = 'http://localhost:8080';
+    const [isLoading, setIsLoading] = useState<boolean>(true); // État de chargement initial
+    const [user, setUser] = useState<GetUserDto | null>(null);
+    const action = new CreadentialAction();
 
+    /**
+     * Initialise l'état d'authentification au démarrage
+     */
+    const initializeAuth = async () => {
+        setIsLoading(true);
+        
+        const storedAuth = localStorage.getItem("isAuthenticated");
+        console.log("Stored auth value:", storedAuth);
+        
+        if (storedAuth === "true") {
+            // Vérifier si l'authentification est toujours valide
+            try {
+                await checkAuth();
+            } catch (error) {
+                console.error("Auth initialization failed:", error);
+                removeAuth();
+            }
+        } else {
+            setIsAuthenticated(false);
+        }
+        
+        setIsLoading(false);
+    };
 
     /**
      * Logs in to the server with the given credentials.
-     *
-     * Updates the `isAuthenticated` state to `true` if the login is successful.
-     *
-     * Throws an error if the request to log in fails.
-     * @param {LoginCredentials} credentials - The username and password to log in with.
      */
     const login = async (credentials: LoginCredentials) => {
         try {
-            await axios.post(`${apiUrl}/login`, credentials, {
-                withCredentials: true,
-            });
-            setIsAuthenticated(true);
+            const response = await action.Login(credentials);
+            console.log("Login response:", response.Success);
+            
+            if (response.Success) {
+                const data = response.Data as AuthResponse;
+                const decoded = jwtDecode<GetUserDto>(data.token);
+                
+                setUser(decoded);
+                persistentAuthentication(true);
+                setIsAuthenticated(true);
+                
+                console.log("Login successful");
+            } else {
+                persistentAuthentication(false);
+                setIsAuthenticated(false);
+                throw new Error("Login failed");
+            }
         } catch (error) {
-            throw new Error(error.response.message);
+            console.error("Login error:", error);
+            persistentAuthentication(false);
+            setIsAuthenticated(false);
+            throw error;
         }
     };
+
     /**
      * Logs out from the server and updates the authentication state.
-     *
-     * Throws an error if the logout request fails.
-     *
-     * @throws {Error} If the request to log out fails.
      */
     const logout = async () => {
         try {
-           const response = await axios.post(`${apiUrl}/logout`, {}, { withCredentials: true });
-           if(!response.data.success)
-           {
-                throw new error('Logout failed');
-           }
-           setIsAuthenticated(false);
+            const response = await action.Logout();
+            if (!response.Success) {
+                console.warn("Logout API call failed, but continuing with local logout");
+            }
         } catch (error) {
-            throw new Error(error.response?.message || 'Logout failed');
+            console.error("Logout API error:", error);
+            // Continuer avec le logout local même si l'API échoue
+        } finally {
+            // Toujours nettoyer l'état local
+            removeAuth();
+            setUser(null);
+            setIsAuthenticated(false);
+            console.log("Logout completed");
         }
     };
+
     /**
-     * Checks the authentication state of the server by making a GET request to the `/checkauth` endpoint.
-     * If the request is successful, the `isAuthenticated` state is updated to true.
-     * If the request fails, the `isAuthenticated` state is updated to false and an error is thrown.
-     *
-     * @throws {Error} If the request to check authentication fails.
+     * Checks the authentication state of the server
      */
     const checkAuth = async () => {
         try {
-            const response = await axios.get<ServiceResponse<string>>(`${apiUrl}/checkauth`, {
-                withCredentials: true,
-            });
- 
-            setIsAuthenticated(response.data.success || false);
-
+            const response = await action.Checkauth();
+            
+            if (response.Success) {
+                console.log("Auth check successful");
+                setIsAuthenticated(true);
+                persistentAuthentication(true);
+                return true;
+            } else {
+                console.log("Auth check failed - not authenticated");
+                await logout();
+                return false;
+            }
         } catch (error) {
-            setIsAuthenticated(false);
-            throw new Error(error.response.message);
+            console.error("Auth check error:", error);
+            await logout();
+            return false;
         }
     };
+
+    // Initialisation au montage du composant
+    useEffect(() => {
+        initializeAuth();
+    }, []);
+
+    // Configuration axios
     useEffect(() => {
         axios.defaults.withCredentials = true;
     }, []);
-    
-    useEffect(()=> 
-    {
-            checkAuth();
-    });
 
+    // Vérification périodique de l'authentification (toutes les 5 minutes)
+    useEffect(() => {
+        if (!isAuthenticated) return;
+
+        const interval = setInterval(() => {
+            console.log("Periodic auth check");
+            checkAuth();
+        }, 5 * 60 * 1000);
+
+        return () => clearInterval(interval);
+    }, [isAuthenticated]);
+
+    // Intercepteur axios pour les erreurs 401
     useEffect(() => {
         const interceptor = axios.interceptors.response.use(
             response => response,
-          async error => {
+            async error => {
                 if (error.response?.status === 401) {
-                   await  logout();
+                    console.log("401 intercepted - logging out");
+                    await logout();
                 }
                 return Promise.reject(error);
             }
         );
+
         return () => axios.interceptors.response.eject(interceptor);
     }, []);
+
+    const persistentAuthentication = (valueToStore: boolean) => {
+        localStorage.setItem("isAuthenticated", valueToStore.toString());
+        console.log("Persistent auth set to:", valueToStore);
+    };
+
+    const removeAuth = () => {
+        localStorage.removeItem("isAuthenticated");
+        console.log("Auth removed from localStorage");
+    };
 
     const value = {
         isAuthenticated,
         login,
         logout,
+        user,
+        isLoading
     };
 
     return (
@@ -143,22 +198,11 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
 
 /**
  * Custom hook to access the authentication context.
- *
- * This hook provides access to the authentication context, allowing components
- * to use authentication-related state and functions. It must be used within a
- * component wrapped by `AuthProvider`.
- *
- * @throws {Error} If the hook is used outside of an `AuthProvider`.
- *
- * @returns {AuthContextType} The authentication context value.
  */
-
-export const useAuth = (): AuthContextType =>{
-
-    const  context = useContext(AuthContext);
-    if(!context)
-    {
-        throw new Error('useAuth must be used within a AuthProvider');
+export const useAuth = (): AuthContextType => {
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error('useAuth must be used within an AuthProvider');
     }
     return context;
-} 
+};

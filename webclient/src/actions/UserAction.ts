@@ -1,4 +1,4 @@
-import { ServiceResponse } from "@/interfaces/ServiceResponse";
+import { PaginationResponse, ServiceResponse } from "@/interfaces/ServiceResponse";
 import { HttpClient } from "./httpClient";
 import { ErrorType } from "@/enums/RequestType";
 import { GetUserDto } from "@/interfaces/User/GetUserDto";
@@ -8,9 +8,9 @@ export class UserAction
 
     private _httpClient: HttpClient;
     private apibaseurl: string;
-    constructor(apibaseurl: string = "http://localhost:5000/api/v1/user") { 
+    constructor(apibaseurl: string = "http://localhost:7159/escape-game/user") { 
         this.apibaseurl = apibaseurl;
-        this._httpClient = HttpClient.getInstance();
+        this._httpClient = new HttpClient();
         this._httpClient.setBaseUrl(this.apibaseurl);
     }
 
@@ -22,9 +22,9 @@ export class UserAction
      *          be false.
      * @throws {Error} If the request to retrieve the users fails.
      */ 
-    public async GetAllUser(): Promise<ServiceResponse<GetUserDto[]>> {
+    public async GetAllUser(): Promise<ServiceResponse<GetUserDto> | PaginationResponse<GetUserDto>> {
         try {
-            const response = await this._httpClient.GetRequestType("").execute<GetUserDto[]>();
+            const response = await this._httpClient.GetRequestType("").execute<GetUserDto>();
 
             if(response.Success)
             {
@@ -50,7 +50,7 @@ export class UserAction
      *          be false.
      * @throws {Error} If the request to retrieve the organisation fails.
      */ 
-    public async GetUserById(id: number): Promise<ServiceResponse<GetUserDto>> {
+    public async GetUserById(id: number): Promise<ServiceResponse<GetUserDto> | PaginationResponse<GetUserDto>> {
         try 
         {
             const response = await this._httpClient.GetRequestType("/" + id).execute<GetUserDto>();
@@ -70,4 +70,25 @@ export class UserAction
             }
         }
     }
+    public async GetCurrentUser(): Promise<ServiceResponse<GetUserDto> | PaginationResponse<GetUserDto>> {
+        try 
+        {
+            const response = await this._httpClient.GetRequestType("").execute<GetUserDto>();
+            if(response.Success)
+            {
+                return response;
+            }
+            throw new Error(response.Message);
+        }
+        catch(error)
+        {
+            return {
+                Data: null,
+                Success: false,
+                Message: error instanceof Error ? error.message : 'An error occurred',
+                ErrorType: ErrorType.Bad,
+            }
+        }
+    }
+   
 }
