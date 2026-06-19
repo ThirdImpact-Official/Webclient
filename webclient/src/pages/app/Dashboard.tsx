@@ -4,68 +4,81 @@ import { useNavigate } from 'react-router-dom';
 import React from 'react';
 import { Box, Card, CardContent, Typography, Button,Stack } from '@mui/material';
 import { UnitofAction } from '@/actions/UnitofAction';
+import { Campaign, Forum, Business, Notifications, BarChart, Person, SportsEsports } from '@mui/icons-material';
 
-
-interface DashboardCardProps{
-  gridArea:string;
+interface DashboardCardProps {
+  
   title: string;
   description: string;
-  backgroundColor:string;
+  backgroundColor: string;
   onClick?: () => void;
   buttonText: string;
   buttonOnClick?: () => void;
+  icon: React.ReactNode; // <-- NOUVEAU
 }
 
 const DashBoardCard = ({
-  gridArea,
   title,
   description,
   backgroundColor,
   onClick,
   buttonText,
   buttonOnClick,
+  icon,
 }: DashboardCardProps) => (
-  <Box sx={{ gridArea, height: '100%',padding:"10px" }}>
-    <Card
-      onClick={onClick}
-      sx={{
-        margin: 2,
-        width: '100%',
-        height: 'auto',
-        cursor: onClick ? 'pointer' : 'default',
-        transition: 'transform 0.2s',
-        '&:hover': {
-          transform: onClick ? 'scale(1.02)' : 'none',
-        },
-      }}
-    >
-      <CardContent sx={{ backgroundColor, color: '#fff', height: '100%' }}>
-        <Typography variant="h5" gutterBottom>
+  <Card
+    onClick={onClick}
+    sx={{
+      cursor: onClick ? "pointer" : "default",
+      border: "1px solid #d0d7de",
+      borderRadius: "6px",
+      backgroundColor: "#f6f8fa",
+      transition: "background-color 0.15s ease, transform 0.15s ease",
+      "&:hover": {
+        backgroundColor: "#f3f4f6",
+        transform: onClick ? "translateY(-2px)" : "none",
+      },
+    }}
+  >
+    <CardContent sx={{ color: "#24292f" }}>
+      <Box sx={{ mb: 1, display: "flex", alignItems: "center", gap: 1 }}>
+        {icon}
+        <Typography variant="h6" sx={{ fontWeight: 600 }}>
           {title}
         </Typography>
-        <Typography variant="body2">{description}</Typography>
-        {buttonText && (
-          <Button
-            variant="contained"
-            onClick={(e) => {
-              e.stopPropagation(); // Prevent card onClick if button is clicked
-              buttonOnClick?.();
-            }}
-            sx={{
-              mt: 2,
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
-              '&:hover': {
-                backgroundColor: 'rgba(255, 255, 255, 0.3)',
-              },
-            }}
-          >
-            {buttonText}
-          </Button>
-        )}
-      </CardContent>
-    </Card>
-  </Box>
+      </Box>
+
+      <Typography variant="body2" sx={{ color: "#57606a" }}>
+        {description}
+      </Typography>
+
+      {buttonText && (
+        <Button
+          variant="outlined"
+          onClick={(e) => {
+            e.stopPropagation();
+            buttonOnClick?.();
+          }}
+          sx={{
+            mt: 2,
+            borderColor: "#d0d7de",
+            color: "#24292f",
+            textTransform: "none",
+            "&:hover": {
+              backgroundColor: "#f3f4f6",
+              borderColor: "#b9c1c9",
+            },
+          }}
+        >
+          {buttonText}
+        </Button>
+      )}
+    </CardContent>
+  </Card>
 );
+
+
+
 
 
 
@@ -100,77 +113,88 @@ const Dashboard = () => {
   if (!isAuthenticated) {
     return <p>Redirecting...</p>;
   }
+return (
+  <Box
+    sx={{
+      display: "grid",
+      gap: 2,
+      p: 2,
+      backgroundColor: "#ffffff",
 
-  return (
-    <Stack
-      sx={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(5, 1fr)',
-        gridTemplateRows: 'repeat(5, 1fr)',
-        columnGap: 0,
-        rowGap: 0,
-        height: '100vh',
-        p: 2,
-      }}
-    >
-     <DashBoardCard
-        gridArea="1 / 1 / 2 / 4"
-        title="Annonces"
-        description="Liste des annonces"
-        backgroundColor="#e91e63"
-        buttonText="Voir"
-        buttonOnClick={() => navigate('/notification')}
-      />
-      <DashBoardCard
-        gridArea="1 / 4 / 2 / 6"
-        title="Forums"
-        description="Liste des forums disponibles"
-        backgroundColor="#9c27b0"
-        buttonText="Voir"
-        buttonOnClick={() => navigate('/forum')}
-      />
-      <DashBoardCard
-        gridArea="2 / 1 / 3 / 4"
-        title="Organisation"
-        description="Gérer votre organisation"
-        backgroundColor="#3f51b5"
-        buttonText="Voir"
-        buttonOnClick={() => navigate('/organisation/user')}
-      />
-      <DashBoardCard
-        gridArea="2 / 4 / 3 / 6"
-        title="Notifications"
-        description={`Vous avez ${count} notifications`}
-        backgroundColor="#673ab7"
-        buttonText="Voir"
-      
-      />
-      <DashBoardCard
-        gridArea="3 / 1 / 6 / 3"
-        title="Statistiques"
-        description="Vos statistiques d'activité"
-        backgroundColor="#2196f3"
-        buttonText="Voir"
-        buttonOnClick={() => navigate('/stats')}
-      />
-      <DashBoardCard
-        gridArea="3 / 3 / 6 / 4"
-        title="Profile"
-        description="Accéder à votre profile"
-        backgroundColor="#03a9f4"
-        buttonText="Voir"
-        buttonOnClick={() => navigate('/profile')}
-      />
-      <DashBoardCard
-        gridArea="3 / 4 / 6 / 6"
-        title="EscapeGame"
-        description="Vos parties en cours"
-        backgroundColor="#4caf50"
-        buttonText="Voir"
-        buttonOnClick={() => navigate('/escape-game')}
-      />
-    </Stack>
-  );
+      // Responsive GitHub-style grid
+      gridTemplateColumns: {
+        xs: "1fr",           // mobile
+        sm: "repeat(2, 1fr)", // tablette
+        md: "repeat(3, 1fr)", // laptop
+        lg: "repeat(4, 1fr)", // desktop
+        xl: "repeat(5, 1fr)", // grand écran (ton layout original)
+      },
+    }}
+  >
+    <DashBoardCard
+      title="Annonces"
+      description="Liste des annonces"
+      backgroundColor="#e91e63"
+      buttonText="Voir"
+      buttonOnClick={() => navigate('/notification')}
+      icon={<Campaign fontSize="large" />}
+    />
+
+    <DashBoardCard
+      title="Forums"
+      description="Liste des forums disponibles"
+      backgroundColor="#9c27b0"
+      buttonText="Voir"
+      buttonOnClick={() => navigate('/forum')}
+      icon={<Forum fontSize="large" />}
+    />
+
+    <DashBoardCard
+      title="Organisation"
+      description="Gérer votre organisation"
+      backgroundColor="#3f51b5"
+      buttonText="Voir"
+      buttonOnClick={() => navigate('/organisation/user')}
+      icon={<Business fontSize="large" />}
+    />
+
+    <DashBoardCard
+      title="Notifications"
+      description={`Vous avez ${count} notifications`}
+      backgroundColor="#673ab7"
+      buttonText="Voir"
+      icon={<Notifications fontSize="large" />}
+    />
+
+    <DashBoardCard
+      title="Statistiques"
+      description="Vos statistiques d'activité"
+      backgroundColor="#2196f3"
+      buttonText="Voir"
+      buttonOnClick={() => navigate('/stats')}
+      icon={<BarChart fontSize="large" />}
+    />
+
+    <DashBoardCard
+      title="Profile"
+      description="Accéder à votre profile"
+      backgroundColor="#03a9f4"
+      buttonText="Voir"
+      buttonOnClick={() => navigate('/profile')}
+      icon={<Person fontSize="large" />}
+    />
+
+    <DashBoardCard
+      title="EscapeGame"
+      description="Vos parties en cours"
+      backgroundColor="#4caf50"
+      buttonText="Voir"
+      buttonOnClick={() => navigate('/escape-game')}
+      icon={<SportsEsports fontSize="large" />}
+    />
+  </Box>
+);
+
 };
 
 export default Dashboard;

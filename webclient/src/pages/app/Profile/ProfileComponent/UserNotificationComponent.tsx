@@ -17,14 +17,15 @@ export const UserNotificationItem: FC<NotificationItemProps> = ({ data }) => {
     const [isRead, setIsRead] = useState<boolean>(data.isRead);
 
     const handleVisibility = () => {
-        setIsRead(!isRead);
+        if (isRead) return;
+        setIsRead(true);
         action.setNotificationVisibility(data.id);
     };
 
     const menupost: GenericMenuItemProps[] = useMemo(() => [
         {
             label: "Settings",
-            icon: <Settings />,
+            icon: <Settings fontSize="small" />,
             onClick: () => console.log("Modification"),
             modalTitle: "Modify the post",
             modalContent: (
@@ -38,33 +39,45 @@ export const UserNotificationItem: FC<NotificationItemProps> = ({ data }) => {
 
     return (
         <Card
-            className="border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors"
+            className="
+                border border-[#d0d7de]
+                rounded-md
+                bg-[#f6f8fa]
+                hover:bg-[#f3f4f6]
+                transition-all
+                duration-150
+            "
             elevation={0}
         >
             <CardContent className="p-4">
-                {/* Header */}
                 <Box className="flex justify-between items-start">
                     <Box>
-                        <Typography variant="subtitle1" className="font-semibold">
+                        <Typography
+                            variant="subtitle1"
+                            className="font-semibold text-[#24292f]"
+                        >
                             {data.title}
                         </Typography>
 
-                        <Typography variant="caption" className="text-gray-500">
+                        <Typography
+                            variant="caption"
+                            className="text-[#57606a] font-mono"
+                        >
                             {FormUtils.FormatDate(data.creationDate)}
                         </Typography>
                     </Box>
 
-                    <GenericMenu items={menupost} menuIcon={<MoreVert />} />
+                    <GenericMenu items={menupost}>
+                        <MoreVert className="text-[#57606a] cursor-pointer" />
+                    </GenericMenu>
                 </Box>
 
-                <Divider className="my-3" />
+                <Divider className="my-3 border-[#d8dee4]" />
 
-                {/* Content */}
-                <Typography variant="body2" className="text-gray-700">
+                <Typography variant="body2" className="text-[#24292f]">
                     {data.content}
                 </Typography>
 
-                {/* Footer */}
                 <CardActions className="flex justify-between items-center mt-3 p-0">
                     <ModalComponent
                         Method={handleVisibility}
@@ -75,13 +88,15 @@ export const UserNotificationItem: FC<NotificationItemProps> = ({ data }) => {
                     />
 
                     <span
-                        className={`px-2 py-1 text-xs rounded-md font-medium ${
-                            isRead
-                                ? "bg-green-100 text-green-700"
-                                : "bg-yellow-100 text-yellow-700"
-                        }`}
+                        className={`
+                            px-2 py-1 text-xs rounded-md font-medium
+                            ${isRead
+                                ? "bg-[#dafbe1] text-[#116329]"
+                                : "bg-[#fff8c5] text-[#9a6700]"
+                            }
+                        `}
                     >
-                        {isRead ? "Read" : "Unread"}
+                        {isRead ? "Available" : "Unavailable"}
                     </span>
                 </CardActions>
             </CardContent>
@@ -99,12 +114,20 @@ const UserNotificationComponent: FC<UserNotificationComponentProps> = ({ dataTab
     }
 
     return (
-        <section className="flex flex-col space-y-3">
+        <section
+            className="
+                flex flex-col space-y-2
+                bg-white
+                rounded-md
+                p-4
+            "
+        >
             {dataTable.map((notification) => (
                 <UserNotificationItem key={notification.id} data={notification} />
             ))}
         </section>
     );
 };
+
 
 export default UserNotificationComponent;

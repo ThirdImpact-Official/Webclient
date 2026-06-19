@@ -14,7 +14,8 @@ import UserNotificationComponent from './ProfileComponent/UserNotificationCompon
 import UpdateUserComponent from './ProfileComponent/UpdateUser';
 import UpdatePassword from './ProfileComponent/UpdatePassword';
 import GenericMenu from '@/components/common/GenericMenu';
-
+import { UserSettings, UserSettingsItem } from './ProfileComponent/UserSettings';
+import UserSettingsComponent from './ProfileComponent/UserSettings';
 export const FakeNotifications: GetNotificationDto[] = [
   {
     id: 1,
@@ -89,6 +90,41 @@ const ProfileComponent = () => {
       fetchNotification();
     }
   }, [user]);
+const usersettingsTab:UserSettings[]= [
+    {
+      title: "Notifications timing",
+      id: 1,
+      
+      content: "Manage your notification preferences and choose how you receive updates.",
+      link: "/settings/notifications"
+    },
+    {
+      title: "Settings",
+      id: 2,
+      
+      content: "Update your account information, change your password, and manage your privacy settings.",
+      link: "/settings/account"
+    },
+    {
+      title: "Schedule",
+      id: 3,  
+      content: "Plan your activities and set reminders to stay organized and on track.",
+      link: "/settings/schedule"
+    },
+    {
+      title: "Privacy",
+      id: 4,
+      content: "Manage your privacy settings and control how your information is shared.",
+      link: "/settings/privacy"
+    },
+    {
+      title: "Security",
+      id: 5,
+      content: "Enhance the security of your account with two-factor authentication and other security measures.",
+      link: "/settings/security"
+    }
+
+  ];
 
   const tabs: TabItem[] = [
     {
@@ -97,8 +133,16 @@ const ProfileComponent = () => {
     },
     {
       label: "Settings",
+      content: <UserSettingsComponent dataTable={usersettingsTab} />,
+    },
+     {
+      label: "Statistics",
       content: <></>,
     },
+    {
+      label: "Privacy",
+      content: <></>,
+    }
   ];
 
   const menupost = useMemo(
