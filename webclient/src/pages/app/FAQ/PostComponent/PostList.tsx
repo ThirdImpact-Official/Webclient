@@ -1,36 +1,37 @@
-import { GetPostForumDto } from "@/interfaces/PublicationInterface/Post/getPostForumDto"
-import { Box, Typography,Container,Grid2 } from "@mui/material"
+import { GetPostForumDto } from "@/interfaces/PublicationInterface/Post/getPostForumDto";
+import { Box, Typography, Container } from "@mui/material";
+import PostItem from "./PostItem";
 
-import PostItem from "./PostItem"
-import React, { useState } from "react"
-interface PostlistProps{
-    data: GetPostForumDto[]
-    OnDetails?: (org: GetPostForumDto) => void
+interface PostListProps {
+  data: GetPostForumDto[];
+  onDetails?: (post: GetPostForumDto) => void;
 }
 
-/**
- * Component PostList
- * 
- * @param {{ data: GetPostForumDto[]; onDetails?: (post: GetPostForumDto) => void }} props
- * 
- * @returns Un composant React affichant une liste de posts
- */
-const PostList: React.FC<{ data: GetPostForumDto[]; onDetails?: (post: GetPostForumDto) => void }> = ({ data, onDetails }) => {
-    const handlePostDetails = (post: GetPostForumDto) => {
-        onDetails?.(post);
-    };
+const PostList: React.FC<PostListProps> = ({ data, onDetails }) => {
+  const handlePostDetails = (post: GetPostForumDto) => {
+    onDetails?.(post);
+  };
 
-    return (
-        <Container>
+  return (
+    <Container sx={{ px: 0 }}>
+      <Typography
+        variant="h6"
+        sx={{ fontWeight: 600, color: "#24292f", mb: 2 }}
+      >
+        Réponses
+      </Typography>
 
-            <Typography variant="h6">Réponses</Typography>
-            <Box className="space-y-4">
-                {data.map((post) => (
-                     
-                        <PostItem key={post.id} dataitem={post} OnDetails={handlePostDetails} />
-                ))}
-            </Box>
-        </Container>
-    );
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        {data.map((post) => (
+          <PostItem
+            key={post.id}
+            dataitem={post}
+            OnDetails={handlePostDetails}
+          />
+        ))}
+      </Box>
+    </Container>
+  );
 };
+
 export default PostList;

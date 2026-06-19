@@ -1,74 +1,99 @@
-import { Button, TextField, Typography,Box } from "@mui/material";
-import { FC, useState } from "react";
-import { AddForumDto } from "@/interfaces/PublicationInterface/Forum/addForumDto";
-import { on } from "events";
-//title: string;
-//content: string;
+import { Button, TextField, Typography, Box, Card, CardContent } from "@mui/material";
+import { useState, FC } from "react";
+import { UpdateForumDto } from "@/interfaces/PublicationInterface/Forum/updateForumDto";
+import { GetForumDto } from "@/interfaces/PublicationInterface/Forum/getForumDto";
 
-interface CreateforumProps {
-    organisationId: number;
-    OnSubmit: (data: AddForumDto) => void;
+interface UpdateForumProps {
+  data: GetForumDto;
+  OnSubmit: (data: UpdateForumDto) => void;
 }
-const CreateForumTopic:FC<CreateforumProps>=({OnSubmit,organisationId})=> {
-    const [formData,setFormData] =useState<AddForumDto>({
-        title: "",
-        content: "",
-        userId:0,
-        organizationId:organisationId
-    });
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
 
-    // Fonction pour soumettre le formulaire
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        // Logique pour envoyer les données à un backend ou effectuer une autre action
-        console.log("Form data submitted:", formData);
-        OnSubmit(formData);
-    };
-    return(
-        <>
-              <Box sx={{ maxWidth: 600, margin: 'auto', padding: 2, bgcolor: 'white' }}>
-                <Typography variant="h5" gutterBottom>Créer un nouveau sujet</Typography>
-                    <form onSubmit={handleSubmit}>
-                        <Box sx={{ marginBottom: 2 }}>
-                            <Typography>Titre</Typography>
-                            <TextField 
-                                name="title"
-                                value={formData.title}
-                                onChange={handleInputChange}
-                                placeholder="Entrez le titre du sujet"
-                                fullWidth
-                                required
-                            />
-                        </Box>
-                        <Box sx={{ marginBottom: 2 }}>
-                            <Typography>Contenu</Typography>
-                            <TextField 
-                                name="content"
-                                value={formData.content}
-                                onChange={handleInputChange}
-                                placeholder="Décrivez votre sujet"
-                                multiline
-                                rows={4}
-                                fullWidth
-                                required
-                            />
-                        </Box>
-                    
-                        <Box className="flex justify-center">
-                            <Button onClick={handleSubmit} type="submit" variant="contained" color="primary">
-                                Ajouter
-                            </Button>
-                        </Box>
-                    </form>
+const UpdateForumTopic: FC<UpdateForumProps> = ({ data, OnSubmit }) => {
+  const [formData, setFormData] = useState<UpdateForumDto>({
+    id: data.id,
+    title: data.title,
+    content: data.content,
+    userId: data.userId,
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    OnSubmit(formData);
+  };
+
+  return (
+    <Card
+      elevation={0}
+      sx={{
+        border: "1px solid #d0d7de",
+        borderRadius: "6px",
+        backgroundColor: "#ffffff",
+        maxWidth: 600,
+        mx: "auto",
+      }}
+    >
+      <CardContent sx={{ p: 3 }}>
+        <Typography
+          variant="h6"
+          sx={{ fontWeight: 600, color: "#24292f", mb: 2 }}
+        >
+          Modifier le sujet #{formData.id}
+        </Typography>
+
+        <form onSubmit={handleSubmit}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <Box>
+              <Typography sx={{ mb: 0.5, color: "#57606a" }}>Titre</Typography>
+              <TextField
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                placeholder="Entrez le titre du sujet"
+                fullWidth
+                required
+              />
             </Box>
-        </>
-    )
-}
-export default CreateForumTopic;
+
+            <Box>
+              <Typography sx={{ mb: 0.5, color: "#57606a" }}>Contenu</Typography>
+              <TextField
+                name="content"
+                value={formData.content}
+                onChange={handleInputChange}
+                placeholder="Décrivez votre sujet"
+                multiline
+                rows={4}
+                fullWidth
+                required
+              />
+            </Box>
+
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                backgroundColor: "#2da44e",
+                textTransform: "none",
+                fontWeight: 600,
+                mt: 1,
+                "&:hover": { backgroundColor: "#2c974b" },
+              }}
+            >
+              Modifier
+            </Button>
+          </Box>
+        </form>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default UpdateForumTopic;

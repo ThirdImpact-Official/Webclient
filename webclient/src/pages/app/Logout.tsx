@@ -43,7 +43,10 @@ export const Logout = () => {
     <React.Fragment>
        <Box className="text-center mb-10 " />
       <Box className="text-center">
-        <p>Vous &ecirc;tes sur le point de vous d&eacute;connecter</p>
+        <Typography>
+          <p>Vous &ecirc;tes sur le point de vous d&eacute;connecter</p>
+        </Typography>
+        
       </Box>
        <Box className="text-center justify-center items-center flex flex-col">
 
@@ -54,7 +57,7 @@ export const Logout = () => {
         ButtonColor="error"
         
       >
-        <Card>
+        <Box>
           <CardContent>
            <Typography>
              <p>&Ecirc;tes-vous s&ucirc;r de vouloir vous d&eacute;connecter ?</p>
@@ -63,7 +66,7 @@ export const Logout = () => {
           <CardActions>
             <Button onClick={handleLogout} disabled={isLoading}>Déconnection connection</Button>
           </CardActions>
-        </Card>
+        </Box>
       </ModalComponent>
       </Box>
     </React.Fragment>

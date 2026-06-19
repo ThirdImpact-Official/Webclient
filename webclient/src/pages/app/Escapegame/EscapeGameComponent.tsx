@@ -24,7 +24,7 @@ import { Refresh } from '@mui/icons-material';
 import { PaginationResponse } from '@/interfaces/ServiceResponse';
 import { FormDataHelper } from '@/classes/FormDataHelper';
 import EscapeGameOrganisation from '../../../../../../MobileApp/EscapeGameNextDoor/app/Organisation/EscapeGame/EscapeGameOrganisation';
-
+import WorkLayout from '@/components/app/Layout/WorkLayout';
 const EscapeGameComponent = () => {
   //const { id } = useParams();
   const { id } = useParams();
@@ -240,58 +240,114 @@ const handleUpdateSubmit = async (eventData: UpdateEscapeGameDto) => {
     {
       label: 'List',
       content: (
-      <>
-        <Card elevation={3}>
-          <CardHeader action={
-            <>
-                <Typography variant="h5">Filtre</Typography>
-                <FormControl sx={{ m: 1 }} variant="standard">
-                  <Select>
-                    <MenuItem>A</MenuItem>
-                    <MenuItem>B</MenuItem>
-                  </Select>
-                </FormControl>
-                <FormControl sx={{ m: 1 }} variant="standard">
-                  <Select>
-                    <MenuItem>A</MenuItem>
-                    <MenuItem>B</MenuItem>
-                  </Select>
-                </FormControl>
-                <FormControl sx={{ m: 1 }} variant="standard">
-                  <Select>
-                    <MenuItem>A</MenuItem>
-                    <MenuItem>B</MenuItem>
-                  </Select>
-                </FormControl>
-                <FormControl variant='standard' sx={{ m: 1 }} className='flex flex-row space-x-10 float-end justify-end items-end'>
-                    <Button
-                      variant='contained'
-                      color='warning'
-                      onClick={handleRefresh}>Refresh
-                      <Refresh></Refresh>
-                      </Button>
-                </FormControl>
-            </>} />
-          <CardContent>
-        {
-          escapeGames != null ?
-          <EscapeGameOrganisationTable
-              data={escapeGames}
-              OnDetails={handleDetails}
-              OnUpdate={handleUpdate}
-              />: <Skeleton></Skeleton>
-        }
-        </CardContent>
-        <CardActions>
-           <Pagination
-                page={page}
-                className="float-end"
-                onChange={handleChangePage}
-                count={pageCount}
-                />
-        </CardActions>
-      </Card>
-      </>
+    <>
+  <Card
+    elevation={0}
+    sx={{
+      border: "1px solid #d0d7de",
+      borderRadius: "6px",
+      backgroundColor: "#ffffff",
+      p: 2,
+    }}
+  >
+    {/* Header GitHub-style */}
+    <CardHeader
+      title={
+        <Typography variant="h6" sx={{ fontWeight: 600, color: "#24292f" }}>
+          Filtres
+        </Typography>
+      }
+      action={
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          {/* Selects */}
+          <FormControl variant="standard" sx={{ minWidth: 120 }}>
+            <Select defaultValue="">
+              <MenuItem value="">A</MenuItem>
+              <MenuItem value="B">B</MenuItem>
+            </Select>
+          </FormControl>
+
+          <FormControl variant="standard" sx={{ minWidth: 120 }}>
+            <Select defaultValue="">
+              <MenuItem value="">A</MenuItem>
+              <MenuItem value="B">B</MenuItem>
+            </Select>
+          </FormControl>
+
+          <FormControl variant="standard" sx={{ minWidth: 120 }}>
+            <Select defaultValue="">
+              <MenuItem value="">A</MenuItem>
+              <MenuItem value="B">B</MenuItem>
+            </Select>
+          </FormControl>
+
+          {/* Refresh Button */}
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={handleRefresh}
+            sx={{
+              textTransform: "none",
+              fontWeight: 600,
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            Refresh
+            <Refresh fontSize="small" />
+          </Button>
+        </Box>
+      }
+      sx={{
+        borderBottom: "1px solid #d8dee4",
+        pb: 1,
+        mb: 2,
+      }}
+    />
+
+    {/* Table */}
+    <CardContent sx={{ p: 0 }}>
+      {escapeGames ? (
+        <EscapeGameOrganisationTable
+          data={escapeGames}
+          OnDetails={handleDetails}
+          OnUpdate={handleUpdate}
+        />
+      ) : (
+        <Skeleton variant="rectangular" height={200} />
+      )}
+    </CardContent>
+
+    {/* Pagination */}
+    <CardActions
+      sx={{
+        borderTop: "1px solid #d8dee4",
+        pt: 2,
+        display: "flex",
+        justifyContent: "flex-end",
+      }}
+    >
+      <Pagination
+        page={page}
+        onChange={handleChangePage}
+        count={pageCount}
+        sx={{
+          "& .MuiPaginationItem-root": {
+            borderRadius: "6px",
+            border: "1px solid #d0d7de",
+          },
+          "& .Mui-selected": {
+            backgroundColor: "#0969da",
+            color: "#ffffff",
+            borderColor: "#0969da",
+          },
+        }}
+      />
+    </CardActions>
+  </Card>
+</>
+
       ),
     },
     {
@@ -339,23 +395,27 @@ const handleUpdateSubmit = async (eventData: UpdateEscapeGameDto) => {
     },
   ];
 
-  return (
-    <Grid2 className="flex flex-row justify-evenly items-center" container spacing={2}>
-      <Box className="flex flex-row gap-4">
-        <Box className='flex w-1/3 =d:w-1/3'>
-          <OrganisationDetails data={organisationData} />
-        </Box>
-        <Box className="flex w-2/3 md:w-2/3">
-          <GenericTabs
-            ref={tabsRef}
-            tabs={tabs}
-            defaultTab={0}
-            ChangeTab={goToTab}
-            ariaLabel="generic tabs"
-          />
-        </Box>
+ return (
+  <WorkLayout
+    title="Organisation"
+    subtitle="Manage organisation details and settings"
+    sidebar={
+      <Box sx={{ p: 1 }}>
+        <OrganisationDetails data={organisationData} />
       </Box>
-    </Grid2>
-  );
+    }
+  >
+    <Box sx={{ width: "100%", p: 1 }}>
+      <GenericTabs
+        ref={tabsRef}
+        tabs={tabs}
+        defaultTab={0}
+        ChangeTab={goToTab}
+        ariaLabel="generic tabs"
+      />
+    </Box>
+  </WorkLayout>
+);
+
 };
 export default EscapeGameComponent;

@@ -1,159 +1,173 @@
-import { GetPostForumDto} from "@/interfaces/PublicationInterface/Post/getPostForumDto";
-import { Card, CardContent, CardHeader, Box, Typography, Divider,Container, CardActionArea, CardActions } from '@mui/material';
-import { Dashboard, Home, MoreVert, Settings } from '@mui/icons-material';
-import { useMemo, useState,useEffect } from "react";
-import { GenericMenuItemProps } from "@/components/common/GenericMenu";
-import GenericMenu from "@/components/common/GenericMenu";
-import Avatar from '@mui/material/Avatar';
+import { GetPostForumDto } from "@/interfaces/PublicationInterface/Post/getPostForumDto";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Box,
+  Typography,
+  Divider,
+  Avatar,
+  CardActions,
+  Container,
+} from "@mui/material";
+import { MoreVert, Settings, Home, Dashboard } from "@mui/icons-material";
+import { useMemo, useState, useEffect } from "react";
+import GenericMenu, { GenericMenuItemProps } from "@/components/common/GenericMenu";
 import img from "@/assets/Image/miaou.jpg";
 import ModalComponent from "@/components/factory/GenericComponent/Modal";
-import AddPostForm from './CreatePost';
+import AddPostForm from "./CreatePost";
 import { AddPostForumDto } from "@/interfaces/PublicationInterface/Post/addPostForumDto";
-import {PostAction} from "@/actions/PostAction";
-import SubPostList from '../ForumComponent/PostComponent/SubPostList';
-
-
+import { PostAction } from "@/actions/PostAction";
+import SubPostList from "../ForumComponent/PostComponent/SubPostList";
 
 interface PostItemProps {
-    dataitem: GetPostForumDto;
-    OnDetails?:(org:GetPostForumDto) => void
+  dataitem: GetPostForumDto;
+  OnDetails?: (org: GetPostForumDto) => void;
 }
 
-
 const PostItem: React.FC<PostItemProps> = ({ dataitem, OnDetails }) => {
-    const [item, setItem] = useState<GetPostForumDto>(dataitem);
-  
+  const [item, setItem] = useState<GetPostForumDto>(dataitem);
+  const [postChild, setPostChild] = useState<GetPostForumDto[]>([]);
+  const [page, setPage] = useState<number>(1);
 
-    const [postChild,setPostChild] = useState<GetPostForumDto[]>([]);
-    const [page,setPAge] = useState<number>(1);
-    const action =new PostAction();
-    
-       
+  const action = new PostAction();
 
-        const fetchPOstChild = async ()=> {
-            try {
-                const response = await action.getPostsFromPostParentId(item.id,page,5);
-                if(response.Success){
-                    setPostChild(response.Data as GetPostForumDto[]);
-                }
-            }
-            catch (e) {
-    
-            }
-        }
-        useEffect(() => {
-             fetchPOstChild();
-        },[item])
-    const handleAddPostForm= async (data:AddPostForumDto) => {
-        try {
-            
-            console.log("object", data);
-            data.postparentId = item.id;
-            data.forumId = item.forumId;
-            const response = await action.createPostForPostParent(item.id,data);
-            if(response.Success) {
-              
-                console.log(response.Data);
-                console.log(response.Message);
-            }
-        }
-        catch (e) {
-                console.log("Error", e.message);
-        }
+  const fetchPostChild = async () => {
+    try {
+      const response = await action.getPostsFromPostParentId(item.id, page, 5);
+      if (response.Success) {
+        setPostChild(response.Data as GetPostForumDto[]);
+      }
+    } catch {}
+  };
+
+  useEffect(() => {
+    fetchPostChild();
+  }, [item]);
+
+  const handleAddPostForm = async (data: AddPostForumDto) => {
+    try {
+      data.postparentId = item.id;
+      data.forumId = item.forumId;
+
+      const response = await action.createPostForPostParent(item.id, data);
+      if (response.Success) {
+        fetchPostChild();
+      }
+    } catch (e) {
+      console.log("Error", e.message);
     }
-    const menupost: GenericMenuItemProps [] = useMemo(() => 
-    [
-        {
-            label: "Modifier",
-            icon: <Settings />,
-            onClick: () => console.log("Modification"),
-            modalTitle: "Modifier le post",
-            modalContent: (
-                <>
-                    <img src={img} alt="Illustration" style={{ maxWidth: "100%" }} />
-                    <p>Voulez-vous modifier ce post ?</p>
-                </>
-            )
-        },
-        {
-            label: "Supprimer",
-            icon: <Home />,
-            onClick: () => console.log("Suppression"),
-            color: "#FF0000",
-            modalTitle: "Supprimer le post",
-            modalContent: (
-                <>
-                    <img src={img} alt="Illustration" style={{ maxWidth: "100%" }} />
-                    <p>Êtes-vous sûr de vouloir supprimer ce post ?</p>
-                </>
-            )
-        },
-        {
-            label: "Signaler",
-            icon: <Dashboard />,
-            onClick: () => console.log("Signalement"),
-            modalTitle: "Signaler le post",
-            modalContent: (
-                <>
-                    <img src={img} alt="Illustration" style={{ maxWidth: "100%" }} />
-                    <p>Ce contenu vous semble inapproprié ?</p>
-                </>
-            )
-        }
-    ],[] );
+  };
 
-    return (
-        <Card className="m-4 bg-white shadow-lg rounded-lg hover:shadow-2xl transition-all">
-            <CardHeader
-                avatar={
-                    <>
-                        <Avatar>
-                            R
-                        </Avatar>
-                    </>
-                }
-                action={
-                    <Box className=" flex justify-end">
-                        
-                        <Typography 
-                                className="text-gray-500" 
-                                variant="subtitle2">{ new Date(item.creationDate).toLocaleDateString()}
-                        </Typography>
-                        <GenericMenu items={menupost}  
-                            menuIcon={<><MoreVert/></>} />
-                    </Box>
-                } >
-            </CardHeader>
-            <Divider/>
-            <CardContent 
-                className="px-4 pb-4">
-                <Box className="post-item-content">
-                    <Typography
-                        variant="body2"
-                        >{item.content}</Typography>
-                </Box>
-            </CardContent> 
-            <CardActions className="post-item-footer flex space-x-4 m-2 pb-2 justify-end">
-                    <ModalComponent children={<>
-                                            <AddPostForm  
-                                                postParentId={item.id}
-                                                onSubmit={handleAddPostForm} />
-                                        </>}
-                                    Title="Add response"
-                                    ButtonTitle="repondre"
-                                    Description="Huh" />
-          
-                    <ModalComponent    
-                            ButtonTitle="Comments"
-                            Title="Details"
-                            ButtonColor="success"
-                            Description="Details" >
-                        <Container className="space-y-4 space-x-4">
-                            <SubPostList data={postChild} />
-                        </Container>
-                    </ModalComponent>
-            </CardActions>
-        </Card>
-    );
+  const menupost: GenericMenuItemProps[] = useMemo(
+    () => [
+      {
+        label: "Modifier",
+        icon: <Settings />,
+        onClick: () => console.log("Modification"),
+        modalTitle: "Modifier le post",
+        modalContent: (
+          <>
+            <img src={img} alt="Illustration" style={{ maxWidth: "100%" }} />
+            <p>Voulez-vous modifier ce post ?</p>
+          </>
+        ),
+      },
+      {
+        label: "Supprimer",
+        icon: <Home />,
+        onClick: () => console.log("Suppression"),
+        color: "#FF0000",
+        modalTitle: "Supprimer le post",
+        modalContent: (
+          <>
+            <img src={img} alt="Illustration" style={{ maxWidth: "100%" }} />
+            <p>Êtes-vous sûr de vouloir supprimer ce post ?</p>
+          </>
+        ),
+      },
+      {
+        label: "Signaler",
+        icon: <Dashboard />,
+        onClick: () => console.log("Signalement"),
+        modalTitle: "Signaler le post",
+        modalContent: (
+          <>
+            <img src={img} alt="Illustration" style={{ maxWidth: "100%" }} />
+            <p>Ce contenu vous semble inapproprié ?</p>
+          </>
+        ),
+      },
+    ],
+    []
+  );
+
+  return (
+    <Card
+      elevation={0}
+      sx={{
+        border: "1px solid #d0d7de",
+        borderRadius: "6px",
+        backgroundColor: "#ffffff",
+        mb: 2,
+      }}
+    >
+      <CardHeader
+        avatar={
+          <Avatar sx={{ bgcolor: "#0969da", fontWeight: 600 }}>
+            {item.userId.toString().charAt(0).toUpperCase()}
+          </Avatar>
+        }
+        action={
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Typography sx={{ color: "#57606a", fontSize: "0.85rem" }}>
+              {new Date(item.creationDate).toLocaleDateString()}
+            </Typography>
+
+            <GenericMenu items={menupost} menuIcon={<MoreVert />} />
+          </Box>
+        }
+        sx={{
+          borderBottom: "1px solid #d8dee4",
+          pb: 1,
+        }}
+      />
+
+      <CardContent sx={{ p: 2 }}>
+        <Typography sx={{ color: "#24292f", mb: 1 }}>{item.content}</Typography>
+      </CardContent>
+
+      <Divider />
+
+      <CardActions
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          gap: 2,
+          p: 2,
+        }}
+      >
+        <ModalComponent
+          Title="Répondre"
+          ButtonTitle="Répondre"
+          Description="Ajouter une réponse"
+        >
+          <AddPostForm postParentId={item.id} onSubmit={handleAddPostForm} />
+        </ModalComponent>
+
+        <ModalComponent
+          ButtonTitle="Commentaires"
+          Title="Commentaires"
+          ButtonColor="success"
+          Description="Voir les réponses"
+        >
+          <Container sx={{ p: 2 }}>
+            <SubPostList data={postChild} />
+          </Container>
+        </ModalComponent>
+      </CardActions>
+    </Card>
+  );
 };
+
 export default PostItem;

@@ -9,19 +9,16 @@ import {
   CardContent,
   Card,
   CircularProgress,
+  CardActions,
+  Alert,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { CreadentialAction } from "@/actions/CreadentialAction";
 import React, { useEffect, useState } from "react";
 import { LoginCredentials } from "@/interfaces/login/loginCredentials";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-/**
- * Login page.
- */
 const Login: React.FC = () => {
-  // -------------------- State --------------------
   const [formData, setFormData] = useState<LoginCredentials>({
     emailAdress: "",
     password: "",
@@ -29,15 +26,12 @@ const Login: React.FC = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const authContext = useAuth();
   const navigate = useNavigate();
 
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    authContext.isAuthenticated
-  );
-
-  // -------------------- Handlers --------------------
   const togglePasswordVisibility = () =>
     setShowPassword((prev) => !prev);
 
@@ -48,110 +42,133 @@ const Login: React.FC = () => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const response = await authContext.login(formData);
+      await authContext.login(formData);
 
       if (authContext.isAuthenticated) {
         navigate("/");
       }
     } catch (error) {
-      console.error("Failed to login:", error);
+      setIsError(true);
+      setError("Email ou mot de passe incorrect.");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    if (authContext.isAuthenticated) {
-      setIsAuthenticated(true);
-      navigate("/");
-    } else {
-      setIsAuthenticated(false);
-    }
-  }, [authContext.isAuthenticated, navigate]);
-
-  // -------------------- Component --------------------
-  if (isAuthenticated) {
+  // Already authenticated
+  if (authContext.isAuthenticated) {
     return (
-      <Card>
-        <CardContent>
-          <Typography>Auth already complete</Typography>
-        </CardContent>
-      </Card>
+      <Box sx={{ p: 4, textAlign: "center" }}>
+        <Card sx={{ maxWidth: 400, mx: "auto", p: 2 }}>
+          <Typography>Vous êtes déjà connecté.</Typography>
+        </Card>
+      </Box>
     );
   }
 
+  // Loading state
   if (isLoading) {
     return (
-      <Card>
-        <CardContent>
+      <Box sx={{ p: 4, textAlign: "center" }}>
+        <Card sx={{ maxWidth: 400, mx: "auto", p: 4 }}>
           <CircularProgress />
-        </CardContent>
-      </Card>
+        </Card>
+      </Box>
     );
   }
 
   return (
-    <Box className="m-2 p-2 text-center">
-      <form className="items-center justify-center">
-        <Box
-          className="space-y-4 my-20 py-20"
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            bgcolor: "background.paper",
-            borderRadius: 3,
-            boxShadow: 8,
-            p: 4,
-            width: { xs: "90%", sm: 400 },
-            maxHeight: "90vh",
-            overflowY: "auto",
-          }}
-        >
-          <Typography variant="h5">Connect to The Application</Typography>
+    <Box
+      sx={{
+        width: "100%",
+        minHeight: "100vh",
+        backgroundColor: "#f6f8fa",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        p: 2,
+      }}
+    >
+      <Card
+        sx={{
+          width: "100%",
+          maxWidth: 420,
+          border: "1px solid #d0d7de",
+          borderRadius: "6px",
+          backgroundColor: "#ffffff",
+          boxShadow: "0 8px 24px rgba(140,149,159,0.2)",
+        }}
+      >
+        <CardContent sx={{ p: 4 }}>
+          <Typography
+            variant="h5"
+            sx={{ fontWeight: 600, color: "#24292f", mb: 3, textAlign: "center" }}
+          >
+            Connexion
+          </Typography>
 
-          <Box>
-            <Typography>Email</Typography>
-            <TextField
-              name="email"
-              label="Email"
-              value={formData.emailAdress}
-              onChange={(e) => handleOnChange("emailAdress", e.target.value)}
-              fullWidth
-            />
-          </Box>
+          {isError && (
+            <Alert
+              severity="error"
+              sx={{ mb: 2 }}
+              onClose={() => setIsError(false)}
+            >
+              {error}
+            </Alert>
+          )}
 
-          <Box>
-            <Typography>Password</Typography>
-            <TextField
-              name="password"
-              label="Password"
-              type={showPassword ? "text" : "password"}
-              value={formData.password}
-              onChange={(e) => handleOnChange("password", e.target.value)}
-              fullWidth
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={togglePasswordVisibility} edge="end">
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Box>
+          <TextField
+            label="Adresse email"
+            value={formData.emailAdress}
+            onChange={(e) => handleOnChange("emailAdress", e.target.value)}
+            fullWidth
+            margin="normal"
+            sx={{
+              "& fieldset": { borderColor: "#d0d7de" },
+              "&:hover fieldset": { borderColor: "#b9c1c9" },
+            }}
+          />
+
+          <TextField
+            label="Mot de passe"
+            type={showPassword ? "text" : "password"}
+            value={formData.password}
+            onChange={(e) => handleOnChange("password", e.target.value)}
+            fullWidth
+            margin="normal"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={togglePasswordVisibility} edge="end">
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              "& fieldset": { borderColor: "#d0d7de" },
+              "&:hover fieldset": { borderColor: "#b9c1c9" },
+            }}
+          />
 
           <Button
             variant="contained"
-            className="bg-black"
+            fullWidth
+            sx={{
+              mt: 3,
+              backgroundColor: "#2da44e",
+              textTransform: "none",
+              fontWeight: 600,
+              "&:hover": {
+                backgroundColor: "#2c974b",
+              },
+            }}
             onClick={handleSubmit}
           >
-            Connecter
+            Se connecter
           </Button>
-        </Box>
-      </form>
+        </CardContent>
+      </Card>
     </Box>
   );
 };

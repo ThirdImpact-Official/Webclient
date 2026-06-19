@@ -1,42 +1,35 @@
 import React, { FC } from "react";
 import { GetAnnonceDto } from "@/interfaces/NotificationInterface/Annonce/getAnnonceDto";
 import GenericTable from "@/components/factory/GenericComponent/GenericTable";
-import { data } from "react-router-dom";
-import { Typography } from "@mui/material";
+import { Typography, Box } from "@mui/material";
 
 interface AnnonceTabsProps {
-    data:GetAnnonceDto[];
-    columns: {label:string; accessor: keyof GetAnnonceDto}[];
-    onDetails:(org:GetAnnonceDto) => void;
-    onUpdate:(org:GetAnnonceDto) => void;
-}
-const Anoncetabs:FC<AnnonceTabsProps> = (props) => {
-    const handleDetails = (org:GetAnnonceDto) => {
-        props.onDetails(org);
-    }
-    const handleUpdate = (org:GetAnnonceDto) => {
-        props.onUpdate(org);
-    }
-    if(data === null || data === undefined)
-    {
-
-        return
-        (
-            <>
-                <Typography>No data </Typography>
-            </>
-        )
-    }
-    else{
-            return (
-                <>
-                    <GenericTable data={props.data} 
-                        columns={props.columns} 
-                        OnDetails={handleDetails} 
-                        OnUpdate={handleUpdate}/>
-                </>
-            )
-    }
+  data: GetAnnonceDto[];
+  columns: { label: string; accessor: keyof GetAnnonceDto }[];
+  onDetails: (org: GetAnnonceDto) => void;
+  onUpdate: (org: GetAnnonceDto) => void;
 }
 
-export default Anoncetabs;
+const AnnonceTabs: FC<AnnonceTabsProps> = ({ data, columns, onDetails, onUpdate }) => {
+  const handleDetails = (item: GetAnnonceDto) => onDetails(item);
+  const handleUpdate = (item: GetAnnonceDto) => onUpdate(item);
+
+  if (!data || data.length === 0) {
+    return (
+      <Box sx={{ p: 2 }}>
+        <Typography sx={{ color: "#57606a" }}>No data available</Typography>
+      </Box>
+    );
+  }
+
+  return (
+    <GenericTable
+      data={data}
+      columns={columns}
+      OnDetails={handleDetails}
+      OnUpdate={handleUpdate}
+    />
+  );
+};
+
+export default AnnonceTabs;

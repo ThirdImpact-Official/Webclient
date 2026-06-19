@@ -1,21 +1,21 @@
 import { GetOrganisationDto } from '@/interfaces/OrganisationInterface/Organisation/getOrganisationDto';
-import { DensityMedium } from '@mui/icons-material';
-import { 
-  Box, 
-  Button, 
-  Card, 
-  Divider, 
-  Typography, 
-  CardContent, 
-  CardHeader, 
-  Menu, 
-  MenuItem, 
+import {
+  Box,
+  Button,
+  Card,
+  Divider,
+  Typography,
+  CardContent,
+  CardHeader,
+  Menu,
+  MenuItem,
   Stack,
   Chip,
   CircularProgress,
   Alert,
-  colors
+  IconButton
 } from '@mui/material';
+import { DensityMedium } from '@mui/icons-material';
 import { FC, useState } from 'react';
 import RenderDetail from '@/components/factory/GenericComponent/RenderDetails';
 
@@ -27,8 +27,8 @@ interface OrganisationDetailsProps {
   onDeactivate?: () => void;
 }
 
-const OrganisationDetails: FC<OrganisationDetailsProps> = ({ 
-  data, 
+const OrganisationDetails: FC<OrganisationDetailsProps> = ({
+  data,
   isLoading = false,
   error = null,
   onNavigateToEscapeGames,
@@ -37,17 +37,14 @@ const OrganisationDetails: FC<OrganisationDetailsProps> = ({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
-  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) =>
     setAnchorEl(event.currentTarget);
-  };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
+  const handleMenuClose = () => setAnchorEl(null);
 
   if (isLoading) {
     return (
-      <Box display="flex" justifyContent="center" p={4}>
+      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -55,7 +52,7 @@ const OrganisationDetails: FC<OrganisationDetailsProps> = ({
 
   if (error) {
     return (
-      <Box p={2}>
+      <Box sx={{ p: 2 }}>
         <Alert severity="error">{error}</Alert>
       </Box>
     );
@@ -63,7 +60,7 @@ const OrganisationDetails: FC<OrganisationDetailsProps> = ({
 
   if (!data) {
     return (
-      <Box p={2}>
+      <Box sx={{ p: 2 }}>
         <Alert severity="info">No organisation data available</Alert>
       </Box>
     );
@@ -76,34 +73,40 @@ const OrganisationDetails: FC<OrganisationDetailsProps> = ({
     { label: 'Description', value: data.description },
     { label: 'Address', value: data.address },
     { label: 'Phone', value: data.phoneNumber },
-  ].filter(item => item.value); // Only show fields with values
+  ].filter(item => item.value);
 
   return (
-    <Card className="m-4 bg-white shadow-lg rounded-lg hover:shadow-2xl transition-all">
-      <CardHeader 
+    <Card
+      elevation={0}
+      sx={{
+        border: "1px solid #d0d7de",
+        borderRadius: "6px",
+        backgroundColor: "#ffffff",
+      }}
+    >
+      {/* Header GitHub-style */}
+      <CardHeader
         title={
           <Box>
-            <Typography variant="h4" component="h1">
+            <Typography variant="h6" sx={{ fontWeight: 600, color: "#24292f" }}>
               {data.name}
             </Typography>
-            <Chip 
+
+            <Chip
               label={data.isActive ? "Actif" : "Inactif"}
-              />
+              color={data.isActive ? "success" : "default"}
+              size="small"
+              sx={{ mt: 1 }}
+            />
           </Box>
-        } 
+        }
         action={
-          <div>
-            <Button
-              id="organisation-menu-button"
-              aria-controls={open ? 'organisation-menu' : undefined}
-              aria-haspopup="true"
-              aria-expanded={open ? 'true' : undefined}
-              onClick={handleMenuClick}
-            >
+          <>
+            <IconButton onClick={handleMenuClick}>
               <DensityMedium />
-            </Button>
+            </IconButton>
+
             <Menu
-              id="organisation-menu"
               anchorEl={anchorEl}
               open={open}
               onClose={handleMenuClose}
@@ -111,59 +114,71 @@ const OrganisationDetails: FC<OrganisationDetailsProps> = ({
                 'aria-labelledby': 'organisation-menu-button',
               }}
             >
-              <MenuItem onClick={() => {
-                handleMenuClose();
-                onNavigateToEscapeGames?.();
-              }}>
+              <MenuItem
+                onClick={() => {
+                  handleMenuClose();
+                  onNavigateToEscapeGames?.();
+                }}
+              >
                 Escape Games
               </MenuItem>
-              <MenuItem 
-              colors='red'
-              onClick={() => {
-                handleMenuClose();
-                onDeactivate?.();
-                
-              }}>
+
+              <MenuItem
+                onClick={() => {
+                  handleMenuClose();
+                  onDeactivate?.();
+                }}
+                sx={{ color: "error.main" }}
+              >
                 Deactivate
               </MenuItem>
             </Menu>
-          </div>
+          </>
         }
+        sx={{
+          borderBottom: "1px solid #d8dee4",
+          pb: 1,
+        }}
       />
-      
-      <CardContent>
-        <Box 
-          component="img" 
-          src={data.logo || '/default-organization-logo.png'} 
-          alt={data.name} 
+
+      {/* Content */}
+      <CardContent sx={{ p: 3 }}>
+        {/* Logo */}
+        <Box
+          component="img"
+          src={data.logo || '/default-organization-logo.png'}
+          alt={data.name}
           sx={{
-            width: "100%", 
-            height: "200px", 
-            borderRadius: "10px",
+            width: "100%",
+            height: "180px",
+            borderRadius: "6px",
             objectFit: "contain",
-            backgroundColor: 'grey.100',
-            mb: 3
+            backgroundColor: "#f6f8fa",
+            border: "1px solid #d0d7de",
+            mb: 3,
           }}
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.src = '/default-organization-logo.png';
           }}
         />
-        
-        <Stack direction="column" spacing={2} divider={<Divider flexItem />}>
+
+        {/* Details */}
+        <Stack
+          direction="column"
+          spacing={2}
+          divider={<Divider flexItem sx={{ borderColor: "#d8dee4" }} />}
+        >
           {organisationDetails.map((item, index) => (
-            <RenderDetail
-              key={index}
-              label={item.label}
-              value={item.value}
-            />
+            <RenderDetail key={index} label={item.label} value={item.value} />
           ))}
         </Stack>
 
+        {/* Status */}
         {data.status && (
-          <Box mt={2}>
-            <Chip 
-              label={`Status: ${data.status}`} 
+          <Box sx={{ mt: 3 }}>
+            <Chip
+              label={`Status: ${data.status}`}
               color={data.status === 'Active' ? 'success' : 'default'}
               variant="outlined"
             />
@@ -172,6 +187,6 @@ const OrganisationDetails: FC<OrganisationDetailsProps> = ({
       </CardContent>
     </Card>
   );
-}
+};
 
 export default OrganisationDetails;

@@ -22,7 +22,7 @@ import { useModal } from "@/context/ContextHook/ModalContext";
 import { useLoading } from "@/context/ContextHook/LoadingContext";
 import { Refresh } from '@mui/icons-material';
 import { on } from 'events';
-
+import WorkLayout from "@/components/app/Layout/WorkLayout";
 
 
 
@@ -141,48 +141,104 @@ const SessionComponent = () => {
             label:"Get all Session",
             content:(
              <>
-             <Card elevation={3}>
-                <CardHeader 
-                    title="Escape Game Details" 
-                    subheader={escapegame?.esgTitle}
-                    action={
-                        <>
-                          <Typography variant="h5">Filtre</Typography>
-                                <FormControl sx={{ m: 1 }} variant="standard">
-                                <Select>
-                                    <MenuItem>A</MenuItem>
-                                    <MenuItem>B</MenuItem>
-                                </Select>
-                                </FormControl>
-                        <FormControl className='flex flex-row space-x-10 float-end justify-end items-end'>
-                                    <Button
-                                    variant='contained'
-                                    color='warning'
-                                    onClick={()=>fetchSessionsByEscapeGameId(id)}>Refresh
-                                    <Refresh />
-                                </Button>
-                        </FormControl> 
-                        </>
-                    } />
-                <CardContent>
-                    {
-                        tableSession ? 
-                        <GetsessionFromEscapeGame
-                                data={tableSession}
-                                columns={columns}
-                                onDetails={handleDetails}
-                                onUpdate={handleUpdate} />
-                                : <Skeleton variant="rectangular" height={500} />
+                <Card
+                elevation={0}
+                sx={{
+                    border: "1px solid #d0d7de",
+                    borderRadius: "6px",
+                    backgroundColor: "#ffffff",
+                    p: 2,
+                }}
+                >
+                {/* Header GitHub-style */}
+                <CardHeader
+                    title={
+                    <Box>
+                        <Typography variant="h6" sx={{ fontWeight: 600, color: "#24292f" }}>
+                        Escape Game Details
+                        </Typography>
+                        <Typography sx={{ color: "#57606a", fontSize: "0.9rem" }}>
+                        {escapegame?.esgTitle}
+                        </Typography>
+                    </Box>
                     }
+                    action={
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                        {/* Filtre */}
+                        <FormControl variant="standard" sx={{ minWidth: 120 }}>
+                        <Select defaultValue="">
+                            <MenuItem value="">A</MenuItem>
+                            <MenuItem value="B">B</MenuItem>
+                        </Select>
+                        </FormControl>
+
+                        {/* Refresh */}
+                        <Button
+                        variant="contained"
+                        color="warning"
+                        onClick={() => fetchSessionsByEscapeGameId(id)}
+                        sx={{
+                            textTransform: "none",
+                            fontWeight: 600,
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                        }}
+                        >
+                        Refresh
+                        <Refresh fontSize="small" />
+                        </Button>
+                    </Box>
+                    }
+                    sx={{
+                    borderBottom: "1px solid #d8dee4",
+                    pb: 1,
+                    mb: 2,
+                    }}
+                />
+
+                {/* Table */}
+                <CardContent sx={{ p: 0 }}>
+                    {tableSession ? (
+                    <GetsessionFromEscapeGame
+                        data={tableSession}
+                        columns={columns}
+                        onDetails={handleDetails}
+                        onUpdate={handleUpdate}
+                    />
+                    ) : (
+                    <Skeleton variant="rectangular" height={500} />
+                    )}
                 </CardContent>
-                <CardActions>
+
+                {/* Pagination GitHub-style */}
+                <CardActions
+                    sx={{
+                    borderTop: "1px solid #d8dee4",
+                    pt: 2,
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    }}
+                >
                     <Pagination
                     count={totalPage}
                     page={page}
                     onChange={handleChangePage}
+                    sx={{
+                        "& .MuiPaginationItem-root": {
+                        borderRadius: "6px",
+                        border: "1px solid #d0d7de",
+                        },
+                        "& .Mui-selected": {
+                        backgroundColor: "#0969da",
+                        color: "#ffffff",
+                        borderColor: "#0969da",
+                        },
+                    }}
                     />
                 </CardActions>
-             </Card>
+                </Card>
+
              </>)
         },
         {
@@ -233,66 +289,21 @@ const SessionComponent = () => {
         }
     ]
     return(
-<Grid2
-  container
-  spacing={3}
-  sx={{
-    width: "100%",
-    minHeight: "100vh",
-    backgroundColor: "#f6f8fa",
-    p: { xs: 2, md: 4 },
-  }}
->
-  {/* Sidebar GitHub-style */}
-  <Grid2
-    xs={12}
-    md={4}
-    sx={{
-      display: "flex",
-      flexDirection: "column",
-      gap: 2,
-    }}
+  <WorkLayout
+    title="Escape Game"
+    subtitle="Manage escape game details and sessions"
+    sidebar={
+      <EscapeGameDetails data={escapegame} />
+    }
   >
-    <Card
-      sx={{
-        border: "1px solid #d0d7de",
-        borderRadius: "6px",
-        backgroundColor: "#ffffff",
-      }}
-    >
-      <CardContent>
-        <EscapeGameDetails data={escapegame} />
-      </CardContent>
-    </Card>
-  </Grid2>
+    <GenericTabs
+      ref={tabsRef}
+      tabs={tabs}
+      defaultTab={0}
+      ChangeTab={goToTab}
+    />
+  </WorkLayout>
+);
 
-  {/* Content area GitHub-style */}
-  <Grid2
-    xs={12}
-    md={8}
-    sx={{
-      display: "flex",
-      flexDirection: "column",
-      gap: 2,
-    }}
-  >
-    <Box
-      sx={{
-        border: "1px solid #d0d7de",
-        borderRadius: "6px",
-        backgroundColor: "#ffffff",
-        p: 2,
-      }}
-    >
-      <GenericTabs
-        ref={tabsRef}
-        tabs={tabs}
-        defaultTab={0}
-        ChangeTab={goToTab}
-      />
-    </Box>
-  </Grid2>
-</Grid2>
-    )
 }
 export default SessionComponent;

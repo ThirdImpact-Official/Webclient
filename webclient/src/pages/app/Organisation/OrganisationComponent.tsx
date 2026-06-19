@@ -35,6 +35,7 @@ import { data } from 'react-router-dom';
 import AdminDetails from './AdminDemand/AdminDemandDetail';
 import Organisation from '../Organisation';
 import { error } from 'console';
+import WorkLayout from '@/components/app/Layout/WorkLayout';
 
 
 const OrganisationComponent = () => {
@@ -223,20 +224,40 @@ const OrganisationComponent = () => {
     },
     {
       label: "Update",
-      content: selectedOrganisation ? (
-        <Card elevation={3} className='p-2'>
-          <CardContent>
+      content:selectedOrganisation ? (
+        <Card
+          elevation={0}
+          sx={{
+            border: "1px solid #d0d7de",
+            borderRadius: "6px",
+            backgroundColor: "#ffffff",
+            p: 2,
+          }}
+        >
+          <CardContent sx={{ p: 2 }}>
             <UpdateOrganisationForm
-                data={selectedOrganisation}
-                handleCallBackResponse={()=> console.log("")} />
+              data={selectedOrganisation}
+              handleCallBackResponse={() => console.log("")}
+            />
           </CardContent>
-        </Card>):(
-          <Card>
-            <CardContent className="text-center items-end">
-              <CircularProgress/>
-            </CardContent>
-          </Card>
-        )
+        </Card>
+      ) : (
+        <Card
+          elevation={0}
+          sx={{
+            border: "1px solid #d0d7de",
+            borderRadius: "6px",
+            backgroundColor: "#ffffff",
+            p: 4,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "200px",
+          }}
+        >
+          <CircularProgress />
+        </Card>
+  )
     },
     {
       label:"Admin Demand Table",
@@ -300,9 +321,13 @@ const OrganisationComponent = () => {
     }
   };
   return (
-    <Box className="flex items-center justify-center">
-        <GenericTabs ref={tabsRef} tabs={tab} defaultTab={0} ChangeTab={goToTab} ariaLabel="generic tabs"/>
-    </Box>
+    <WorkLayout 
+      title="Organisation Management" 
+      subtitle="Manage your organisations and admin demands">
+      <Box className="flex items-center justify-center">
+          <GenericTabs ref={tabsRef} tabs={tab} defaultTab={0} ChangeTab={goToTab} ariaLabel="generic tabs"/>
+      </Box>
+    </WorkLayout>
   );
 };
 

@@ -16,6 +16,7 @@ import { Car } from "lucide-react";
 import Organisation from "../Organisation";
 import OrganisationDetails from "../Organisation/OrganisationDetails";
 import { data } from 'react-router-dom';
+import WorkLayout from "@/components/app/Layout/WorkLayout";
 
 const FaqComponent = () => {
   const tabsRef = useRef<{ changeTab: (index: number) => void } | null>(null);
@@ -209,16 +210,23 @@ const FaqComponent = () => {
       </Card>
   }
   return (
-    <Box className="flex flex-row justify-center items-center ">
+    <WorkLayout title="FAQ" 
+      subtitle="Frequently Asked Questions"
+    sidebar={
       <Box>
         <OrganisationDetails data={organisation}   />
       </Box>
+    }
+    >
+
+    <Box className="flex flex-row justify-center items-center ">
       <GenericTabs ref={tabsRef} tabs={tabs} defaultTab={0} ChangeTab={goToTab} />
       <Snackbar open={snackbarOpen} autoHideDuration={4000} onClose={() => setSnackbarOpen(false)}>
         <Alert onClose={() => setSnackbarOpen(false)} severity="success">{snackbarMessage}</Alert>
       </Snackbar>
 
     </Box>
+    </WorkLayout>
   );
 };
 

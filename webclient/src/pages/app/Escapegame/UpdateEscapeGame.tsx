@@ -1,7 +1,7 @@
 import { FC, useState, ChangeEvent } from 'react';
 import { 
   Box, Button, TextField, Typography, Select, MenuItem, Input, Checkbox, InputLabel, 
-  SelectChangeEvent} from '@mui/material';
+  SelectChangeEvent,Card,CardContent } from '@mui/material';
 import { GetEscapeGameDto } from '@/interfaces/EscapeGameInterface/EscapeGame/getEscapeGameDto';
 import { UpdateEscapeGameDto } from '@/interfaces/EscapeGameInterface/EscapeGame/updateEscapeGameDto';
 import { PriceLevel, DifficultyLevel } from '@/enums/PriceLevel';
@@ -64,128 +64,158 @@ const UpdateEscapeGameForm: FC<UpdateEscapeGameProps> = ({ data, onSubmit }) => 
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <Box className="grid grid-cols-1 gap-4 justify-between">
-        <Typography variant="h4" className="text-center">
-          Update Escape Game
+<form onSubmit={handleSubmit}>
+  <Card
+    elevation={0}
+    sx={{
+      border: "1px solid #d0d7de",
+      borderRadius: "6px",
+      backgroundColor: "#ffffff",
+      p: 3,
+      maxWidth: 800,
+      mx: "auto",
+    }}
+  >
+    <Typography
+      variant="h5"
+      sx={{ fontWeight: 600, color: "#24292f", mb: 3, textAlign: "center" }}
+    >
+      Mettre à jour l’Escape Game
+    </Typography>
+
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+      {/* SECTION 1 — Informations générales */}
+      <Box>
+        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
+          Informations générales
         </Typography>
-        <Box>
-          <Box className="space-y-4">
-            <Box>
-              <TextField
-                name="esgNom"
-                type="text"
-                label="Nom"
-                fullWidth
-                placeholder="Nom"
-                value={updatedEscapeGame.esgNom}
-                onChange={handleInputChange}
-              />
-            </Box>
-            <Box>
-              <TextField
-                name="esgTitle"
-                label="Titre"
-                fullWidth
-                placeholder="Titre"
-                value={updatedEscapeGame.esgTitle}
-                onChange={handleInputChange}
-              />
-            </Box>
-            <Box>
-              <TextField
-                name="esgContent"
-                label="Description"
-                fullWidth
-                placeholder="Description"
-                value={updatedEscapeGame.esgContent}
-                onChange={handleInputChange}
-              />
-            </Box>
-            <Box>
-              <TextField
-                name="esgCreator"
-                label="Créateur"
-                placeholder="Créateur"
-                fullWidth
-                value={updatedEscapeGame.esgCreator}
-                onChange={handleInputChange}
-              />
-            </Box>
-            <Box>
-              <TextField
-                name="esgWebsite"
-                label="Site Web"
-                fullWidth
-                placeholder="Site Web"
-                value={updatedEscapeGame.esgWebsite}
-                onChange={handleInputChange}
-              />
-            </Box>
-            <Box>
-              <TextField
-                name="esgPhoneNumber"
-                label="Téléphone"
-                fullWidth
-                placeholder="Téléphone"
-                value={updatedEscapeGame.esgPhoneNumber}
-                onChange={handleInputChange}
-              />
-            </Box>
-            <Box>
-              <TextField
-                name="minPlayers"
-                label="Nombre minimum de joueurs"
-                type="number"
-                fullWidth
-                placeholder="Nombre minimum de joueurs"
-                value={updatedEscapeGame.minPlayers}
-                onChange={handleNumberInputChange}
-                inputProps={{ min: 1 }}
-              />
-            </Box>
-            <Box>
-              <TextField
-                name="maxPlayers"
-                label="Nombre maximum de joueurs"
-                type="number"
-                fullWidth
-                placeholder="Nombre maximum de joueurs"
-                value={updatedEscapeGame.maxPlayers}
-                onChange={handleNumberInputChange}
-                inputProps={{ min: 1 }}
-              />
-            </Box>
-            <Box>
-              <TextField
-                name="language"
-                label="Langue"
-                fullWidth
-                placeholder="Langue"
-                value={updatedEscapeGame.language}
-                onChange={handleInputChange}
-              />
-            </Box>
-          </Box>
-        
+
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <TextField
+            name="esgNom"
+            label="Nom"
+            fullWidth
+            value={updatedEscapeGame.esgNom}
+            onChange={handleInputChange}
+          />
+
+          <TextField
+            name="esgTitle"
+            label="Titre"
+            fullWidth
+            value={updatedEscapeGame.esgTitle}
+            onChange={handleInputChange}
+          />
+
+          <TextField
+            name="esgContent"
+            label="Description"
+            fullWidth
+            multiline
+            rows={3}
+            value={updatedEscapeGame.esgContent}
+            onChange={handleInputChange}
+          />
+
+          <TextField
+            name="esgCreator"
+            label="Créateur"
+            fullWidth
+            value={updatedEscapeGame.esgCreator}
+            onChange={handleInputChange}
+          />
+
+          <TextField
+            name="esgWebsite"
+            label="Site Web"
+            fullWidth
+            value={updatedEscapeGame.esgWebsite}
+            onChange={handleInputChange}
+          />
+
+          <TextField
+            name="esgPhoneNumber"
+            label="Téléphone"
+            fullWidth
+            value={updatedEscapeGame.esgPhoneNumber}
+            onChange={handleInputChange}
+          />
+        </Box>
+      </Box>
+
+      {/* SECTION 2 — Joueurs */}
+      <Box>
+        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
+          Joueurs
+        </Typography>
+
+        <Box sx={{ display: "flex", gap: 2 }}>
+          <TextField
+            name="minPlayers"
+            label="Min joueurs"
+            type="number"
+            fullWidth
+            value={updatedEscapeGame.minPlayers}
+            onChange={handleNumberInputChange}
+            inputProps={{ min: 1 }}
+          />
+
+          <TextField
+            name="maxPlayers"
+            label="Max joueurs"
+            type="number"
+            fullWidth
+            value={updatedEscapeGame.maxPlayers}
+            onChange={handleNumberInputChange}
+            inputProps={{ min: 1 }}
+          />
+        </Box>
+
+        <TextField
+          name="language"
+          label="Langue"
+          fullWidth
+          sx={{ mt: 2 }}
+          value={updatedEscapeGame.language}
+          onChange={handleInputChange}
+        />
+      </Box>
+
+      {/* SECTION 3 — Image & Enfants */}
+      <Box>
+        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
+          Image & Options
+        </Typography>
+
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <Box>
             <InputLabel>Image</InputLabel>
-            <TextField
-              type="file"
-              fullWidth
-              onChange={handleFileChange}
-            />
-            <InputLabel>Pour enfants ?</InputLabel>
+            <TextField type="file" fullWidth onChange={handleFileChange} />
+          </Box>
+
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <Checkbox
               name="esg_IsForChildren"
               checked={updatedEscapeGame.esg_IsForChildren}
               onChange={handleCheckboxChange}
             />
+            <Typography>Pour enfants</Typography>
           </Box>
-          <Box>
+        </Box>
+      </Box>
+
+      {/* SECTION 4 — Prix & Difficulté */}
+      <Box>
+        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
+          Prix & Difficulté
+        </Typography>
+
+        <Box sx={{ display: "flex", gap: 2 }}>
+          <Box sx={{ flex: 1 }}>
             <InputLabel>Prix</InputLabel>
             <Select
               name="esg_Price_Id"
+              fullWidth
               value={updatedEscapeGame.esg_Price_Id}
               onChange={handleSelectChange}
             >
@@ -195,10 +225,12 @@ const UpdateEscapeGameForm: FC<UpdateEscapeGameProps> = ({ data, onSubmit }) => 
               <MenuItem value={PriceLevel.High}>Élevé</MenuItem>
             </Select>
           </Box>
-          <Box>
+
+          <Box sx={{ flex: 1 }}>
             <InputLabel>Difficulté</InputLabel>
             <Select
               name="esg_DILE_Id"
+              fullWidth
               value={updatedEscapeGame.esg_DILE_Id}
               onChange={handleSelectChange}
             >
@@ -208,13 +240,27 @@ const UpdateEscapeGameForm: FC<UpdateEscapeGameProps> = ({ data, onSubmit }) => 
             </Select>
           </Box>
         </Box>
-        <Box className="flex items-center justify-center">
-          <Button variant="contained" type="submit">
-            Mettre à jour
-          </Button>
-        </Box>
       </Box>
-    </form>
+
+      {/* SUBMIT */}
+      <Box sx={{ textAlign: "center", mt: 3 }}>
+        <Button
+          variant="contained"
+          type="submit"
+          sx={{
+            backgroundColor: "#2da44e",
+            textTransform: "none",
+            fontWeight: 600,
+            px: 4,
+            "&:hover": { backgroundColor: "#2c974b" },
+          }}
+        >
+          Mettre à jour
+        </Button>
+      </Box>
+    </Box>
+  </Card>
+</form>
   );
 };
 

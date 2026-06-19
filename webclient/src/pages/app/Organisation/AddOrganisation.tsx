@@ -84,144 +84,179 @@ const AddNewOrganisation = () => {
         }
     };
 
-    return (
-        <Box>
-            <form className=" text-center" onSubmit={handleSubmit}>
-                <Grid2 container spacing={4} className="pt-10 my-4 mx-10 ">
-                        <Grid2 className="p-4 bg-white" size={6}>
-                            
-                                <Typography variant="h6" 
-                                            className="m-1">Organisation :</Typography>
-                                <Divider orientation="horizontal" flexItem />
-                        
-                                <Item className=" flex flex-col space-y-4 m-auto">
-                                    <Box>
-                                        <TextField
-                                            label="Name"
-                                            placeholder="insert name"
-                                            type="text"
-                                            value={organisationData.name}
-                                            onChange={(e) => handleOrganisationChange("name", e.target.value)}
-                                            />
+return (
+  <Box
+    sx={{
+      width: "100%",
+      backgroundColor: "#f6f8fa",
+      p: { xs: 2, md: 4 },
+    }}
+  >
+    <form onSubmit={handleSubmit}>
+      <Grid2 container spacing={3}>
+        
+        {/* Organisation Section */}
+        <Grid2 xs={12} md={6}>
+          <Box
+            sx={{
+              border: "1px solid #d0d7de",
+              borderRadius: "6px",
+              backgroundColor: "#ffffff",
+              p: 3,
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{ fontWeight: 600, color: "#24292f", mb: 2 }}
+            >
+              Organisation
+            </Typography>
 
-                                    </Box>
-                                    <Box>
-                                        <TextField
-                                            label="Email"
-                                            placeholder="insert email"
-                                            type="text"
-                                            value={organisationData.email}
-                                            onChange={(e) => handleOrganisationChange("email", e.target.value)}
-                                            />
+            <Divider sx={{ mb: 2 }} />
 
-                                    </Box>
-                                    <Box>
-                                        <TextField
-                                            label="PhoneNumber"
-                                            placeholder="insert phone number"
-                                            type="text"
-                                            value={organisationData.phoneNumber}
-                                            onChange={(e) => handleOrganisationChange("phoneNumber", e.target.value)}
-                                            />
-                                    </Box>          
-                                    <Box>
-                                        <TextField
-                                            placeholder="insert description"
-                                            value={organisationData.description}
-                                            fullWidth
-                                            multiline
-                                            rows={4}
-                                            onChange={(e) => handleOrganisationChange("description", e.target.value)}
-                                            />
-                                    </Box>
-                                </Item>
-                            </Grid2>
-                            <Grid2 className="bg-white p-4" size={6} >
-                                <Typography
-                                    variant="h6"
-                                     className="m-1">Address</Typography>
-                                <hr />
-                                <Item className=" flex flex-col  space-y-4">
-                                    <Box>
-                                        <TextField
-                                            label="Postal Code"
-                                            placeholder="insert postal code"
-                                            type="text"
-                                            value={addressData.postalCode}
-                                            onChange={(e) => handleAddressChange("postalCode", e.target.value)}
-                                            />
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <TextField
+                label="Name"
+                value={organisationData.name}
+                onChange={(e) => handleOrganisationChange("name", e.target.value)}
+                fullWidth
+              />
 
-                                    </Box>
-                                    <Box>
-                                        <TextField
-                                            label="Street"
-                                            placeholder="Street"
-                                            type="text"
-                                            value={addressData.street}
-                                            onChange={(e) => handleAddressChange("street", e.target.value)}
-                                        />
-                                    </Box>
-                                    <Box>
-                                        <TextField
-                                            label="City"
-                                            placeholder="insert city"
-                                            type="text"
-                                            value={addressData.city}
-                                            onChange={(e) => handleAddressChange("city", e.target.value)}
-                                        />
+              <TextField
+                label="Email"
+                value={organisationData.email}
+                onChange={(e) => handleOrganisationChange("email", e.target.value)}
+                fullWidth
+              />
 
-                                    </Box>
-                                    <Box>
-                                        <TextField
-                                            label="Country"
-                                            placeholder="insert country"
-                                            type="text"
-                                            value={addressData.country}
-                                            onChange={(e) => handleAddressChange("country", e.target.value)}
-                                        />
-                                    </Box>
-                                    <Box>
-                                    <TextField
-                                        label="Latitude"
-                                        placeholder="insert latitude"
-                                        type="text"
-                                        value={addressData.latitude}
-                                        onChange={(e) => handleAddressChange("latitude", e.target.value)}
-                                        />
-                                    </Box>
-                                    <Box>
-                                        <TextField
-                                            label="Longitude"
-                                            placeholder="insert longitude"
-                                            type="text"
-                                            value={addressData.longitude}
-                                            onChange={(e) => handleAddressChange("longitude", e.target.value)}
-                                            />
-                                    </Box>
-                                    <Box className="p-6">
-                                        <Typography variant="h6">Logo d'organisation</Typography>
-                                        <TextField
-                                            type="file"
-                                            placeholder="insert logo"
-                                            onChange={handleFileChange}
-                                            />
-                                    </Box>
-                                </Item>
-                            </Grid2>
-            
-                    </Grid2>
-                    <Box className="flex flex-col items-center justify-center text-center" >
-                            <Button
-                                type="submit"
-                                variant="contained"
-                                className="bg-blue-500 p-4 border-rounded rounded-sm text-center">
-                                Ajouter
-                            </Button>
-                        
-                    </Box>
-            </form>
-        </Box>
-    );
+              <TextField
+                label="Phone Number"
+                value={organisationData.phoneNumber}
+                onChange={(e) =>
+                  handleOrganisationChange("phoneNumber", e.target.value)
+                }
+                fullWidth
+              />
+
+              <TextField
+                label="Description"
+                value={organisationData.description}
+                onChange={(e) =>
+                  handleOrganisationChange("description", e.target.value)
+                }
+                fullWidth
+                multiline
+                rows={4}
+              />
+            </Box>
+          </Box>
+        </Grid2>
+
+        {/* Address Section */}
+        <Grid2 xs={12} md={6}>
+          <Box
+            sx={{
+              border: "1px solid #d0d7de",
+              borderRadius: "6px",
+              backgroundColor: "#ffffff",
+              p: 3,
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{ fontWeight: 600, color: "#24292f", mb: 2 }}
+            >
+              Address
+            </Typography>
+
+            <Divider sx={{ mb: 2 }} />
+
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <TextField
+                label="Postal Code"
+                value={addressData.postalCode}
+                onChange={(e) =>
+                  handleAddressChange("postalCode", e.target.value)
+                }
+                fullWidth
+              />
+
+              <TextField
+                label="Street"
+                value={addressData.street}
+                onChange={(e) =>
+                  handleAddressChange("street", e.target.value)
+                }
+                fullWidth
+              />
+
+              <TextField
+                label="City"
+                value={addressData.city}
+                onChange={(e) => handleAddressChange("city", e.target.value)}
+                fullWidth
+              />
+
+              <TextField
+                label="Country"
+                value={addressData.country}
+                onChange={(e) =>
+                  handleAddressChange("country", e.target.value)
+                }
+                fullWidth
+              />
+
+              <TextField
+                label="Latitude"
+                value={addressData.latitude}
+                onChange={(e) =>
+                  handleAddressChange("latitude", e.target.value)
+                }
+                fullWidth
+              />
+
+              <TextField
+                label="Longitude"
+                value={addressData.longitude}
+                onChange={(e) =>
+                  handleAddressChange("longitude", e.target.value)
+                }
+                fullWidth
+              />
+
+              <Box>
+                <Typography sx={{ mb: 1, color: "#57606a" }}>
+                  Logo d'organisation
+                </Typography>
+                <TextField type="file" onChange={handleFileChange} fullWidth />
+              </Box>
+            </Box>
+          </Box>
+        </Grid2>
+      </Grid2>
+
+      {/* Submit Button */}
+      <Box sx={{ textAlign: "center", mt: 4 }}>
+        <Button
+          type="submit"
+          variant="contained"
+          sx={{
+            backgroundColor: "#2da44e",
+            textTransform: "none",
+            fontWeight: 600,
+            px: 4,
+            "&:hover": {
+              backgroundColor: "#2c974b",
+            },
+          }}
+        >
+          Ajouter
+        </Button>
+      </Box>
+    </form>
+  </Box>
+);
+
 };
 
 export default AddNewOrganisation;

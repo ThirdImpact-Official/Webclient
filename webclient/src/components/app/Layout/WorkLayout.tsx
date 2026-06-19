@@ -1,4 +1,3 @@
-// components/layout/DashboardLayout.tsx
 import { Box, Typography } from "@mui/material";
 import { FC, ReactNode } from "react";
 
@@ -21,23 +20,36 @@ const WorkLayout: FC<workLayoutProps> = ({
         width: "100%",
         minHeight: "100vh",
         backgroundColor: "#f6f8fa",
-        p: { xs: 2, md: 4 },
+        p: { xs: 1.5, sm: 2, md: 4 },
       }}
     >
       {/* Header GitHub-style */}
       <Box
         sx={{
-          mb: 3,
-          pb: 2,
+          mb: { xs: 2, md: 3 },
+          pb: { xs: 1, md: 2 },
           borderBottom: "1px solid #d0d7de",
         }}
       >
-        <Typography variant="h5" sx={{ fontWeight: 600, color: "#24292f" }}>
+        <Typography
+          variant="h5"
+          sx={{
+            fontWeight: 600,
+            color: "#24292f",
+            fontSize: { xs: "1.3rem", md: "1.6rem" },
+          }}
+        >
           {title}
         </Typography>
 
         {subtitle && (
-          <Typography sx={{ color: "#57606a", mt: 0.5 }}>
+          <Typography
+            sx={{
+              color: "#57606a",
+              mt: 0.5,
+              fontSize: { xs: "0.85rem", md: "1rem" },
+            }}
+          >
             {subtitle}
           </Typography>
         )}
@@ -47,8 +59,15 @@ const WorkLayout: FC<workLayoutProps> = ({
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: sidebar ? { xs: "1fr", md: "300px 1fr" } : "1fr",
-          gap: 3,
+          gridTemplateColumns: sidebar
+            ? {
+                xs: "1fr",
+                sm: "1fr",
+                md: "280px 1fr",
+                lg: "300px 1fr",
+              }
+            : "1fr",
+          gap: { xs: 2, md: 3 },
         }}
       >
         {/* Sidebar */}
@@ -58,8 +77,10 @@ const WorkLayout: FC<workLayoutProps> = ({
               border: "1px solid #d0d7de",
               borderRadius: "6px",
               backgroundColor: "#ffffff",
-              p: 2,
+              p: { xs: 1.5, md: 2 },
               height: "fit-content",
+              position: "relative",
+              top: 0,
             }}
           >
             {sidebar}
@@ -72,7 +93,9 @@ const WorkLayout: FC<workLayoutProps> = ({
             border: "1px solid #d0d7de",
             borderRadius: "6px",
             backgroundColor: "#ffffff",
-            p: 2,
+            p: { xs: 1.5, md: 2 },
+            minHeight: "200px",
+            overflowX: "auto",
           }}
         >
           {children}

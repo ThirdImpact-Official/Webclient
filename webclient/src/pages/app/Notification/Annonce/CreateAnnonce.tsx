@@ -1,115 +1,156 @@
-import { FC, useEffect, useState } from 'react';
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { FC, useEffect, useState } from "react";
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Card,
+  CardContent,
+} from "@mui/material";
 import { AddAnnonceDto } from "@/interfaces/NotificationInterface/Annonce/addAnnonceDto";
-import { OrganisationAction } from '../../../../actions/OrganisationActions';
-import Organisation from '@/pages/app/Organisation';
-import { GetOrganisationDto } from '@/interfaces/OrganisationInterface/Organisation/GetOrganisationDto';
-import { useNavigate } from 'react-router-dom';
-import { useToasted } from '@/context/ContextHook/ToastedContext';
-import { UnitofAction } from '@/actions/UnitofAction';
+import { GetOrganisationDto } from "@/interfaces/OrganisationInterface/Organisation/GetOrganisationDto";
+import { UnitofAction } from "@/actions/UnitofAction";
+
 interface CreateAnnonceProps {
-    onSubmit: (data: AddAnnonceDto) => void;  
+  onSubmit: (data: AddAnnonceDto) => void;
 }
 
 const CreateAnnonce: FC<CreateAnnonceProps> = ({ onSubmit }) => {
-    const action = new UnitofAction();
-    const [announcement, setAnnouncement] = useState<AddAnnonceDto>({
-        name: '',
-        description: '',
-        formFile: null,
-        organisationId: 0
-    });
-    const [Organisation,setorganisation]=useState<GetOrganisationDto>();
+  const action = new UnitofAction();
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        console.log(announcement);
-        event.preventDefault();
-        onSubmit(announcement);
-    };
+  const [announcement, setAnnouncement] = useState<AddAnnonceDto>({
+    name: "",
+    description: "",
+    formFile: null,
+    organisationId: 0,
+  });
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setAnnouncement({ 
-            ...announcement,
-            [event.target.name]: event.target.value 
-        });
-    };
+  const [organisation, setOrganisation] = useState<GetOrganisationDto | null>(
+    null
+  );
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0] || null;
-        setAnnouncement({ 
-            ...announcement,
-            formFile: file
-        });
-    };
-    const fetchOrganisationId= async ()=> {
-        try
-        {
-            const response = await action.organisationAction.GetOrganisationByIdForCurrentUser();
-            if(response.Success)
-            {
-                const statData = response.Data as GetOrganisationDto[];
-                setorganisation(statData[0]);
-                setAnnouncement({...announcement,organisationId:statData[0].orgId});
-            }
-        }
-        catch(err)
-        {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    onSubmit(announcement);
+  };
 
-        }
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAnnouncement((prev) => ({
+      ...prev,
+      [event.target.name]: event.target.value,
+    }));
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] || null;
+    setAnnouncement((prev) => ({
+      ...prev,
+      formFile: file,
+    }));
+  };
+
+  const fetchOrganisationId = async () => {
+    try {
+      const response =
+        await action.organisationAction.GetOrganisationByIdForCurrentUser();
+
+      if (response?.Success && Array.isArray(response.Data) && response.Data.length > 0) {
+        const org = response.Data[0];
+        setOrganisation(org);
+
+        setAnnouncement((prev) => ({
+          ...prev,
+          organisationId: org.orgId ?? 0,
+        }));
+      }
+    } catch (err) {
+      console.warn("Organisation fetch failed (Brave may have blocked it):", err);
     }
-    useEffect(() => {
-        fetchOrganisationId();
-    },[setorganisation]);
-    return (
-        <Box className="text-center">
-            <Typography className="p-4" variant="h4">Create an Annonce</Typography>
-            <form className="flex items-center justify-center mx-15 rounded-md space-y-2" onSubmit={handleSubmit}>
-                <Box className="space-y-2">
-                    <Box>
-                        <Typography>Name</Typography>
-                        <TextField
-                            type="text"
-                            name="name"
-                            value={announcement.name}
-                            onChange={handleChange}
-                            required
-                        />
-                    </Box>
-                    <Box>
-                        <Typography>Description</Typography>
-                        <TextField
-                            type="text"
-                            name="description"
-                            value={announcement.description}
-                            onChange={handleChange}
-                            multiline
-                            rows={3}
-                            required
-                        />
-                    </Box>
-                    <Box>
-                        <Typography>Image</Typography>
-                        <TextField
-                            type="file"
-                            name="file"
-                            onChange={handleFileChange}
-                            InputProps={{
-                                inputProps: {
-                                    accept: "image/*"
-                                }
-                            }}
-                            InputLabelProps={{
-                                shrink: true
-                            }}
-                        />
-                    </Box>
-                    <Box className="flex items-center justify-center p-4">
-                        <Button variant="contained" type="submit">Send</Button>
-                    </Box>
-                </Box>
-            </form>
-        </Box>
-    );
+  };
+
+  useEffect(() => {
+    fetchOrganisationId();
+  }, []);
+
+  return (
+    <Card
+      elevation={0}
+      sx={{
+        border: "1px solid #d0d7de",
+        borderRadius: "6px",
+        backgroundColor: "#ffffff",
+        maxWidth: 600,
+        mx: "auto",
+      }}
+    >
+      <CardContent sx={{ p: 3 }}>
+        <Typography
+          variant="h6"
+          sx={{ fontWeight: 600, color: "#24292f", mb: 2 }}
+        >
+          Create an Announcement
+        </Typography>
+
+        <form onSubmit={handleSubmit}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            
+            <Box>
+              <Typography sx={{ mb: 0.5, color: "#57606a" }}>Name</Typography>
+              <TextField
+                fullWidth
+                name="name"
+                value={announcement.name}
+                onChange={handleChange}
+                required
+              />
+            </Box>
+
+            <Box>
+              <Typography sx={{ mb: 0.5, color: "#57606a" }}>
+                Description
+              </Typography>
+              <TextField
+                fullWidth
+                name="description"
+                value={announcement.description}
+                onChange={handleChange}
+                multiline
+                rows={4}
+                required
+              />
+            </Box>
+
+            <Box>
+              <Typography sx={{ mb: 0.5, color: "#57606a" }}>Image</Typography>
+              <TextField
+                type="file"
+                onChange={handleFileChange}
+                InputProps={{
+                  inputProps: { accept: "image/*" },
+                }}
+                InputLabelProps={{ shrink: true }}
+                fullWidth
+              />
+            </Box>
+
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                backgroundColor: "#2da44e",
+                textTransform: "none",
+                fontWeight: 600,
+                mt: 1,
+                "&:hover": { backgroundColor: "#2c974b" },
+              }}
+            >
+              Send
+            </Button>
+          </Box>
+        </form>
+      </CardContent>
+    </Card>
+  );
 };
 
 export default CreateAnnonce;

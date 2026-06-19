@@ -18,6 +18,7 @@ import { Refresh } from "@mui/icons-material";
 import { UpdateOrganisationDto } from "@/interfaces/OrganisationInterface/Organisation/updateOrganisationDto";
 import UpdateOrganisationForm from '../UpdateOrganisation';
 import { on } from 'events';
+import WorkLayout from "@/components/app/Layout/WorkLayout";
 
 
 const UserOrganisationComponent = () => {
@@ -302,42 +303,35 @@ const handleDeactivation=async ()=>{
 
       
         return (
-          <Box className="container mx-auto py-3">
-          <div className="flex flex-col md:flex-row gap-4">
-        
-            {/* Left Column - Organisation Details */}
-            <div className="w-full md:w-1/3">
-              <Grid2>
-                <CardContent>
-                  {isLoading ? (
-                    <Skeleton width={210} height={118} />
-                  ) : (
-                    <OrganisationDetails data={selectedOrganisation} onDeactivate={handleDeactivation} />
-                  )}
-                </CardContent>
-              </Grid2>
-            </div>
-        
-            {/* Right Column - Tabs */}
-            <div className="w-full md:w-2/3">
-              <Grid2>
-                <CardContent>
-                  {isLoading ? (
-                    <Skeleton width={210} height={118} />
-                  ) : (
-                    <GenericTabs
-                      ref={tabsRef}
-                      tabs={colt}
-                      defaultTab={0}
-                      ChangeTab={goToTab}
-                    />
-                  )}
-                </CardContent>
-              </Grid2>
-            </div>
-        
-          </div>
-        </Box>
+ <WorkLayout
+    title="User Organisation"
+    subtitle="Manage user organisations"
+    sidebar={
+      <Box sx={{ p: 1 }}>
+        {isLoading ? (
+          <Skeleton variant="rectangular" width="100%" height={150} />
+        ) : (
+          <OrganisationDetails
+            data={selectedOrganisation}
+            onDeactivate={handleDeactivation}
+          />
+        )}
+      </Box>
+    }
+  >
+    <Box sx={{ width: "100%", p: 1 }}>
+      {isLoading ? (
+        <Skeleton variant="rectangular" width="100%" height={200} />
+      ) : (
+        <GenericTabs
+          ref={tabsRef}
+          tabs={colt}
+          defaultTab={0}
+          ChangeTab={goToTab}
+        />
+      )}
+    </Box>
+  </WorkLayout>
         
         );
     

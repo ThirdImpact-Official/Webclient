@@ -1,57 +1,104 @@
-import React,{FC}from 'react';
-import { GetAdressDto } from '../../../interfaces/OrganisationInterface/Adress/getAdressDto';
-import { Box, Typography, Divider } from '@mui/material';
-import ModalComponent from '@/components/factory/GenericComponent/Modal';
-import UpdateAdress from './UpdateAdress';
+import React, { FC } from "react";
+import { GetAdressDto } from "../../../interfaces/OrganisationInterface/Adress/getAdressDto";
+import {
+  Box,
+  Typography,
+  Divider,
+  Card,
+  CardContent,
+  Stack,
+  Button,
+} from "@mui/material";
+import ModalComponent from "@/components/factory/GenericComponent/Modal";
+import UpdateAdress from "./UpdateAdress";
 
-
-
-
-interface AddressDetailProps 
-{
-    props?: GetAdressDto;
+interface AddressDetailProps {
+  props?: GetAdressDto;
 }
+
 const AddressDetail: FC<AddressDetailProps> = ({ props: address }) => {
   if (!address) {
-    return <Typography variant="body1">Not defined</Typography>;
+    return (
+      <Typography sx={{ color: "#57606a", textAlign: "center", mt: 2 }}>
+        Not defined
+      </Typography>
+    );
   }
 
   return (
-    <Box className=" items-center justify-center bg-white selection:flex flex-col m-10 p-4 text-center ">
-      <Box className="p-4">
-        <Typography variant="h4">Address Details</Typography>
-      </Box>
-      <Box className=" bg-white mx-10 my-4 space-y-2">
-        <Box className="flex gap-4 justify-between">
-          <Typography sx={{pe:'5px'}} variant="h5">Street:</Typography>
-          <Typography variant="body1">{address.street}</Typography>
-        </Box>
-        <Box className="flex gap-4 justify-between">
-          <Typography variant="h5">Postal Code:</Typography>
-          <Typography variant="body1">{address.postalCode}</Typography>
-        </Box>
-        <Box className="flex gap-4 justify-between">
-          <Typography variant="h5">City:</Typography>
-          <Typography variant="body1">{address.city}</Typography>
-        </Box>
-        <Box className="flex gap-4 justify-between">
-          <Typography variant="h5">Country:</Typography>
-          <Typography variant="body1">{address.country}</Typography>
-        </Box>
-        <Divider />
-        <Box className="flex justify-between mt-2">
-          <ModalComponent ButtonTitle='Update' 
-                          children={<><UpdateAdress data={address} OnSubmit={() => {}} /></>} 
-                          Title='' 
-                          Description="" />
-                          
-          <ModalComponent ButtonTitle='Delete' 
-                          children={<>DeletepopUP</>} 
-                          Title='' 
-                          Description="" />
-        </Box>
-      </Box>
-    </Box>
+    <Card
+      elevation={0}
+      sx={{
+        border: "1px solid #d0d7de",
+        borderRadius: "6px",
+        backgroundColor: "#ffffff",
+        maxWidth: 600,
+        mx: "auto",
+      }}
+    >
+      <CardContent sx={{ p: 3 }}>
+        {/* Title */}
+        <Typography
+          variant="h6"
+          sx={{ fontWeight: 600, color: "#24292f", mb: 2, textAlign: "center" }}
+        >
+          Address Details
+        </Typography>
+
+        <Stack spacing={2}>
+          {/* Street */}
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography sx={{ fontWeight: 600, color: "#24292f" }}>
+              Street:
+            </Typography>
+            <Typography>{address.street}</Typography>
+          </Box>
+
+          {/* Postal Code */}
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography sx={{ fontWeight: 600, color: "#24292f" }}>
+              Postal Code:
+            </Typography>
+            <Typography>{address.postalCode}</Typography>
+          </Box>
+
+          {/* City */}
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography sx={{ fontWeight: 600, color: "#24292f" }}>
+              City:
+            </Typography>
+            <Typography>{address.city}</Typography>
+          </Box>
+
+          {/* Country */}
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography sx={{ fontWeight: 600, color: "#24292f" }}>
+              Country:
+            </Typography>
+            <Typography>{address.country}</Typography>
+          </Box>
+
+          <Divider />
+
+          {/* Actions */}
+          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
+            <ModalComponent
+              ButtonTitle="Update"
+              Title="Update Address"
+              Description=""
+              children={<UpdateAdress data={address} OnSubmit={() => {}} />}
+            />
+
+            <ModalComponent
+              ButtonTitle="Delete"
+              Title="Delete Address"
+              Description=""
+              children={<>DeletepopUP</>}
+            />
+          </Box>
+        </Stack>
+      </CardContent>
+    </Card>
   );
 };
 
