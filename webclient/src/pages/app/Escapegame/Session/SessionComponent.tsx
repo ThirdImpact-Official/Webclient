@@ -233,20 +233,66 @@ const SessionComponent = () => {
         }
     ]
     return(
-        <Grid2 container spacing={2} className="flex justify-evenly items-center">
-            <Box className="flex flex-row gap-4">
-                <Grid2 size={4} className="flex flex-col gap-4 w-1/3 md:1/3">
-                    <Card elevation={3}>
-                        <CardContent>
-                            <EscapeGameDetails data={escapegame}  />
-                        </CardContent>
-                    </Card>
-                </Grid2>
-                <Grid2 size={6}  className="flex flex-col gap-4 w-2/3 md:2/3">
-                    <GenericTabs ref={tabsRef} tabs={tabs} defaultTab={0}  ChangeTab={goToTab}  />
-                </Grid2>
-            </Box>
-        </Grid2>
+<Grid2
+  container
+  spacing={3}
+  sx={{
+    width: "100%",
+    minHeight: "100vh",
+    backgroundColor: "#f6f8fa",
+    p: { xs: 2, md: 4 },
+  }}
+>
+  {/* Sidebar GitHub-style */}
+  <Grid2
+    xs={12}
+    md={4}
+    sx={{
+      display: "flex",
+      flexDirection: "column",
+      gap: 2,
+    }}
+  >
+    <Card
+      sx={{
+        border: "1px solid #d0d7de",
+        borderRadius: "6px",
+        backgroundColor: "#ffffff",
+      }}
+    >
+      <CardContent>
+        <EscapeGameDetails data={escapegame} />
+      </CardContent>
+    </Card>
+  </Grid2>
+
+  {/* Content area GitHub-style */}
+  <Grid2
+    xs={12}
+    md={8}
+    sx={{
+      display: "flex",
+      flexDirection: "column",
+      gap: 2,
+    }}
+  >
+    <Box
+      sx={{
+        border: "1px solid #d0d7de",
+        borderRadius: "6px",
+        backgroundColor: "#ffffff",
+        p: 2,
+      }}
+    >
+      <GenericTabs
+        ref={tabsRef}
+        tabs={tabs}
+        defaultTab={0}
+        ChangeTab={goToTab}
+      />
+    </Box>
+  </Grid2>
+</Grid2>
     )
 }
 export default SessionComponent;

@@ -1,6 +1,5 @@
 import React, { useState, ReactNode, forwardRef, useImperativeHandle } from 'react';
-import { Tabs, Tab } from "@mui/material";
-import { Box } from "@mui/material"; // Note: Changed from lucide-react to @mui/material for consistency
+import { Tabs, Tab, Box } from "@mui/material";
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -19,7 +18,11 @@ function CustomTabPanel(props: TabPanelProps) {
       aria-labelledby={`tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          {children}
+        </Box>
+      )}
     </div>
   );
 }
@@ -33,37 +36,76 @@ export interface GenericTabsProps {
   tabs: TabItem[];
   defaultTab?: number;
   ariaLabel?: string;
-  ChangeTab?:(arg:number)=>void
+  ChangeTab?: (arg: number) => void;
 }
 
 const GenericTabs = forwardRef(({ tabs, defaultTab = 0, ariaLabel = "generic tabs", ChangeTab }: GenericTabsProps, ref) => {
-    const [value, setValue] = useState(defaultTab);
-  
-    useImperativeHandle(ref, () => ({
-      changeTab: (tabIndex: number) => {
-        setValue((prev) => {
-          if (tabIndex >= 0 && tabIndex < tabs.length && tabIndex !== prev) {
-            if (ChangeTab) ChangeTab(tabIndex);
-            return tabIndex;
+  const [value, setValue] = useState(defaultTab);
+
+  useImperativeHandle(ref, () => ({
+    changeTab: (tabIndex: number) => {
+      setValue((prev) => {
+        if (tabIndex >= 0 && tabIndex < tabs.length && tabIndex !== prev) {
+          ChangeTab?.(tabIndex);
+          return tabIndex;
+        }
+        return prev;
+      });
+    },
+    currentTab: () => value
+  }));
+
+  return (
+    <Box sx={{ width: '100%' }}>
+      <Tabs
+        value={value}
+        onChange={(e, newValue) => setValue(newValue)}
+        aria-label={ariaLabel}
+        sx={{
+          borderBottom: "1px solid #d0d7de",
+          minHeight: "40px",
+
+          "& .MuiTab-root": {
+            textTransform: "none",
+            fontWeight: 500,
+            color: "#57606a",
+            minHeight: "40px",
+            paddingX: 2,
+            "&:hover": {
+              color: "#24292f",
+              backgroundColor: "#f6f8fa",
+            }
+          },
+
+          "& .Mui-selected": {
+            color: "#24292f",
+            fontWeight: 600,
+          },
+
+          "& .MuiTabs-indicator": {
+            backgroundColor: "#0969da",
+            height: "3px",
+            borderRadius: "3px 3px 0 0",
           }
-          return prev;
-        });
-      },
-      currentTab: () => value // 👈 Rend currentTab une méthode
-    }));
-  
-    return (
-      <Box sx={{ width: '100%' }}>
-        <Tabs value={value} onChange={(e, newValue) => setValue(newValue)} aria-label={ariaLabel}>
-          {tabs.map((tab, index) => (
-            <Tab key={index} label={tab.label} id={`tab-${index}`} aria-controls={`tab-panel-${index}`} />
-          ))}
-        </Tabs>
+        }}
+      >
         {tabs.map((tab, index) => (
-          <CustomTabPanel key={index} value={value} index={index}>{tab.content}</CustomTabPanel>
+          <Tab
+            key={index}
+            label={tab.label}
+            id={`tab-${index}`}
+            aria-controls={`tab-panel-${index}`}
+          />
         ))}
-      </Box>
-    );
-  });
-  
-  export default GenericTabs;
+      </Tabs>
+
+      {tabs.map((tab, index) => (
+        <CustomTabPanel key={index} value={value} index={index}>
+          {tab.content}
+        </CustomTabPanel>
+      ))}
+    </Box>
+  );
+});
+
+export default GenericTabs;

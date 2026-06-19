@@ -21,6 +21,7 @@ import { GetOrganisationDto } from "@/interfaces/OrganisationInterface/Organisat
 
 import { OrganisationAction } from "@/actions/OrganisationActions";
 import OrganisationDetails from '../Organisation/OrganisationDetails';
+import WorkLayout from "@/components/app/Layout/WorkLayout";
 /*
     Notification Component 
     ce composant Contient la liste des notifications 
@@ -216,7 +217,7 @@ const NotificationComponent = () => {
             <>
                 <Card elevation={3} >
                      <CardContent>
-                       <AnnonceDetails data={selectAnnonce} columns={annoncecolumns} onUpdate={handleUpdate}  onDelete={handleDelete}/> 
+                       <AnnonceDetails data={selectAnnonce} onUpdate={handleUpdate}  onDelete={handleDelete}/> 
                      </CardContent>
                 </Card>
             </>):(<Card>
@@ -255,12 +256,18 @@ const NotificationComponent = () => {
     ]
     return (
         <>
-            <Box className="flex flex-row text-center items-center justify-center ">
-                  <Box>
-                        <OrganisationDetails data={getorganisation}   />
-                      </Box>
-                <GenericTabs tabs={tabs} ref={tabsRef} ChangeTab={goToTab}   />
-            </Box>
+        <WorkLayout   title="Organisation"
+            subtitle="Gestion et configuration de votre organisation"
+            sidebar={
+            <OrganisationDetails data={getorganisation} />
+            }
+        >
+            <GenericTabs
+            tabs={tabs}
+            ref={tabsRef}
+            ChangeTab={goToTab}
+            />
+        </WorkLayout>
             <Snackbar
                        open={snackbarOpen}
                        autoHideDuration={30}

@@ -28,11 +28,12 @@ const GenericTable = <T,>({
     OnDetails,
     OnUpdate
 }: GenerationTableProps<T>) => {
+
     if (!data || data.length === 0) {
         return (
             <Box sx={{ p: 3 }}>
                 <Skeleton variant="rectangular" height={200} />
-                <Typography variant="body2" sx={{ mt: 2, color: "text.secondary" }}>
+                <Typography variant="body2" sx={{ mt: 2, color: "#57606a" }}>
                     No results found.
                 </Typography>
             </Box>
@@ -40,32 +41,63 @@ const GenericTable = <T,>({
     }
 
     return (
-        <TableContainer 
-            component={Paper} 
-            className="hover:shadow-2xl transition-all"
-            sx={{ borderRadius: 2, overflow: "auto" }}>
-            <Table aria-label="customized table">
+        <TableContainer
+            component={Paper}
+            sx={{
+                borderRadius: "6px",
+                border: "1px solid #d0d7de",
+                overflow: "hidden",
+                backgroundColor: "#ffffff",
+            }}
+        >
+            <Table>
                 <TableHead>
-                    <TableRow>
+                    <TableRow
+                        sx={{
+                            backgroundColor: "#f6f8fa",
+                            borderBottom: "1px solid #d0d7de",
+                        }}
+                    >
                         {columns.map((col) => (
-                            <TableCell key={String(col.accessor)}>
-                                <Typography variant="subtitle2" fontWeight="bold">
-                                    {col.label}
-                                </Typography>
+                            <TableCell
+                                key={String(col.accessor)}
+                                sx={{
+                                    fontWeight: 600,
+                                    color: "#24292f",
+                                    fontSize: "0.875rem",
+                                }}
+                            >
+                                {col.label}
                             </TableCell>
                         ))}
+
                         {(OnDetails || OnUpdate) && (
-                            <TableCell align="center">
-                                <Typography variant="subtitle2" fontWeight="bold">
-                                    Actions
-                                </Typography>
+                            <TableCell
+                                align="center"
+                                sx={{
+                                    fontWeight: 600,
+                                    color: "#24292f",
+                                    fontSize: "0.875rem",
+                                }}
+                            >
+                                Actions
                             </TableCell>
                         )}
                     </TableRow>
                 </TableHead>
+
                 <TableBody>
                     {data.map((item, index) => (
-                        <TableRow key={index} hover>
+                        <TableRow
+                            key={index}
+                            hover
+                            sx={{
+                                "&:hover": {
+                                    backgroundColor: "#f6f8fa",
+                                },
+                                borderBottom: "1px solid #d8dee4",
+                            }}
+                        >
                             {columns.map((col) => {
                                 const value = item[col.accessor];
                                 const isDate =
@@ -73,7 +105,10 @@ const GenericTable = <T,>({
                                     (typeof value === "string" && !isNaN(Date.parse(value)));
 
                                 return (
-                                    <TableCell key={String(col.accessor)}>
+                                    <TableCell
+                                        key={String(col.accessor)}
+                                        sx={{ color: "#24292f" }}
+                                    >
                                         {isDate
                                             ? FormUtils.FormatDate(value?.toString() ?? "")
                                             : value != null
@@ -82,31 +117,47 @@ const GenericTable = <T,>({
                                     </TableCell>
                                 );
                             })}
-                            {(OnDetails || OnUpdate) && (
-                                <TableCell>
-                                    <Stack direction="row" spacing={1} justifyContent="center">
-                                        <Box sx={{ display: "flex", gap: 1 }}>
-                                            {OnDetails && (
-                                                <Button
-                                                    size="small"
-                                                    variant="outlined"
-                                                    onClick={() => OnDetails(item)}
-                                                >
-                                                    Details
-                                                </Button>
-                                            )}
-                                            {OnUpdate && (
-                                                <Button
-                                                    size="small"
-                                                    variant="outlined"
-                                                    color="primary"
-                                                    onClick={() => OnUpdate(item)}
-                                                >
-                                                    Update
-                                                </Button>
-                                            )}
-                                        </Box>
 
+                            {(OnDetails || OnUpdate) && (
+                                <TableCell align="center">
+                                    <Stack direction="row" spacing={1} justifyContent="center">
+                                        {OnDetails && (
+                                            <Button
+                                                size="small"
+                                                variant="outlined"
+                                                onClick={() => OnDetails(item)}
+                                                sx={{
+                                                    borderColor: "#d0d7de",
+                                                    color: "#24292f",
+                                                    textTransform: "none",
+                                                    "&:hover": {
+                                                        backgroundColor: "#f3f4f6",
+                                                        borderColor: "#b9c1c9",
+                                                    },
+                                                }}
+                                            >
+                                                Details
+                                            </Button>
+                                        )}
+
+                                        {OnUpdate && (
+                                            <Button
+                                                size="small"
+                                                variant="outlined"
+                                                color="primary"
+                                                onClick={() => OnUpdate(item)}
+                                                sx={{
+                                                    textTransform: "none",
+                                                    borderColor: "#0969da",
+                                                    "&:hover": {
+                                                        backgroundColor: "#e7f3ff",
+                                                        borderColor: "#0550ae",
+                                                    },
+                                                }}
+                                            >
+                                                Update
+                                            </Button>
+                                        )}
                                     </Stack>
                                 </TableCell>
                             )}

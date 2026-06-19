@@ -19,7 +19,9 @@ const DetailsComponent = <T,>({ data, columns }: DetailsProps<T>) => {
   if (!data) {
     return (
       <Box textAlign="center" p={4}>
-        <Typography color="text.secondary">Aucune donnée disponible</Typography>
+        <Typography sx={{ color: "#57606a" }}>
+          Aucune donnée disponible
+        </Typography>
       </Box>
     );
   }
@@ -33,8 +35,10 @@ const DetailsComponent = <T,>({ data, columns }: DetailsProps<T>) => {
         width: props?.width || '100%',
         height: props?.height || 200,
         objectFit: 'cover',
-        borderRadius: 1,
+        borderRadius: "6px",
         mt: 1,
+        border: "1px solid #d0d7de",
+        backgroundColor: "#f6f8fa",
         display: 'block'
       }}
       onError={(e) => {
@@ -62,22 +66,45 @@ const DetailsComponent = <T,>({ data, columns }: DetailsProps<T>) => {
       return renderImagesGrid(value, column.label, column.imageProps);
     }
 
-    return <Typography>{value || '-'}</Typography>;
+    return (
+      <Typography sx={{ color: "#24292f", mt: 0.5 }}>
+        {value || "-"}
+      </Typography>
+    );
   };
 
   return (
-    <Card variant="outlined" sx={{ borderRadius: 2 }}>
-      <CardContent>
+    <Card
+      variant="outlined"
+      sx={{
+        borderRadius: "6px",
+        border: "1px solid #d0d7de",
+        backgroundColor: "#ffffff",
+      }}
+    >
+      <CardContent sx={{ p: 3 }}>
         <Stack spacing={2}>
           {columns.map((column, index) => {
             const value = data[column.accessor];
+
             return (
               <Box key={column.accessor as string}>
-                <Typography variant="subtitle2" color="text.secondary">
+                <Typography
+                  variant="subtitle2"
+                  sx={{
+                    color: "#57606a",
+                    fontWeight: 600,
+                    fontSize: "0.85rem",
+                  }}
+                >
                   {column.label}
                 </Typography>
+
                 {renderValue(column, value)}
-                {index < columns.length - 1 && <Divider sx={{ my: 2 }} />}
+
+                {index < columns.length - 1 && (
+                  <Divider sx={{ my: 2, borderColor: "#d8dee4" }} />
+                )}
               </Box>
             );
           })}
